@@ -40,7 +40,7 @@ const CTA = () => {
         <div className="p-6 text-center">
           <h3 className="text-lg font-semibold mb-2">Thank you for reaching out!</h3>
           <p className="text-muted-foreground">
-            We'll get back to you at {values.email} within 24 hours.
+            We&apos;ll get back to you at {values.email} within 24 hours.
           </p>
         </div>
       );
@@ -64,7 +64,7 @@ const CTA = () => {
               Ready to Transform Your Digital Presence?
             </h2>
             <p className="text-lg text-muted-foreground mb-8">
-              Let's discuss how we can help your business grow. Schedule a free consultation 
+              Let&apos;s discuss how we can help your business grow. Schedule a free consultation 
               with our experts and get started on your digital transformation journey.
             </p>
             

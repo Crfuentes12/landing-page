@@ -4,7 +4,6 @@
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowDown } from "lucide-react";
-import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useScroll } from "@/providers/scroll-provider";
 import { useTheme } from "@/providers/theme-provider";
 

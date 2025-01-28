@@ -92,7 +92,7 @@ const FAQ = () => {
         }`}>
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
           <p className="text-lg text-muted-foreground">
-            Have questions? We're here to help. If you don't see your question here, 
+            Have questions? We&apos;re here to help. If you don&apos;t see your question here, 
             feel free to reach out to our support team.
           </p>
         </div>

@@ -18,11 +18,11 @@ interface PlanDetails {
   popular?: boolean;
 }
 
-interface PricingFormData {
+type PricingFormData = Record<string, unknown> & {
   email: string;
   company: string;
   employees: string;
-}
+};
 
 const plans: PlanDetails[] = [
   {

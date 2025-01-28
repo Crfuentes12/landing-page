@@ -8,12 +8,12 @@ import { useModal } from "@/providers/modal-provider";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Mail, Phone } from "lucide-react";
 
-interface ContactFormData {
+type ContactFormData = Record<string, unknown> & {
   firstName: string;
   lastName: string;
   email: string;
   message: string;
-}
+};
 
 const CTA = () => {
   const { openModal } = useModal();

@@ -1,4 +1,3 @@
-// src/hooks/use-form.ts
 import { useState, useCallback, useEffect } from 'react';
 import { ValidationFunction } from '@/lib/validation';
 
@@ -16,7 +15,7 @@ interface FormState<T> {
   isValid: boolean;
 }
 
-export function useForm<T extends Record<string, any>>({
+export function useForm<T extends Record<string, unknown>>({
   initialValues,
   validationSchema,
   onSubmit,
@@ -46,7 +45,7 @@ export function useForm<T extends Record<string, any>>({
 
   const handleChange = useCallback((
     name: keyof T,
-    value: any,
+    value: unknown,
     shouldValidate: boolean = true
   ) => {
     setFormState(prev => {

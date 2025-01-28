@@ -21,7 +21,7 @@ export function formatCurrency(amount: number): string {
   }).format(amount);
 }
 
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {
@@ -38,7 +38,7 @@ export function debounce<T extends (...args: any[]) => any>(
   };
 }
 
-export function throttle<T extends (...args: any[]) => any>(
+export function throttle<T extends (...args: unknown[]) => unknown>(
   func: T,
   limit: number
 ): (...args: Parameters<T>) => void {
@@ -90,7 +90,6 @@ export function generateId(length: number = 8): string {
   ).join('');
 }
 
-// src/lib/utils.ts (continued)
 export function getRandomColor(): string {
   const letters = '0123456789ABCDEF';
   let color = '#';
@@ -135,17 +134,17 @@ export function deepClone<T>(obj: T): T {
   }
 
   if (obj instanceof Date) {
-    return new Date(obj.getTime()) as any;
+    return new Date(obj.getTime()) as T;
   }
 
-  if (obj instanceof Array) {
-    return obj.map(item => deepClone(item)) as any;
+  if (Array.isArray(obj)) {
+    return obj.map(item => deepClone(item)) as T;
   }
 
   if (obj instanceof Object) {
-    const copy = {} as Record<string, any>;
+    const copy = {} as Record<string, unknown>;
     Object.keys(obj).forEach(key => {
-      copy[key] = deepClone((obj as Record<string, any>)[key]);
+      copy[key] = deepClone((obj as Record<string, unknown>)[key]);
     });
     return copy as T;
   }
@@ -217,9 +216,11 @@ export function shuffleArray<T>(array: T[]): T[] {
   return newArray;
 }
 
-export function memoize<T>(fn: Function): (...args: any[]) => T {
+export function memoize<TFunc extends (...args: unknown[]) => unknown>(
+  fn: TFunc
+): (...args: Parameters<TFunc>) => ReturnType<TFunc> {
   const cache = new Map();
-  return (...args: any[]) => {
+  return (...args: Parameters<TFunc>) => {
     const key = JSON.stringify(args);
     if (cache.has(key)) {
       return cache.get(key);
@@ -262,7 +263,7 @@ export const cookies = {
 
 // Form validation utilities
 export const validators = {
-  required: (value: any) => (value ? null : 'This field is required'),
+  required: (value: unknown) => (value ? null : 'This field is required'),
   
   email: (value: string) => 
     isEmail(value) ? null : 'Please enter a valid email address',
@@ -276,13 +277,13 @@ export const validators = {
   pattern: (pattern: RegExp, message: string) => (value: string) =>
     pattern.test(value) ? null : message,
     
-  match: (field: string, fieldName: string) => (value: string, formValues: any) =>
+  match: (field: string, fieldName: string) => (value: string, formValues: Record<string, unknown>) =>
     value === formValues[field] ? null : `Must match ${fieldName}`,
 };
 
 // Local storage utilities with expiry
 export const storage = {
-  set(key: string, value: any, expiryHours?: number): void {
+  set(key: string, value: unknown, expiryHours?: number): void {
     const item = {
       value,
       timestamp: new Date().getTime(),
@@ -291,7 +292,7 @@ export const storage = {
     localStorage.setItem(key, JSON.stringify(item));
   },
 
-  get(key: string): any {
+  get(key: string): unknown {
     const itemStr = localStorage.getItem(key);
     if (!itemStr) return null;
 

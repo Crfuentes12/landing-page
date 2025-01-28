@@ -51,12 +51,12 @@ const OurServices = () => {
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Services</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Comprehensive digital solutions to help your business thrive in the modern world.
-            From development to marketing, we've got you covered.
+            From development to marketing, we&apos;ve got you covered.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((service, index) => {
+          {services.map((service) => {
             const Icon = service.icon;
             return (
               <Card 

@@ -23,7 +23,7 @@ const CTA = () => {
               Ready to Transform Your Digital Presence?
             </h2>
             <p className="text-lg text-muted-foreground mb-8">
-              Let's discuss how we can help your business grow. Schedule a free consultation 
+              Let&apos;s discuss how we can help your business grow. Schedule a free consultation 
               with our experts and get started on your digital transformation journey.
             </p>
             

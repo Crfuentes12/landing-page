@@ -2,10 +2,51 @@
 //landing-page/src/components/home/CTA.tsx
 "use client";
 
+import { useForm } from "@/hooks/use-form";
+import { schemas } from "@/lib/validation";
+import { useModal } from "@/providers/modal-provider";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Mail, Phone } from "lucide-react";
 
+interface ContactFormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  message: string;
+}
+
 const CTA = () => {
+  const { openModal } = useModal();
+  const {
+    values,
+    errors,
+    touched,
+    isSubmitting,
+    handleChange,
+    handleBlur,
+    handleSubmit
+  } = useForm<ContactFormData>({
+    initialValues: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      message: ''
+    },
+    validationSchema: schemas.contactForm,
+    onSubmit: async (values) => {
+      // Here you would typically send the form data to your API
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
+      openModal(
+        <div className="p-6 text-center">
+          <h3 className="text-lg font-semibold mb-2">Thank you for reaching out!</h3>
+          <p className="text-muted-foreground">
+            We'll get back to you at {values.email} within 24 hours.
+          </p>
+        </div>
+      );
+    }
+  });
+
   return (
     <section className="relative py-20 px-6 overflow-hidden">
       {/* Background Pattern */}
@@ -23,7 +64,7 @@ const CTA = () => {
               Ready to Transform Your Digital Presence?
             </h2>
             <p className="text-lg text-muted-foreground mb-8">
-              Let&apos;s discuss how we can help your business grow. Schedule a free consultation 
+              Let's discuss how we can help your business grow. Schedule a free consultation 
               with our experts and get started on your digital transformation journey.
             </p>
             
@@ -44,7 +85,7 @@ const CTA = () => {
           </div>
 
           <div className="bg-background rounded-lg p-8 shadow-lg border">
-            <form className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label htmlFor="firstName" className="text-sm font-medium">
@@ -53,9 +94,17 @@ const CTA = () => {
                   <input
                     id="firstName"
                     type="text"
-                    className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    value={values.firstName}
+                    onChange={e => handleChange('firstName', e.target.value)}
+                    onBlur={() => handleBlur('firstName')}
+                    className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50
+                      ${touched.firstName && errors.firstName ? 'border-red-500' : 'border-input'}
+                    `}
                     placeholder="John"
                   />
+                  {touched.firstName && errors.firstName && (
+                    <p className="text-sm text-red-500">{errors.firstName}</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="lastName" className="text-sm font-medium">
@@ -64,9 +113,17 @@ const CTA = () => {
                   <input
                     id="lastName"
                     type="text"
-                    className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    value={values.lastName}
+                    onChange={e => handleChange('lastName', e.target.value)}
+                    onBlur={() => handleBlur('lastName')}
+                    className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50
+                      ${touched.lastName && errors.lastName ? 'border-red-500' : 'border-input'}
+                    `}
                     placeholder="Doe"
                   />
+                  {touched.lastName && errors.lastName && (
+                    <p className="text-sm text-red-500">{errors.lastName}</p>
+                  )}
                 </div>
               </div>
 
@@ -77,9 +134,17 @@ const CTA = () => {
                 <input
                   id="email"
                   type="email"
-                  className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  value={values.email}
+                  onChange={e => handleChange('email', e.target.value)}
+                  onBlur={() => handleBlur('email')}
+                  className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50
+                    ${touched.email && errors.email ? 'border-red-500' : 'border-input'}
+                  `}
                   placeholder="john@example.com"
                 />
+                {touched.email && errors.email && (
+                  <p className="text-sm text-red-500">{errors.email}</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -89,13 +154,21 @@ const CTA = () => {
                 <textarea
                   id="message"
                   rows={4}
-                  className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  value={values.message}
+                  onChange={e => handleChange('message', e.target.value)}
+                  onBlur={() => handleBlur('message')}
+                  className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50
+                    ${touched.message && errors.message ? 'border-red-500' : 'border-input'}
+                  `}
                   placeholder="Tell us about your project..."
                 />
+                {touched.message && errors.message && (
+                  <p className="text-sm text-red-500">{errors.message}</p>
+                )}
               </div>
 
-              <Button className="w-full group">
-                Send Message
+              <Button className="w-full group" type="submit" disabled={isSubmitting}>
+                {isSubmitting ? 'Sending...' : 'Send Message'}
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
             </form>

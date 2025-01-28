@@ -1,12 +1,31 @@
 //landing-page/src/components/home/Pricing.tsx
+// src/components/home/Pricing.tsx
 "use client";
 
 import { useState } from 'react';
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
+import { useModal } from "@/providers/modal-provider";
+import { useLocalStorage } from "@/hooks/use-local-storage";
+import { useForm } from '@/hooks/use-form';
+import { schemas } from '@/lib/validation';
 
-const plans = [
+interface PlanDetails {
+  name: string;
+  price: { monthly: number; annual: number };
+  description: string;
+  features: string[];
+  popular?: boolean;
+}
+
+interface PricingFormData {
+  email: string;
+  company: string;
+  employees: string;
+}
+
+const plans: PlanDetails[] = [
   {
     name: "Starter",
     price: { monthly: 49, annual: 39 },
@@ -51,8 +70,111 @@ const plans = [
   }
 ];
 
+const PricingModal = ({ plan, onClose }: { plan: PlanDetails; onClose: () => void }) => {
+  const {
+    values,
+    errors,
+    touched,
+    isSubmitting,
+    handleChange,
+    handleBlur,
+    handleSubmit
+  } = useForm<PricingFormData>({
+    initialValues: {
+      email: '',
+      company: '',
+      employees: ''
+    },
+    validationSchema: schemas.pricingForm,
+    onSubmit: async (values) => {
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
+      onClose();
+      console.log('Subscription values:', { plan, ...values });
+    }
+  });
+
+  return (
+    <div className="p-6 max-w-md mx-auto">
+      <h3 className="text-lg font-semibold mb-4">Get Started with {plan.name}</h3>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Work Email</label>
+          <input
+            type="email"
+            value={values.email}
+            onChange={e => handleChange('email', e.target.value)}
+            onBlur={() => handleBlur('email')}
+            className={`w-full px-3 py-2 border rounded-md ${
+              touched.email && errors.email ? 'border-red-500' : 'border-gray-300'
+            }`}
+          />
+          {touched.email && errors.email && (
+            <p className="text-sm text-red-500">{errors.email}</p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Company Name</label>
+          <input
+            type="text"
+            value={values.company}
+            onChange={e => handleChange('company', e.target.value)}
+            onBlur={() => handleBlur('company')}
+            className={`w-full px-3 py-2 border rounded-md ${
+              touched.company && errors.company ? 'border-red-500' : 'border-gray-300'
+            }`}
+          />
+          {touched.company && errors.company && (
+            <p className="text-sm text-red-500">{errors.company}</p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Number of Employees</label>
+          <select
+            value={values.employees}
+            onChange={e => handleChange('employees', e.target.value)}
+            onBlur={() => handleBlur('employees')}
+            className={`w-full px-3 py-2 border rounded-md ${
+              touched.employees && errors.employees ? 'border-red-500' : 'border-gray-300'
+            }`}
+          >
+            <option value="">Select...</option>
+            <option value="1-10">1-10</option>
+            <option value="11-50">11-50</option>
+            <option value="51-200">51-200</option>
+            <option value="201+">201+</option>
+          </select>
+          {touched.employees && errors.employees && (
+            <p className="text-sm text-red-500">{errors.employees}</p>
+          )}
+        </div>
+
+        <div className="flex gap-3 pt-4">
+          <Button type="button" variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'Processing...' : 'Continue'}
+          </Button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
 const Pricing = () => {
-  const [isAnnual, setIsAnnual] = useState(false);
+  const [isAnnual, setIsAnnual] = useLocalStorage('pricing-billing-period', false);
+  const { openModal } = useModal();
+
+  const handlePlanSelection = (plan: PlanDetails) => {
+    openModal(
+      <PricingModal 
+        plan={plan} 
+        onClose={() => openModal(null)} 
+      />
+    );
+  };
 
   return (
     <section className="py-20 px-6">
@@ -117,13 +239,14 @@ const Pricing = () => {
                       <span className="text-sm">{feature}</span>
                     </li>
                   ))}
-                  </ul>
+                </ul>
               </CardContent>
               
               <CardFooter>
                 <Button 
                   className="w-full"
                   variant={plan.popular ? "default" : "outline"}
+                  onClick={() => handlePlanSelection(plan)}
                 >
                   Get Started with {plan.name}
                 </Button>
@@ -135,7 +258,7 @@ const Pricing = () => {
         <div className="mt-12 text-center">
           <p className="text-sm text-muted-foreground">
             All prices are in USD and exclude applicable taxes. 
-            Need a custom plan? <a href="#" className="text-primary hover:underline">Contact us</a>
+            Need a custom plan? <a href="#contact" className="text-primary hover:underline">Contact us</a>
           </p>
         </div>
       </div>

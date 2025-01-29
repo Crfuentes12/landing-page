@@ -28,11 +28,6 @@ interface AIResponse {
   timeline: Timeline;
 }
 
-interface Message {
-  role: 'user' | 'assistant' | 'system';
-  content: string;
-}
-
 const PRICE_RANGES = [
   { min: 8000, max: 10000 }, // Initial
   { min: 7000, max: 8500 },  // After requirements

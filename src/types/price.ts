@@ -1,4 +1,4 @@
-// types/price.ts
+//src/types/price.ts
 import { z } from 'zod';
 
 export const PriceResponseSchema = z.object({

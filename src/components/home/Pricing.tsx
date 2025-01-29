@@ -2,263 +2,243 @@
 // src/components/home/Pricing.tsx
 "use client";
 
-import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
-import { useModal } from "@/providers/modal-provider";
-import { useLocalStorage } from "@/hooks/use-local-storage";
-import { useForm } from '@/hooks/use-form';
-import { schemas } from '@/lib/validation';
-
-interface PlanDetails {
-  name: string;
-  price: { monthly: number; annual: number };
-  description: string;
-  features: string[];
-  popular?: boolean;
-}
-
-type PricingFormData = Record<string, unknown> & {
-  email: string;
-  company: string;
-  employees: string;
-};
-
-const plans: PlanDetails[] = [
-  {
-    name: "Starter",
-    price: { monthly: 49, annual: 39 },
-    description: "Perfect for small businesses just getting started",
-    features: [
-      "Up to 5 team members",
-      "Basic analytics",
-      "24/7 support",
-      "1 project",
-      "Basic reporting"
-    ]
-  },
-  {
-    name: "Professional",
-    price: { monthly: 99, annual: 89 },
-    description: "Ideal for growing businesses and teams",
-    features: [
-      "Up to 20 team members",
-      "Advanced analytics",
-      "Priority support",
-      "10 projects",
-      "Custom reporting",
-      "API access",
-      "Team collaboration"
-    ],
-    popular: true
-  },
-  {
-    name: "Enterprise",
-    price: { monthly: 199, annual: 179 },
-    description: "Advanced features for large organizations",
-    features: [
-      "Unlimited team members",
-      "Enterprise analytics",
-      "Dedicated support",
-      "Unlimited projects",
-      "Custom solutions",
-      "Advanced security",
-      "SLA guarantee",
-      "Custom integrations"
-    ]
-  }
-];
-
-const PricingModal = ({ plan, onClose }: { plan: PlanDetails; onClose: () => void }) => {
-  const {
-    values,
-    errors,
-    touched,
-    isSubmitting,
-    handleChange,
-    handleBlur,
-    handleSubmit
-  } = useForm<PricingFormData>({
-    initialValues: {
-      email: '',
-      company: '',
-      employees: ''
-    },
-    validationSchema: schemas.pricingForm,
-    onSubmit: async (values) => {
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
-      onClose();
-      console.log('Subscription values:', { plan, ...values });
-    }
-  });
-
-  return (
-    <div className="p-6 max-w-md mx-auto">
-      <h3 className="text-lg font-semibold mb-4">Get Started with {plan.name}</h3>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Work Email</label>
-          <input
-            type="email"
-            value={values.email}
-            onChange={e => handleChange('email', e.target.value)}
-            onBlur={() => handleBlur('email')}
-            className={`w-full px-3 py-2 border rounded-md ${
-              touched.email && errors.email ? 'border-red-500' : 'border-gray-300'
-            }`}
-          />
-          {touched.email && errors.email && (
-            <p className="text-sm text-red-500">{errors.email}</p>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Company Name</label>
-          <input
-            type="text"
-            value={values.company}
-            onChange={e => handleChange('company', e.target.value)}
-            onBlur={() => handleBlur('company')}
-            className={`w-full px-3 py-2 border rounded-md ${
-              touched.company && errors.company ? 'border-red-500' : 'border-gray-300'
-            }`}
-          />
-          {touched.company && errors.company && (
-            <p className="text-sm text-red-500">{errors.company}</p>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Number of Employees</label>
-          <select
-            value={values.employees}
-            onChange={e => handleChange('employees', e.target.value)}
-            onBlur={() => handleBlur('employees')}
-            className={`w-full px-3 py-2 border rounded-md ${
-              touched.employees && errors.employees ? 'border-red-500' : 'border-gray-300'
-            }`}
-          >
-            <option value="">Select...</option>
-            <option value="1-10">1-10</option>
-            <option value="11-50">11-50</option>
-            <option value="51-200">51-200</option>
-            <option value="201+">201+</option>
-          </select>
-          {touched.employees && errors.employees && (
-            <p className="text-sm text-red-500">{errors.employees}</p>
-          )}
-        </div>
-
-        <div className="flex gap-3 pt-4">
-          <Button type="button" variant="outline" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Processing...' : 'Continue'}
-          </Button>
-        </div>
-      </form>
-    </div>
-  );
-};
+import React, { useState, useRef, useEffect } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Send, Loader2, Clock, CheckCircle2, BarChart2 } from 'lucide-react';
+import type { Message } from '@/types/price';
 
 const Pricing = () => {
-  const [isAnnual, setIsAnnual] = useLocalStorage('pricing-billing-period', false);
-  const { openModal } = useModal();
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      role: 'assistant',
+      content: 'Hi! I can help you calculate a price estimate for your project. What type of project are you looking to build?',
+      priceData: {
+        priceRange: { min: 5000, max: 7000 }
+      }
+    }
+  ]);
+  const [inputMessage, setInputMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const handlePlanSelection = (plan: PlanDetails) => {
-    openModal(
-      <PricingModal 
-        plan={plan} 
-        onClose={() => openModal(null)} 
-      />
-    );
+  // Get the latest price data from messages
+  const latestPriceData = messages
+    .filter(m => m.priceData)
+    .slice(-1)[0]?.priceData;
+
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  // Auto-resize textarea
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [inputMessage]);
+
+  const handleSendMessage = async () => {
+    if (!inputMessage.trim()) return;
+
+    const newMessage: Message = {
+      role: 'user',
+      content: inputMessage
+    };
+
+    setMessages(prev => [...prev, newMessage]);
+    setInputMessage('');
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: messages.map(m => ({
+            role: m.role,
+            content: m.content
+          }))
+        }),
+      });
+
+      const data = await response.json();
+
+      setMessages(prev => [...prev, {
+        role: 'assistant',
+        content: data.message,
+        priceData: {
+          priceRange: data.priceRange,
+          requirements: data.requirements,
+          confidence: data.confidence,
+          timeline: data.timeline
+        }
+      }]);
+    } catch (error) {
+      console.error('Error:', error);
+      setMessages(prev => [...prev, {
+        role: 'assistant',
+        content: 'Sorry, I encountered an error. Please try again.',
+        priceData: {
+          priceRange: { min: 5000, max: 7000 }
+        }
+      }]);
+    } finally {
+      setIsLoading(false);
+      if (textareaRef.current) {
+        textareaRef.current.style.height = 'auto';
+      }
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      maximumFractionDigits: 0
+    }).format(amount);
   };
 
   return (
     <section className="py-20 px-6">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Simple, Transparent Pricing</h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
-            Choose the perfect plan for your business needs. All plans include our core features.
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Get Your Project Estimate</h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Chat with our AI assistant to get a customized price estimate for your project.
           </p>
-
-          <div className="flex items-center justify-center gap-4 mb-8">
-            <span className={`text-sm ${!isAnnual ? 'text-primary' : 'text-muted-foreground'}`}>Monthly</span>
-            <button
-              onClick={() => setIsAnnual(!isAnnual)}
-              className={`relative w-14 h-7 rounded-full transition-colors duration-300 focus:outline-none ${
-                isAnnual ? 'bg-primary' : 'bg-muted'
-              }`}
-            >
-              <span
-                className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white transition-transform duration-300 ${
-                  isAnnual ? 'translate-x-7' : 'translate-x-0'
-                }`}
-              />
-            </button>
-            <span className={`text-sm ${isAnnual ? 'text-primary' : 'text-muted-foreground'}`}>
-              Annual <span className="text-xs text-primary">Save 20%</span>
-            </span>
-          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {plans.map((plan) => (
-            <Card 
-              key={plan.name}
-              className={`relative ${
-                plan.popular ? 'border-primary shadow-lg scale-105' : ''
-              }`}
-            >
-              {plan.popular && (
-                <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-bl-lg rounded-tr-lg">
-                  Popular
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Chat Section */}
+          <Card className="h-[600px] flex flex-col overflow-hidden">
+            <CardContent className="flex flex-col h-full p-0">
+              {/* Chat Messages Container */}
+              <div 
+                ref={chatContainerRef}
+                className="flex-1 overflow-y-auto p-6 space-y-4"
+                style={{
+                  scrollbarWidth: 'thin',
+                  scrollbarColor: 'rgb(203 213 225) transparent'
+                }}
+              >
+                {messages.map((message, index) => (
+                  <div
+                    key={index}
+                    className={`flex ${
+                      message.role === 'user' ? 'justify-end' : 'justify-start'
+                    }`}
+                  >
+                    <div
+                      className={`max-w-[80%] rounded-lg p-3 ${
+                        message.role === 'user'
+                          ? 'bg-primary text-primary-foreground'
+                          : 'bg-muted'
+                      }`}
+                    >
+                      <p className="whitespace-pre-wrap">{message.content}</p>
+                    </div>
+                  </div>
+                ))}
+                {isLoading && (
+                  <div className="flex justify-start">
+                    <div className="bg-muted rounded-lg p-3">
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Input Container */}
+              <div className="border-t p-4 bg-background">
+                <div className="flex gap-2">
+                  <textarea
+                    ref={textareaRef}
+                    value={inputMessage}
+                    onChange={(e) => setInputMessage(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder="Type your message..."
+                    className="flex-1 resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 min-h-[2.5rem] max-h-[10rem]"
+                    rows={1}
+                  />
+                  <Button
+                    onClick={handleSendMessage}
+                    disabled={isLoading || !inputMessage.trim()}
+                  >
+                    <Send className="h-5 w-5" />
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Price Calculator Section */}
+          <Card className="h-[600px]">
+            <CardContent className="p-6 flex flex-col h-full">
+              <div className="text-center mb-8">
+                <h3 className="text-2xl font-bold mb-2">Estimated Price Range</h3>
+                <div className="text-4xl font-bold text-primary">
+                  {latestPriceData && (
+                    <>{formatCurrency(latestPriceData.priceRange.min)} - {formatCurrency(latestPriceData.priceRange.max)}</>
+                  )}
+                </div>
+              </div>
+
+              {latestPriceData?.confidence && (
+                <div className="flex items-center gap-2 mb-4">
+                  <BarChart2 className="h-5 w-5 text-muted-foreground" />
+                  <span className="text-sm">
+                    Confidence Level: <span className="font-medium capitalize">{latestPriceData.confidence}</span>
+                  </span>
                 </div>
               )}
-              
-              <CardHeader>
-                <h3 className="text-2xl font-bold">{plan.name}</h3>
-                <p className="text-muted-foreground">{plan.description}</p>
-              </CardHeader>
-              
-              <CardContent>
-                <div className="mb-6">
-                  <span className="text-4xl font-bold">
-                    ${isAnnual ? plan.price.annual : plan.price.monthly}
-                  </span>
-                  <span className="text-muted-foreground">/month</span>
-                </div>
-                
-                <ul className="space-y-3">
-                  {plan.features.map((feature) => (
-                    <li key={feature} className="flex items-center gap-2">
-                      <Check className="h-4 w-4 text-primary" />
-                      <span className="text-sm">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-              
-              <CardFooter>
-                <Button 
-                  className="w-full"
-                  variant={plan.popular ? "default" : "outline"}
-                  onClick={() => handlePlanSelection(plan)}
-                >
-                  Get Started with {plan.name}
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
 
-        <div className="mt-12 text-center">
-          <p className="text-sm text-muted-foreground">
-            All prices are in USD and exclude applicable taxes. 
-            Need a custom plan? <a href="#contact" className="text-primary hover:underline">Contact us</a>
-          </p>
+              {latestPriceData?.timeline && (
+                <div className="flex items-center gap-2 mb-4">
+                  <Clock className="h-5 w-5 text-muted-foreground" />
+                  <span className="text-sm">
+                    Estimated Timeline: {latestPriceData.timeline.min}-{latestPriceData.timeline.max} {latestPriceData.timeline.unit}
+                  </span>
+                </div>
+              )}
+
+              {latestPriceData?.requirements && latestPriceData.requirements.length > 0 && (
+                <div className="mt-6">
+                  <h4 className="font-semibold mb-3 flex items-center gap-2">
+                    <CheckCircle2 className="h-5 w-5 text-muted-foreground" />
+                    Project Requirements:
+                  </h4>
+                  <ul className="space-y-2">
+                    {latestPriceData.requirements.map((req, index) => (
+                      <li key={index} className="text-sm flex items-start gap-2">
+                        <span className="text-primary">•</span>
+                        {req}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              <div className="mt-auto">
+                <p className="text-sm text-muted-foreground text-center">
+                  * Final price may vary based on specific requirements and complexity
+                </p>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </section>

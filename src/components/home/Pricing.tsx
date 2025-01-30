@@ -203,9 +203,10 @@ const Pricing = () => {
        nextAction: 'gather_info'
      });
      setActiveTab('estimate');
-   } catch (err) {
-     setError('Failed to reset chat. Please try again.');
-   } finally {
+    } catch (error: unknown) {
+      console.error('Reset error:', error);
+      setError('Failed to reset chat. Please try again.');
+    } finally {
      setIsLoading(false);
    }
  };
@@ -271,7 +272,8 @@ const Pricing = () => {
         suggestedQuestions: data.suggestedQuestions || [],
         nextAction: data.nextAction || null
       }));
-    } catch (err) {
+    } catch (error: unknown) {
+      console.error('Reset error:', error);
       setError('Failed to send message. Please try again.');
       setChatState(prev => ({
         ...prev,

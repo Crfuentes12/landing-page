@@ -95,11 +95,11 @@ const TECHNICAL_KEYWORDS = [
   'infrastructure', 'deployment', 'testing', 'monitoring', 'analytics'
 ];
 
-const BUSINESS_KEYWORDS = [
+/* const BUSINESS_KEYWORDS = [
   'revenue', 'users', 'customers', 'market', 'competition', 'strategy',
   'growth', 'scaling', 'monetization', 'conversion', 'retention',
   'acquisition', 'pricing', 'subscription', 'b2b', 'b2c'
-];
+]; */
 
 const INDUSTRY_SECTORS = [
   'finance', 'healthcare', 'education', 'retail', 'ecommerce',

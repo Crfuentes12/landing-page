@@ -102,116 +102,116 @@ const Pricing = () => {
     nextAction: 'gather_info'
   });
 
-  // Local state
-  const [inputMessage, setInputMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState('chat');
+ // Local state
+ const [inputMessage, setInputMessage] = useState('');
+ const [isLoading, setIsLoading] = useState(false);
+ const [error, setError] = useState<string | null>(null);
+ const [activeTab, setActiveTab] = useState('estimate');
 
-  // Refs
-  const chatContainerRef = useRef<HTMLDivElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+ // Refs
+ const chatContainerRef = useRef<HTMLDivElement>(null);
+ const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Initialize session from localStorage
-  useEffect(() => {
-    const storedSessionId = localStorage.getItem('chat_session_id');
-    const storedConversationId = localStorage.getItem('chat_conversation_id');
-    
-    if (storedSessionId) {
-      setChatState(prev => ({
-        ...prev,
-        sessionId: storedSessionId,
-        conversationId: storedConversationId
-      }));
-    }
-  }, []);
+ // Initialize session from localStorage
+ useEffect(() => {
+   const storedSessionId = localStorage.getItem('chat_session_id');
+   const storedConversationId = localStorage.getItem('chat_conversation_id');
+   
+   if (storedSessionId) {
+     setChatState(prev => ({
+       ...prev,
+       sessionId: storedSessionId,
+       conversationId: storedConversationId
+     }));
+   }
+ }, []);
 
-  // Auto-scroll chat
-  useEffect(() => {
-    if (chatContainerRef.current) {
-      const scrollContainer = chatContainerRef.current;
-      scrollContainer.scrollTop = scrollContainer.scrollHeight;
-    }
-  }, [chatState.messages]);
+ // Auto-scroll chat
+ useEffect(() => {
+   if (chatContainerRef.current) {
+     const scrollContainer = chatContainerRef.current;
+     scrollContainer.scrollTop = scrollContainer.scrollHeight;
+   }
+ }, [chatState.messages]);
 
-  // Auto-resize textarea
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${Math.min(
-        Math.max(textareaRef.current.scrollHeight, 40),
-        160
-      )}px`;
-    }
-  }, [inputMessage]);
+ // Auto-resize textarea
+ useEffect(() => {
+   if (textareaRef.current) {
+     textareaRef.current.style.height = 'auto';
+     textareaRef.current.style.height = `${Math.min(
+       Math.max(textareaRef.current.scrollHeight, 40),
+       160
+     )}px`;
+   }
+ }, [inputMessage]);
 
-  // Helper Functions
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      maximumFractionDigits: 0
-    }).format(amount);
-  };
+ // Helper Functions
+ const formatCurrency = (amount: number) => {
+   return new Intl.NumberFormat('en-US', {
+     style: 'currency',
+     currency: 'USD',
+     maximumFractionDigits: 0
+   }).format(amount);
+ };
 
-  // Reset chat
-  const handleReset = async () => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      // Clear stored session and conversation IDs
-      localStorage.removeItem('chat_session_id');
-      localStorage.removeItem('chat_conversation_id');
+ // Reset chat
+ const handleReset = async () => {
+   setIsLoading(true);
+   setError(null);
+   
+   try {
+     // Clear stored session and conversation IDs
+     localStorage.removeItem('chat_session_id');
+     localStorage.removeItem('chat_conversation_id');
 
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: [{ role: 'user', content: 'reset' }],
-          sessionId: null,
-          conversationId: null
-        })
-      });
+     const response = await fetch('/api/chat', {
+       method: 'POST',
+       headers: { 'Content-Type': 'application/json' },
+       body: JSON.stringify({
+         messages: [{ role: 'user', content: 'reset' }],
+         sessionId: null,
+         conversationId: null
+       })
+     });
 
-      if (!response.ok) throw new Error('Failed to reset chat');
-      const data = await response.json();
+     if (!response.ok) throw new Error('Failed to reset chat');
+     const data = await response.json();
 
-      // Store new session and conversation IDs
-      localStorage.setItem('chat_session_id', data.sessionId);
-      if (data.conversationId) {
-        localStorage.setItem('chat_conversation_id', data.conversationId);
-      }
+     // Store new session and conversation IDs
+     localStorage.setItem('chat_session_id', data.sessionId);
+     if (data.conversationId) {
+       localStorage.setItem('chat_conversation_id', data.conversationId);
+     }
 
-      setChatState({
-        sessionId: data.sessionId,
-        conversationId: data.conversationId,
-        messages: [
-          {
-            role: 'assistant',
-            content: data.message,
-            timestamp: Date.now()
-          }
-        ],
-        priceRange: data.priceRange,
-        confidence: data.confidence,
-        requirements: data.requirements,
-        timeline: data.timeline,
-        context: data.context,
-        isLocked: false,
-        suggestedQuestions: data.suggestedQuestions || [],
-        nextAction: 'gather_info'
-      });
-      setActiveTab('chat');
-    } catch (error) {
-      setError('Failed to reset chat. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+     setChatState({
+       sessionId: data.sessionId,
+       conversationId: data.conversationId,
+       messages: [
+         {
+           role: 'assistant',
+           content: data.message,
+           timestamp: Date.now()
+         }
+       ],
+       priceRange: data.priceRange,
+       confidence: data.confidence,
+       requirements: data.requirements,
+       timeline: data.timeline,
+       context: data.context,
+       isLocked: false,
+       suggestedQuestions: data.suggestedQuestions || [],
+       nextAction: 'gather_info'
+     });
+     setActiveTab('estimate');
+   } catch (err) {
+     setError('Failed to reset chat. Please try again.');
+   } finally {
+     setIsLoading(false);
+   }
+ };
 
-  // Send message
-  const handleSendMessage = async () => {
+   // Send message
+   const handleSendMessage = async () => {
     if (!inputMessage.trim() || isLoading) return;
     
     const newMessage: Message = {
@@ -271,7 +271,7 @@ const Pricing = () => {
         suggestedQuestions: data.suggestedQuestions || [],
         nextAction: data.nextAction || null
       }));
-    } catch (error) {
+    } catch (err) {
       setError('Failed to send message. Please try again.');
       setChatState(prev => ({
         ...prev,
@@ -412,7 +412,7 @@ const Pricing = () => {
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Chat with our AI assistant to get a precise price estimate for your project.
-            We'll analyze your requirements and provide a detailed breakdown.
+            We&apos;ll analyze your requirements and provide a detailed breakdown.
           </p>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -528,33 +528,33 @@ const Pricing = () => {
               </div>
             </CardContent>
           </Card>
-          {/* Analysis Section */}
-          <Card className="h-[600px]">
+           {/* Analysis Section */}
+           <Card className="h-[600px]">
             <CardContent className="p-6">
               <Tabs defaultValue="estimate" className="h-full flex flex-col">
-              <TabsList className="mb-4">
-                <TabsTrigger 
-                  value="estimate" 
-                  onClick={() => setActiveTab('estimate')}
-                  className={activeTab === 'estimate' ? 'font-medium' : ''}
-                >
-                  Estimate
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="requirements"
-                  onClick={() => setActiveTab('requirements')}
-                  className={activeTab === 'requirements' ? 'font-medium' : ''}
-                >
-                  Requirements
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="analysis"
-                  onClick={() => setActiveTab('analysis')}
-                  className={activeTab === 'analysis' ? 'font-medium' : ''}
-                >
-                  Analysis
-                </TabsTrigger>
-              </TabsList>
+                <TabsList className="mb-4">
+                  <TabsTrigger 
+                    value="estimate" 
+                    onClick={() => setActiveTab('estimate')}
+                    className={activeTab === 'estimate' ? 'font-medium' : ''}
+                  >
+                    Estimate
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="requirements"
+                    onClick={() => setActiveTab('requirements')}
+                    className={activeTab === 'requirements' ? 'font-medium' : ''}
+                  >
+                    Requirements
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="analysis"
+                    onClick={() => setActiveTab('analysis')}
+                    className={activeTab === 'analysis' ? 'font-medium' : ''}
+                  >
+                    Analysis
+                  </TabsTrigger>
+                </TabsList>
               // Add error handling in the UI
                 {error && (
                   <Alert variant="destructive" className="mx-4 mb-4">

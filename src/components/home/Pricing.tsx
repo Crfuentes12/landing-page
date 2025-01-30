@@ -12,7 +12,6 @@ import {
   Info,
   BarChart2,
   CheckCircle2,
-  AlertTriangle,
   Building2,
   Cpu,
   Timer,
@@ -533,11 +532,35 @@ const Pricing = () => {
           <Card className="h-[600px]">
             <CardContent className="p-6">
               <Tabs defaultValue="estimate" className="h-full flex flex-col">
-                <TabsList className="mb-4">
-                  <TabsTrigger value="estimate">Estimate</TabsTrigger>
-                  <TabsTrigger value="requirements">Requirements</TabsTrigger>
-                  <TabsTrigger value="analysis">Analysis</TabsTrigger>
-                </TabsList>
+              <TabsList className="mb-4">
+                <TabsTrigger 
+                  value="estimate" 
+                  onClick={() => setActiveTab('estimate')}
+                  className={activeTab === 'estimate' ? 'font-medium' : ''}
+                >
+                  Estimate
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="requirements"
+                  onClick={() => setActiveTab('requirements')}
+                  className={activeTab === 'requirements' ? 'font-medium' : ''}
+                >
+                  Requirements
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="analysis"
+                  onClick={() => setActiveTab('analysis')}
+                  className={activeTab === 'analysis' ? 'font-medium' : ''}
+                >
+                  Analysis
+                </TabsTrigger>
+              </TabsList>
+              // Add error handling in the UI
+                {error && (
+                  <Alert variant="destructive" className="mx-4 mb-4">
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
                 <TabsContent value="estimate" className="flex-1 mt-0">
                   <div className="space-y-6">
                     {/* Price Display */}

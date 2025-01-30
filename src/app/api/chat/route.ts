@@ -3,7 +3,6 @@ import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { z } from 'zod';
 import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
-import _ from 'lodash';
 import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import { v4 as uuidv4 } from 'uuid';

@@ -1,5 +1,7 @@
 // src/types/lottie.d.ts
 declare module '*.lottie' {
-    const content: any;
-    export default content;
-  }
+  import { AnimationConfigWithPath, AnimationConfigWithData } from 'lottie-web';
+
+  const content: AnimationConfigWithPath | AnimationConfigWithData;
+  export default content;
+}

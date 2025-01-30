@@ -39,3 +39,34 @@ export interface Message {
 export interface ChatRequest {
   messages: Message[];
 }
+export interface PriceRange {
+    min: number;
+    max: number;
+  }
+  
+  export interface Timeline {
+    min: number;
+    max: number;
+    unit: 'weeks' | 'days' | 'months';
+  }
+  
+  export interface Requirement {
+    id: string;
+    description: string;
+    priority: 'high' | 'medium' | 'low';
+    category: 'functional' | 'technical' | 'business' | 'other';
+    addedAt: string;
+  }
+  
+  export interface Message {
+    role: 'user' | 'assistant' | 'system';
+    content: string;
+  }
+  
+  export interface PriceData {
+    priceRange: PriceRange;
+    confidence?: 'high' | 'medium' | 'low';
+    requirements?: Requirement[];
+    timeline?: Timeline;
+    context?: any;
+  }

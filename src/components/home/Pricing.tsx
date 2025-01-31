@@ -1,10 +1,12 @@
 //landing-page/src/components/home/Pricing.tsx
-"use client";
 import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Progress } from '@/components/ui/progress';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { 
   Send, 
   RefreshCw, 
@@ -15,15 +17,16 @@ import {
   Building2,
   Cpu,
   Timer,
-  Shield
+  Shield,
+  TrendingDown
 } from 'lucide-react';
 import Lottie from 'lottie-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Progress } from '@/components/ui/progress';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import typingAnimation from '@/assets/typing-animation.json';
 
-// Enhanced Types
+// Constants
+const INITIAL_PRICE_RANGE = { min: 10000, max: 15000 };
+const TARGET_PRICE_RANGE = { min: 5000, max: 5300 };
+
 interface PriceRange {
   min: number;
   max: number;
@@ -45,10 +48,12 @@ interface ConversationContext {
   projectType?: string;
   industry?: string;
   scale?: 'startup' | 'small' | 'medium' | 'enterprise';
-  technicalComplexity?: number;
-  projectClarity?: number;
-  clientEngagement?: number;
+  technicalComplexity: number;
+  projectClarity: number;
+  clientEngagement: number;
   riskFactors: string[];
+  conversationProgress: number;
+  priceReductionFactor: number;
 }
 
 interface Message {
@@ -71,25 +76,6 @@ interface ChatState {
   nextAction: 'gather_info' | 'refine_price' | 'finalize' | 'locked' | null;
 }
 
-const getStorageValue = (key: string): string | null => {
-  if (typeof window !== 'undefined') {
-    return localStorage.getItem(key);
-  }
-  return null;
-};
-
-const setStorageValue = (key: string, value: string) => {
-  if (typeof window !== 'undefined') {
-    localStorage.setItem(key, value);
-  }
-};
-
-const removeStorageValue = (key: string) => {
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem(key);
-  }
-};
-
 const Pricing = () => {
   // State management
   const [chatState, setChatState] = useState<ChatState>({
@@ -98,11 +84,11 @@ const Pricing = () => {
     messages: [
       {
         role: 'assistant',
-        content: "Hi! I'm here to help you calculate a precise price estimate for your project. Let's start by understanding what you're looking to build. What type of project do you have in mind?",
+        content: "Hi! I'm here to help you get a competitive price for your project. Our standard development rates typically start at $10,000-$15,000, but through our conversation, I'll help identify ways to optimize the scope and reduce costs significantly. What type of project are you looking to build?",
         timestamp: Date.now()
       }
     ],
-    priceRange: { min: 5000, max: 10000 },
+    priceRange: INITIAL_PRICE_RANGE,
     confidence: 0.5,
     requirements: [],
     timeline: {
@@ -114,7 +100,9 @@ const Pricing = () => {
       projectClarity: 0.5,
       technicalComplexity: 0.5,
       clientEngagement: 0.5,
-      riskFactors: []
+      riskFactors: [],
+      conversationProgress: 0,
+      priceReductionFactor: 0
     },
     isLocked: false,
     suggestedQuestions: [],
@@ -127,10 +115,31 @@ const Pricing = () => {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('chat');
   const [isClient, setIsClient] = useState(false);
+  const [previousPrice, setPreviousPrice] = useState<PriceRange>(INITIAL_PRICE_RANGE);
 
   // Refs
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Storage helpers
+  const getStorageValue = (key: string): string | null => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(key);
+    }
+    return null;
+  };
+
+  const setStorageValue = (key: string, value: string) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(key, value);
+    }
+  };
+
+  const removeStorageValue = (key: string) => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(key);
+    }
+  };
 
   // Set isClient to true once component mounts
   useEffect(() => {
@@ -152,6 +161,14 @@ const Pricing = () => {
       }
     }
   }, [isClient]);
+
+  // Track price changes for animation
+  useEffect(() => {
+    if (chatState.priceRange.min !== previousPrice.min || 
+        chatState.priceRange.max !== previousPrice.max) {
+      setPreviousPrice(chatState.priceRange);
+    }
+  }, [chatState.priceRange, previousPrice]);
 
   // Auto-scroll chat
   useEffect(() => {
@@ -181,13 +198,23 @@ const Pricing = () => {
     }).format(amount);
   };
 
+  const calculateSavings = () => {
+    const initialTotal = INITIAL_PRICE_RANGE.max;
+    const currentTotal = chatState.priceRange.max;
+    const savings = initialTotal - currentTotal;
+    const savingsPercentage = (savings / initialTotal) * 100;
+    return {
+      amount: savings,
+      percentage: savingsPercentage
+    };
+  };
+
   // Reset chat
   const handleReset = async () => {
     setIsLoading(true);
     setError(null);
     
     try {
-      // Clear stored session and conversation IDs
       removeStorageValue('chat_session_id');
       removeStorageValue('chat_conversation_id');
 
@@ -202,16 +229,15 @@ const Pricing = () => {
       });
 
       if (!response.ok) {
-        const errorMsg = 'Failed to reset chat';
-        setError(errorMsg);
-        throw new Error(errorMsg);
+        throw new Error('Failed to reset chat');
       }
       
       const data = await response.json();
 
-      // Store new session and conversation IDs
       if (isClient) {
-        setStorageValue('chat_session_id', data.sessionId);
+        if (data.sessionId) {
+          setStorageValue('chat_session_id', data.sessionId);
+        }
         if (data.conversationId) {
           setStorageValue('chat_conversation_id', data.conversationId);
         }
@@ -223,22 +249,30 @@ const Pricing = () => {
         messages: [
           {
             role: 'assistant',
-            content: data.message,
+            content: "Hi! I'm here to help you get a competitive price for your project. Our standard development rates typically start at $10,000-$15,000, but through our conversation, I'll help identify ways to optimize the scope and reduce costs significantly. What type of project are you looking to build?",
             timestamp: Date.now()
           }
         ],
-        priceRange: data.priceRange,
-        confidence: data.confidence,
-        requirements: data.requirements,
+        priceRange: INITIAL_PRICE_RANGE,
+        confidence: 0.5,
+        requirements: [],
         timeline: data.timeline,
-        context: data.context,
+        context: {
+          projectClarity: 0.5,
+          technicalComplexity: 0.5,
+          clientEngagement: 0.5,
+          riskFactors: [],
+          conversationProgress: 0,
+          priceReductionFactor: 0
+        },
         isLocked: false,
         suggestedQuestions: data.suggestedQuestions || [],
         nextAction: 'gather_info'
       });
+      setPreviousPrice(INITIAL_PRICE_RANGE);
       setActiveTab('chat');
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to reset chat. Please try again.';
+      const errorMessage = err instanceof Error ? err.message : 'Failed to reset chat';
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -274,14 +308,11 @@ const Pricing = () => {
       });
 
       if (!response.ok) {
-        const errorMsg = 'Failed to send message';
-        setError(errorMsg);
-        throw new Error(errorMsg);
+        throw new Error('Failed to send message');
       }
       
       const data = await response.json();
 
-      // Store session and conversation IDs
       if (isClient) {
         if (data.sessionId) {
           setStorageValue('chat_session_id', data.sessionId);
@@ -314,7 +345,7 @@ const Pricing = () => {
         nextAction: data.nextAction || null
       }));
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to send message. Please try again.';
+      const errorMessage = err instanceof Error ? err.message : 'Failed to send message';
       setError(errorMessage);
       setChatState(prev => ({
         ...prev,
@@ -333,7 +364,7 @@ const Pricing = () => {
     }
   };
 
-  // Get complexity color based on level
+  // UI Helper Functions
   const getComplexityColor = (complexity: string) => {
     switch (complexity) {
       case 'high': return 'text-red-500 bg-red-100';
@@ -343,14 +374,39 @@ const Pricing = () => {
     }
   };
 
-  // Get confidence color based on level
   const getConfidenceColor = (confidence: number) => {
     if (confidence >= 0.8) return 'text-green-600';
     if (confidence >= 0.5) return 'text-yellow-600';
     return 'text-blue-600';
   };
 
-  // Render requirements section
+  // Render functions
+  const renderPriceDisplay = () => {
+    const savings = calculateSavings();
+    return (
+      <div className="space-y-4">
+        <div className="text-center">
+          <h3 className="text-2xl font-bold mb-2">Price Estimate</h3>
+          <div className="text-4xl font-bold text-primary">
+            {formatCurrency(chatState.priceRange.min)} - {formatCurrency(chatState.priceRange.max)}
+          </div>
+          {savings.amount > 0 && (
+            <div className="mt-2 text-green-600 flex items-center justify-center gap-1">
+              <TrendingDown className="h-4 w-4" />
+              <span className="text-sm">
+                Saved {formatCurrency(savings.amount)} ({Math.round(savings.percentage)}%)
+              </span>
+            </div>
+          )}
+        </div>
+        {/* Original market rate display */}
+        <div className="text-center text-sm text-muted-foreground">
+          <p>Market rate: {formatCurrency(INITIAL_PRICE_RANGE.min)} - {formatCurrency(INITIAL_PRICE_RANGE.max)}</p>
+        </div>
+      </div>
+    );
+  };
+
   const renderRequirements = () => {
     if (!chatState.requirements.length) {
       return (
@@ -378,10 +434,21 @@ const Pricing = () => {
     );
   };
 
-  // Render context section
   const renderContext = () => {
+    const progressPercentage = (chatState.context.conversationProgress || 0) * 100;
+    
     return (
       <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Info className="h-5 w-5 text-muted-foreground" />
+          <div>
+            <div className="text-sm font-medium">Conversation Progress</div>
+            <Progress value={progressPercentage} className="h-2 w-32" />
+            <div className="text-xs text-muted-foreground mt-1">
+              {Math.round(progressPercentage)}% Complete
+            </div>
+          </div>
+        </div>
         {chatState.context.projectType && (
           <div className="flex items-center gap-2">
             <Building2 className="h-5 w-5 text-muted-foreground" />
@@ -431,7 +498,6 @@ const Pricing = () => {
     );
   };
 
-  // Render timeline section
   const renderTimeline = () => {
     return (
       <div className="flex items-center gap-2">
@@ -446,7 +512,7 @@ const Pricing = () => {
     );
   };
 
-  // Only render the component after it has mounted on the client
+  // Only render after client-side hydration
   if (!isClient) {
     return null;
   }
@@ -459,10 +525,12 @@ const Pricing = () => {
             Get Your Project Estimate
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Chat with our AI assistant to get a precise price estimate for your project.
-            We&apos;ll analyze your requirements and provide a detailed breakdown.
+            Our AI assistant helps optimize your project scope to provide the most competitive pricing.
+            Standard market rates start at {formatCurrency(INITIAL_PRICE_RANGE.min)}, but through smart planning,
+            we can significantly reduce costs while maintaining quality.
           </p>
         </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Chat Section */}
           <Card className="h-[600px] flex flex-col">
@@ -505,12 +573,14 @@ const Pricing = () => {
                   </div>
                 )}
               </div>
+
               {/* Error Alert */}
               {error && (
                 <Alert variant="destructive" className="mx-4 mb-4">
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
+
               {/* Suggested Questions */}
               {!chatState.isLocked && chatState.suggestedQuestions.length > 0 && (
                 <div className="p-4 border-t">
@@ -530,6 +600,7 @@ const Pricing = () => {
                   </div>
                 </div>
               )}
+
               {/* Input Area */}
               <div className="border-t p-4 bg-background">
                 <div className="flex gap-2">
@@ -576,6 +647,7 @@ const Pricing = () => {
               </div>
             </CardContent>
           </Card>
+
           {/* Analysis Section */}
           <Card className="h-[600px]">
             <CardContent className="p-6">
@@ -603,20 +675,17 @@ const Pricing = () => {
                     Analysis
                   </TabsTrigger>
                 </TabsList>
+
                 {error && (
                   <Alert variant="destructive" className="mb-4">
                     <AlertDescription>{error}</AlertDescription>
                   </Alert>
                 )}
+
                 <TabsContent value="estimate" className="flex-1 mt-0">
                   <div className="space-y-6">
-                    {/* Price Display */}
-                    <div className="text-center">
-                      <h3 className="text-2xl font-bold mb-2">Price Estimate</h3>
-                      <div className="text-4xl font-bold text-primary">
-                        {formatCurrency(chatState.priceRange.min)} - {formatCurrency(chatState.priceRange.max)}
-                      </div>
-                    </div>
+                    {renderPriceDisplay()}
+                    
                     {/* Confidence Indicator */}
                     <div>
                       <div className="flex items-center justify-between mb-2">
@@ -627,8 +696,10 @@ const Pricing = () => {
                       </div>
                       <Progress value={chatState.confidence * 100} className="h-2" />
                     </div>
+
                     {/* Timeline */}
                     {renderTimeline()}
+
                     {/* Status Indicators */}
                     <div className="space-y-4">
                       <div className="flex items-center gap-2">
@@ -654,6 +725,7 @@ const Pricing = () => {
                         </span>
                       </div>
                     </div>
+
                     {/* Information Box */}
                     <div className="mt-auto">
                       <Alert>
@@ -666,7 +738,7 @@ const Pricing = () => {
                           ) : (
                             <>
                               <Info className="h-4 w-4 inline-block mr-2" />
-                              Continue providing details to refine the estimate.
+                              Continue the conversation to optimize your price further.
                             </>
                           )}
                         </AlertDescription>
@@ -674,6 +746,7 @@ const Pricing = () => {
                     </div>
                   </div>
                 </TabsContent>
+
                 <TabsContent value="requirements" className="flex-1 mt-0">
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold">Project Requirements</h3>
@@ -682,6 +755,7 @@ const Pricing = () => {
                     </div>
                   </div>
                 </TabsContent>
+
                 <TabsContent value="analysis" className="flex-1 mt-0">
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold">Project Analysis</h3>

@@ -5,7 +5,7 @@ import { z } from 'zod';
 import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
 import { createClient } from '@supabase/supabase-js';
 import { v4 as uuidv4 } from 'uuid';
-import { INITIAL_PRICE_RANGE, TARGET_PRICE_RANGE, type PriceRange, type Timeline } from '@/lib/constants';
+import { INITIAL_PRICE_RANGE, TARGET_PRICE_RANGE, type PriceRange} from '@/lib/constants';
 
 
 // Initialize Supabase client

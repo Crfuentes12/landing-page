@@ -4,8 +4,9 @@ import OpenAI from 'openai';
 import { z } from 'zod';
 import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
 import { createClient } from '@supabase/supabase-js';
-import { cookies } from 'next/headers';
 import { v4 as uuidv4 } from 'uuid';
+import { INITIAL_PRICE_RANGE, TARGET_PRICE_RANGE, type PriceRange, type Timeline } from '@/lib/constants';
+
 
 // Initialize Supabase client
 if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
@@ -90,17 +91,6 @@ interface ConversationRecord {
   updated_at: string;
 }
 
-interface PriceRange {
-  min: number;
-  max: number;
-}
-
-interface Timeline {
-  min: number;
-  max: number;
-  unit: 'weeks' | 'days' | 'months';
-}
-
 interface ProjectRequirement {
   description: string;
   complexity: 'low' | 'medium' | 'high';
@@ -171,8 +161,6 @@ IMPORTANT:
 
 // Constants
 const ANONYMOUS_SESSION_COOKIE = 'anonymous_session_id';
-const INITIAL_PRICE_RANGE = { min: 10000, max: 15000 };
-const TARGET_PRICE_RANGE = { min: 5000, max: 5300 };
 const MAX_MEANINGFUL_INTERACTIONS = 5; // Number of meaningful interactions before reaching target price
 
 // Information detection class
@@ -395,14 +383,10 @@ export async function POST(request: Request) {
   try {
     const { messages: incomingMessages, conversationId, sessionId } = await request.json();
     
-    // Initialize conversation manager
     const conversationManager = new ConversationManager(conversationId, sessionId);
-    
-    // Load or create conversation
-    let conversation = await conversationManager.loadConversation();
+    const conversation = await conversationManager.loadConversation();
     const isNewConversation = !conversation;
     
-    // Initialize messages array
     let messages: ChatCompletionMessageParam[] = [];
     
     if (isNewConversation) {

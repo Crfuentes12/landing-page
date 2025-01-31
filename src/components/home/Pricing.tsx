@@ -22,21 +22,7 @@ import {
 } from 'lucide-react';
 import Lottie from 'lottie-react';
 import typingAnimation from '@/assets/typing-animation.json';
-
-// Constants
-const INITIAL_PRICE_RANGE = { min: 10000, max: 15000 };
-const TARGET_PRICE_RANGE = { min: 5000, max: 5300 };
-
-interface PriceRange {
-  min: number;
-  max: number;
-}
-
-interface Timeline {
-  min: number;
-  max: number;
-  unit: 'weeks' | 'days' | 'months';
-}
+import { INITIAL_PRICE_RANGE, TARGET_PRICE_RANGE, type PriceRange, type Timeline } from '@/lib/constants';
 
 interface ProjectRequirement {
   description: string;
@@ -77,7 +63,6 @@ interface ChatState {
 }
 
 const Pricing = () => {
-  // State management
   const [chatState, setChatState] = useState<ChatState>({
     sessionId: null,
     conversationId: null,
@@ -198,14 +183,19 @@ const Pricing = () => {
     }).format(amount);
   };
 
+  // When calculating savings, use TARGET_PRICE_RANGE
   const calculateSavings = () => {
     const initialTotal = INITIAL_PRICE_RANGE.max;
     const currentTotal = chatState.priceRange.max;
-    const savings = initialTotal - currentTotal;
-    const savingsPercentage = (savings / initialTotal) * 100;
+    const targetTotal = TARGET_PRICE_RANGE.max;
+    const potentialSavings = initialTotal - targetTotal;
+    const currentSavings = initialTotal - currentTotal;
+    const savingsPercentage = (currentSavings / potentialSavings) * 100;
+    
     return {
-      amount: savings,
-      percentage: savingsPercentage
+      amount: currentSavings,
+      percentage: savingsPercentage,
+      potential: potentialSavings
     };
   };
 

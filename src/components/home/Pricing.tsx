@@ -174,7 +174,12 @@ const Pricing = () => {
         })
       });
 
-      if (!response.ok) throw new Error('Failed to reset chat');
+      if (!response.ok) {
+        const errorMsg = 'Failed to reset chat';
+        setError(errorMsg);
+        throw new Error(errorMsg);
+      }
+      
       const data = await response.json();
 
       // Store new session and conversation IDs
@@ -203,8 +208,9 @@ const Pricing = () => {
         nextAction: 'gather_info'
       });
       setActiveTab('chat');
-    } catch (error) {
-      setError('Failed to reset chat. Please try again.');
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to reset chat. Please try again.';
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -238,7 +244,12 @@ const Pricing = () => {
         })
       });
 
-      if (!response.ok) throw new Error('Failed to send message');
+      if (!response.ok) {
+        const errorMsg = 'Failed to send message';
+        setError(errorMsg);
+        throw new Error(errorMsg);
+      }
+      
       const data = await response.json();
 
       // Store session and conversation IDs
@@ -271,8 +282,9 @@ const Pricing = () => {
         suggestedQuestions: data.suggestedQuestions || [],
         nextAction: data.nextAction || null
       }));
-    } catch (error) {
-      setError('Failed to send message. Please try again.');
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to send message. Please try again.';
+      setError(errorMessage);
       setChatState(prev => ({
         ...prev,
         messages: [...prev.messages, newMessage]
@@ -532,32 +544,31 @@ const Pricing = () => {
           <Card className="h-[600px]">
             <CardContent className="p-6">
               <Tabs defaultValue="estimate" className="h-full flex flex-col">
-              <TabsList className="mb-4">
-                <TabsTrigger 
-                  value="estimate" 
-                  onClick={() => setActiveTab('estimate')}
-                  className={activeTab === 'estimate' ? 'font-medium' : ''}
-                >
-                  Estimate
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="requirements"
-                  onClick={() => setActiveTab('requirements')}
-                  className={activeTab === 'requirements' ? 'font-medium' : ''}
-                >
-                  Requirements
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="analysis"
-                  onClick={() => setActiveTab('analysis')}
-                  className={activeTab === 'analysis' ? 'font-medium' : ''}
-                >
-                  Analysis
-                </TabsTrigger>
-              </TabsList>
-              // Add error handling in the UI
+                <TabsList className="mb-4">
+                  <TabsTrigger 
+                    value="estimate" 
+                    onClick={() => setActiveTab('estimate')}
+                    className={activeTab === 'estimate' ? 'font-medium' : ''}
+                  >
+                    Estimate
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="requirements"
+                    onClick={() => setActiveTab('requirements')}
+                    className={activeTab === 'requirements' ? 'font-medium' : ''}
+                  >
+                    Requirements
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="analysis"
+                    onClick={() => setActiveTab('analysis')}
+                    className={activeTab === 'analysis' ? 'font-medium' : ''}
+                  >
+                    Analysis
+                  </TabsTrigger>
+                </TabsList>
                 {error && (
-                  <Alert variant="destructive" className="mx-4 mb-4">
+                  <Alert variant="destructive" className="mb-4">
                     <AlertDescription>{error}</AlertDescription>
                   </Alert>
                 )}

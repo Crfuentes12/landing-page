@@ -1,12 +1,18 @@
+//landing-page/src/app/home/page.tsx
+import dynamic from 'next/dynamic';
 import Hero from "@/components/home/Hero";
 import AboutUs from "@/components/home/AboutUs";
 import WhyUs from "@/components/home/WhyUs";
 import FAQ from "@/components/home/FAQ";
-import Pricing from "@/components/home/Pricing";
 import CTA from "@/components/home/CTA";
 import OurServices from "@/components/home/OurServices";
 import Roadmap from "@/components/home/Roadmap";
 import ScrollToTop from "@/components/ScrollToTop";
+
+// Dynamically import Pricing component with SSR disabled
+const Pricing = dynamic(() => import('@/components/home/Pricing'), {
+  ssr: false,
+});
 
 export default function Home() {
   return (

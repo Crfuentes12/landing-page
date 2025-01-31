@@ -71,6 +71,25 @@ interface ChatState {
   nextAction: 'gather_info' | 'refine_price' | 'finalize' | 'locked' | null;
 }
 
+const getStorageValue = (key: string): string | null => {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem(key);
+  }
+  return null;
+};
+
+const setStorageValue = (key: string, value: string) => {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(key, value);
+  }
+};
+
+const removeStorageValue = (key: string) => {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem(key);
+  }
+};
+
 const Pricing = () => {
   // State management
   const [chatState, setChatState] = useState<ChatState>({
@@ -107,24 +126,32 @@ const Pricing = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('chat');
+  const [isClient, setIsClient] = useState(false);
 
   // Refs
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  // Set isClient to true once component mounts
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   // Initialize session from localStorage
   useEffect(() => {
-    const storedSessionId = localStorage.getItem('chat_session_id');
-    const storedConversationId = localStorage.getItem('chat_conversation_id');
-    
-    if (storedSessionId) {
-      setChatState(prev => ({
-        ...prev,
-        sessionId: storedSessionId,
-        conversationId: storedConversationId
-      }));
+    if (isClient) {
+      const storedSessionId = getStorageValue('chat_session_id');
+      const storedConversationId = getStorageValue('chat_conversation_id');
+      
+      if (storedSessionId) {
+        setChatState(prev => ({
+          ...prev,
+          sessionId: storedSessionId,
+          conversationId: storedConversationId
+        }));
+      }
     }
-  }, []);
+  }, [isClient]);
 
   // Auto-scroll chat
   useEffect(() => {
@@ -161,8 +188,8 @@ const Pricing = () => {
     
     try {
       // Clear stored session and conversation IDs
-      localStorage.removeItem('chat_session_id');
-      localStorage.removeItem('chat_conversation_id');
+      removeStorageValue('chat_session_id');
+      removeStorageValue('chat_conversation_id');
 
       const response = await fetch('/api/chat', {
         method: 'POST',
@@ -183,9 +210,11 @@ const Pricing = () => {
       const data = await response.json();
 
       // Store new session and conversation IDs
-      localStorage.setItem('chat_session_id', data.sessionId);
-      if (data.conversationId) {
-        localStorage.setItem('chat_conversation_id', data.conversationId);
+      if (isClient) {
+        setStorageValue('chat_session_id', data.sessionId);
+        if (data.conversationId) {
+          setStorageValue('chat_conversation_id', data.conversationId);
+        }
       }
 
       setChatState({
@@ -253,11 +282,13 @@ const Pricing = () => {
       const data = await response.json();
 
       // Store session and conversation IDs
-      if (data.sessionId) {
-        localStorage.setItem('chat_session_id', data.sessionId);
-      }
-      if (data.conversationId) {
-        localStorage.setItem('chat_conversation_id', data.conversationId);
+      if (isClient) {
+        if (data.sessionId) {
+          setStorageValue('chat_session_id', data.sessionId);
+        }
+        if (data.conversationId) {
+          setStorageValue('chat_conversation_id', data.conversationId);
+        }
       }
 
       setChatState(prev => ({
@@ -414,6 +445,11 @@ const Pricing = () => {
       </div>
     );
   };
+
+  // Only render the component after it has mounted on the client
+  if (!isClient) {
+    return null;
+  }
 
   return (
     <section className="py-20 px-6">

@@ -102,117 +102,116 @@ const Pricing = () => {
     nextAction: 'gather_info'
   });
 
- // Local state
- const [inputMessage, setInputMessage] = useState('');
- const [isLoading, setIsLoading] = useState(false);
- const [error, setError] = useState<string | null>(null);
- const [activeTab, setActiveTab] = useState('estimate');
+  // Local state
+  const [inputMessage, setInputMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState('chat');
 
- // Refs
- const chatContainerRef = useRef<HTMLDivElement>(null);
- const textareaRef = useRef<HTMLTextAreaElement>(null);
+  // Refs
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
- // Initialize session from localStorage
- useEffect(() => {
-   const storedSessionId = localStorage.getItem('chat_session_id');
-   const storedConversationId = localStorage.getItem('chat_conversation_id');
-   
-   if (storedSessionId) {
-     setChatState(prev => ({
-       ...prev,
-       sessionId: storedSessionId,
-       conversationId: storedConversationId
-     }));
-   }
- }, []);
+  // Initialize session from localStorage
+  useEffect(() => {
+    const storedSessionId = localStorage.getItem('chat_session_id');
+    const storedConversationId = localStorage.getItem('chat_conversation_id');
+    
+    if (storedSessionId) {
+      setChatState(prev => ({
+        ...prev,
+        sessionId: storedSessionId,
+        conversationId: storedConversationId
+      }));
+    }
+  }, []);
 
- // Auto-scroll chat
- useEffect(() => {
-   if (chatContainerRef.current) {
-     const scrollContainer = chatContainerRef.current;
-     scrollContainer.scrollTop = scrollContainer.scrollHeight;
-   }
- }, [chatState.messages]);
+  // Auto-scroll chat
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      const scrollContainer = chatContainerRef.current;
+      scrollContainer.scrollTop = scrollContainer.scrollHeight;
+    }
+  }, [chatState.messages]);
 
- // Auto-resize textarea
- useEffect(() => {
-   if (textareaRef.current) {
-     textareaRef.current.style.height = 'auto';
-     textareaRef.current.style.height = `${Math.min(
-       Math.max(textareaRef.current.scrollHeight, 40),
-       160
-     )}px`;
-   }
- }, [inputMessage]);
+  // Auto-resize textarea
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${Math.min(
+        Math.max(textareaRef.current.scrollHeight, 40),
+        160
+      )}px`;
+    }
+  }, [inputMessage]);
 
- // Helper Functions
- const formatCurrency = (amount: number) => {
-   return new Intl.NumberFormat('en-US', {
-     style: 'currency',
-     currency: 'USD',
-     maximumFractionDigits: 0
-   }).format(amount);
- };
+  // Helper Functions
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      maximumFractionDigits: 0
+    }).format(amount);
+  };
 
- // Reset chat
- const handleReset = async () => {
-   setIsLoading(true);
-   setError(null);
-   
-   try {
-     // Clear stored session and conversation IDs
-     localStorage.removeItem('chat_session_id');
-     localStorage.removeItem('chat_conversation_id');
+  // Reset chat
+  const handleReset = async () => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      // Clear stored session and conversation IDs
+      localStorage.removeItem('chat_session_id');
+      localStorage.removeItem('chat_conversation_id');
 
-     const response = await fetch('/api/chat', {
-       method: 'POST',
-       headers: { 'Content-Type': 'application/json' },
-       body: JSON.stringify({
-         messages: [{ role: 'user', content: 'reset' }],
-         sessionId: null,
-         conversationId: null
-       })
-     });
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [{ role: 'user', content: 'reset' }],
+          sessionId: null,
+          conversationId: null
+        })
+      });
 
-     if (!response.ok) throw new Error('Failed to reset chat');
-     const data = await response.json();
+      if (!response.ok) throw new Error('Failed to reset chat');
+      const data = await response.json();
 
-     // Store new session and conversation IDs
-     localStorage.setItem('chat_session_id', data.sessionId);
-     if (data.conversationId) {
-       localStorage.setItem('chat_conversation_id', data.conversationId);
-     }
+      // Store new session and conversation IDs
+      localStorage.setItem('chat_session_id', data.sessionId);
+      if (data.conversationId) {
+        localStorage.setItem('chat_conversation_id', data.conversationId);
+      }
 
-     setChatState({
-       sessionId: data.sessionId,
-       conversationId: data.conversationId,
-       messages: [
-         {
-           role: 'assistant',
-           content: data.message,
-           timestamp: Date.now()
-         }
-       ],
-       priceRange: data.priceRange,
-       confidence: data.confidence,
-       requirements: data.requirements,
-       timeline: data.timeline,
-       context: data.context,
-       isLocked: false,
-       suggestedQuestions: data.suggestedQuestions || [],
-       nextAction: 'gather_info'
-     });
-     setActiveTab('estimate');
-    } catch (error: unknown) {
-      console.error('Reset error:', error);
+      setChatState({
+        sessionId: data.sessionId,
+        conversationId: data.conversationId,
+        messages: [
+          {
+            role: 'assistant',
+            content: data.message,
+            timestamp: Date.now()
+          }
+        ],
+        priceRange: data.priceRange,
+        confidence: data.confidence,
+        requirements: data.requirements,
+        timeline: data.timeline,
+        context: data.context,
+        isLocked: false,
+        suggestedQuestions: data.suggestedQuestions || [],
+        nextAction: 'gather_info'
+      });
+      setActiveTab('chat');
+    } catch (error) {
       setError('Failed to reset chat. Please try again.');
     } finally {
-     setIsLoading(false);
-   }
- };
+      setIsLoading(false);
+    }
+  };
 
-   // Send message
-   const handleSendMessage = async () => {
+  // Send message
+  const handleSendMessage = async () => {
     if (!inputMessage.trim() || isLoading) return;
     
     const newMessage: Message = {
@@ -272,8 +271,7 @@ const Pricing = () => {
         suggestedQuestions: data.suggestedQuestions || [],
         nextAction: data.nextAction || null
       }));
-    } catch (error: unknown) {
-      console.error('Reset error:', error);
+    } catch (error) {
       setError('Failed to send message. Please try again.');
       setChatState(prev => ({
         ...prev,
@@ -465,6 +463,25 @@ const Pricing = () => {
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
+              {/* Suggested Questions */}
+              {!chatState.isLocked && chatState.suggestedQuestions.length > 0 && (
+                <div className="p-4 border-t">
+                  <p className="text-sm text-muted-foreground mb-2">Suggested questions:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {chatState.suggestedQuestions.map((question, index) => (
+                      <Button
+                        key={index}
+                        variant="outline"
+                        size="sm"
+                        className="text-sm"
+                        onClick={() => setInputMessage(question)}
+                      >
+                        {question}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              )}
               {/* Input Area */}
               <div className="border-t p-4 bg-background">
                 <div className="flex gap-2">
@@ -515,37 +532,116 @@ const Pricing = () => {
           <Card className="h-[600px]">
             <CardContent className="p-6">
               <Tabs defaultValue="estimate" className="h-full flex flex-col">
-                <TabsList className="mb-4">
-                  <TabsTrigger 
-                    value="estimate" 
-                    onClick={() => setActiveTab('estimate')}
-                    className={activeTab === 'estimate' ? 'font-medium' : ''}
-                  >
-                    Estimate
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="requirements"
-                    onClick={() => setActiveTab('requirements')}
-                    className={activeTab === 'requirements' ? 'font-medium' : ''}
-                  >
-                    Requirements
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="analysis"
-                    onClick={() => setActiveTab('analysis')}
-                    className={activeTab === 'analysis' ? 'font-medium' : ''}
-                  >
-                    Analysis
-                  </TabsTrigger>
-                </TabsList>
-                {/* UI Error handling */}
+              <TabsList className="mb-4">
+                <TabsTrigger 
+                  value="estimate" 
+                  onClick={() => setActiveTab('estimate')}
+                  className={activeTab === 'estimate' ? 'font-medium' : ''}
+                >
+                  Estimate
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="requirements"
+                  onClick={() => setActiveTab('requirements')}
+                  className={activeTab === 'requirements' ? 'font-medium' : ''}
+                >
+                  Requirements
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="analysis"
+                  onClick={() => setActiveTab('analysis')}
+                  className={activeTab === 'analysis' ? 'font-medium' : ''}
+                >
+                  Analysis
+                </TabsTrigger>
+              </TabsList>
+              // Add error handling in the UI
                 {error && (
                   <Alert variant="destructive" className="mx-4 mb-4">
                     <AlertDescription>{error}</AlertDescription>
                   </Alert>
                 )}
                 <TabsContent value="estimate" className="flex-1 mt-0">
-                  {/* Rest of the TabsContent components remain the same */}
+                  <div className="space-y-6">
+                    {/* Price Display */}
+                    <div className="text-center">
+                      <h3 className="text-2xl font-bold mb-2">Price Estimate</h3>
+                      <div className="text-4xl font-bold text-primary">
+                        {formatCurrency(chatState.priceRange.min)} - {formatCurrency(chatState.priceRange.max)}
+                      </div>
+                    </div>
+                    {/* Confidence Indicator */}
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm text-muted-foreground">Estimate Confidence</span>
+                        <span className={`text-sm font-medium ${getConfidenceColor(chatState.confidence)}`}>
+                          {Math.round(chatState.confidence * 100)}%
+                        </span>
+                      </div>
+                      <Progress value={chatState.confidence * 100} className="h-2" />
+                    </div>
+                    {/* Timeline */}
+                    {renderTimeline()}
+                    {/* Status Indicators */}
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2">
+                        <BarChart2 className="h-5 w-5 text-muted-foreground" />
+                        <span className="text-sm">
+                          Estimation Status:
+                          {chatState.isLocked ? (
+                            <span className="text-green-600 ml-1">Complete</span>
+                          ) : (
+                            <span className="text-blue-600 ml-1">In Progress</span>
+                          )}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Lock className="h-5 w-5 text-muted-foreground" />
+                        <span className="text-sm">
+                          Chat Status:
+                          {chatState.isLocked ? (
+                            <span className="text-green-600 ml-1">Locked</span>
+                          ) : (
+                            <span className="text-blue-600 ml-1">Active</span>
+                          )}
+                        </span>
+                      </div>
+                    </div>
+                    {/* Information Box */}
+                    <div className="mt-auto">
+                      <Alert>
+                        <AlertDescription>
+                          {chatState.isLocked ? (
+                            <>
+                              <CheckCircle2 className="h-4 w-4 inline-block mr-2 text-green-600" />
+                              Estimation complete! Press reset to start a new estimation.
+                            </>
+                          ) : (
+                            <>
+                              <Info className="h-4 w-4 inline-block mr-2" />
+                              Continue providing details to refine the estimate.
+                            </>
+                          )}
+                        </AlertDescription>
+                      </Alert>
+                    </div>
+                  </div>
+                </TabsContent>
+                <TabsContent value="requirements" className="flex-1 mt-0">
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold">Project Requirements</h3>
+                    <div className="overflow-y-auto max-h-[400px]">
+                      {renderRequirements()}
+                    </div>
+                  </div>
+                </TabsContent>
+                <TabsContent value="analysis" className="flex-1 mt-0">
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold">Project Analysis</h3>
+                    <div className="overflow-y-auto max-h-[400px]">
+                      {renderContext()}
+                    </div>
+                  </div>
                 </TabsContent>
               </Tabs>
             </CardContent>

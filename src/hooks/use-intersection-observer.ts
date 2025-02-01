@@ -1,8 +1,8 @@
-// src/hooks/use-intersection-observer.ts
-import { RefObject, useEffect, useState } from 'react';
+// hooks/use-intersection-observer.ts
+import { useEffect, useState, RefObject } from 'react';
 
 interface UseIntersectionObserverProps {
-  ref: RefObject<Element | null>;
+  ref: RefObject<HTMLElement | null>;
   options?: IntersectionObserverInit;
   freezeOnceVisible?: boolean;
 }
@@ -10,31 +10,29 @@ interface UseIntersectionObserverProps {
 export function useIntersectionObserver({
   ref,
   options = {},
-  freezeOnceVisible = false
+  freezeOnceVisible = true
 }: UseIntersectionObserverProps): boolean {
-  const [isIntersecting, setIsIntersecting] = useState<boolean>(false);
+  const [isVisible, setIsVisible] = useState<boolean>(false);
 
   useEffect(() => {
     const element = ref?.current;
-
-    if (!element) {
-      return;
-    }
+    if (!element) return;
 
     const observer = new IntersectionObserver(([entry]) => {
-      setIsIntersecting(entry.isIntersecting);
-
-      if (entry.isIntersecting && freezeOnceVisible) {
-        observer.unobserve(element);
-      }
+      const isElementVisible = entry.isIntersecting;
+      
+      setIsVisible(prev => {
+        if (freezeOnceVisible && prev) return true;
+        return isElementVisible;
+      });
     }, options);
 
     observer.observe(element);
 
     return () => {
-      observer.disconnect();
+      observer.unobserve(element);
     };
   }, [ref, options, freezeOnceVisible]);
 
-  return isIntersecting;
+  return isVisible;
 }

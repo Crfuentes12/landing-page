@@ -4,120 +4,156 @@
 import { useRef } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
-import { Award, Clock, Users, Shield, Zap, HeartHandshake } from "lucide-react";
-
-interface ReasonProps {
-  icon: typeof Award;
-  title: string;
-  description: string;
-}
-
-const reasons: ReasonProps[] = [
-  {
-    icon: Award,
-    title: "Industry Excellence",
-    description: "Award-winning solutions backed by years of experience and expertise in digital transformation."
-  },
-  {
-    icon: Clock,
-    title: "Fast Turnaround",
-    description: "Quick delivery without compromising quality. We understand time is crucial for your business."
-  },
-  {
-    icon: Users,
-    title: "Dedicated Team",
-    description: "A team of passionate experts committed to your success, available 24/7 for support."
-  },
-  {
-    icon: Shield,
-    title: "Security First",
-    description: "Enterprise-grade security measures to protect your data and ensure compliance."
-  },
-  {
-    icon: Zap,
-    title: "Cutting-edge Tech",
-    description: "Latest technologies and best practices to keep you ahead of the competition."
-  },
-  {
-    icon: HeartHandshake,
-    title: "Client Success",
-    description: "Your success is our success. We're invested in long-term partnerships."
-  }
-];
+import { Rocket, Zap, Target, ArrowRight, Clock, Shield, Sparkles } from "lucide-react";
 
 const WhyUs = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isVisible = useIntersectionObserver({
     ref: sectionRef,
-    options: { threshold: 0.1 }
+    options: { threshold: 0.1 },
+    freezeOnceVisible: true
   });
 
   return (
-    <section className="py-20 px-6 bg-accent/5">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Choose Us?</h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            We combine industry expertise with cutting-edge technology to deliver 
-            exceptional results for our clients.
-          </p>
-        </div>
+    <section className="py-24 relative overflow-hidden bg-gradient-to-b from-background to-accent/5">
+      {/* Background Pattern */}
+      <div 
+        className="absolute inset-0 bg-grid-pattern opacity-5"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%234285F4' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+        }}
+      />
 
-        <div 
-          ref={sectionRef}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {reasons.map((reason, index) => {
-            const Icon = reason.icon;
-            return (
-              <Card 
-                key={reason.title}
-                className={`transform transition-all duration-700 ${
-                  isVisible 
-                    ? 'translate-y-0 opacity-100' 
-                    : 'translate-y-10 opacity-0'
-                }`}
-                style={{ transitionDelay: `${index * 100}ms` }}
-              >
-                <CardContent className="pt-6">
-                  <div className="rounded-lg p-3 bg-primary/5 w-fit mb-4">
-                    <Icon className="h-6 w-6 text-primary" />
-                  </div>
-                  <h3 className="font-semibold mb-2">{reason.title}</h3>
-                  <p className="text-muted-foreground text-sm">
-                    {reason.description}
+      <div className="max-w-7xl mx-auto px-6">
+        {/* Main Content */}
+        <div className="relative z-10">
+          {/* Header Section */}
+          <div className="max-w-3xl mx-auto text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#4285F4] to-[#2B63D9] mb-6">
+              Why We Do This
+            </h2>
+            <p className="text-lg md:text-xl text-muted-foreground">
+              We believe every bold idea deserves a chance.
+            </p>
+          </div>
+
+          {/* Core Message */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
+            <div 
+              className={`transform transition-all duration-700 ease-out ${
+                isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+              }`}
+            >
+              <Card className="h-full bg-black/80 border-[#4285F4]/20">
+                <CardContent className="p-8">
+                  <h3 className="text-xl font-semibold text-white mb-6">The Problem We&apos;re Solving</h3>
+                  <p className="text-white/80 leading-relaxed mb-6">
+                    Too many visionary founders struggle to bring their ideas to life, because they face barriers that shouldn&apos;t exist. High costs due to unnecessary features and bad advice kill great concepts before they even reach the market.
                   </p>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3 text-white/70">
+                      <ArrowRight className="h-5 w-5 text-[#4285F4]" />
+                      <span>Overpriced agencies</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-white/70">
+                      <ArrowRight className="h-5 w-5 text-[#4285F4]" />
+                      <span>Overcomplicated solutions</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-white/70">
+                      <ArrowRight className="h-5 w-5 text-[#4285F4]" />
+                      <span>Unnecessary roadblocks</span>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
-            );
-          })}
-        </div>
+            </div>
 
-        <div className="mt-16 text-center">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div 
+              className={`transform transition-all duration-700 ease-out ${
+                isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+              }`}
+              style={{ transitionDelay: '200ms' }}
+            >
+              <Card className="h-full bg-[#4285F4] border-none">
+                <CardContent className="p-8">
+                  <h3 className="text-xl font-semibold text-white mb-6">Our Solution</h3>
+                  <p className="text-white/90 leading-relaxed mb-6">
+                    We break down these barriers by making personalized MVP development simple, smart, and accessible. We understand businesses and build solutions that make sense.
+                  </p>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3 text-white">
+                      <Sparkles className="h-5 w-5" />
+                      <span>Focus on what truly matters</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-white">
+                      <Sparkles className="h-5 w-5" />
+                      <span>Make MVPs accessible</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-white">
+                      <Sparkles className="h-5 w-5" />
+                      <span>Combine tech, AI, and startup expertise</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
+          {/* Process Steps */}
+          <div 
+            ref={sectionRef} 
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6"
+          >
             {[
-              { label: 'Projects Completed', value: '500+' },
-              { label: 'Happy Clients', value: '200+' },
-              { label: 'Team Members', value: '50+' },
-              { label: 'Years Experience', value: '10+' },
-            ].map((stat, index) => (
-              <div 
-                key={stat.label}
-                className={`transform transition-all duration-700 ${
-                  isVisible 
-                    ? 'translate-y-0 opacity-100' 
-                    : 'translate-y-10 opacity-0'
-                }`}
-                style={{ transitionDelay: `${index * 200}ms` }}
-              >
-                <div className="text-3xl font-bold text-primary mb-2">
-                  {stat.value}
+              {
+                icon: Target,
+                title: "Idea Analysis",
+                description: "We dive into your vision to understand your needs"
+              },
+              {
+                icon: Zap,
+                title: "Smart Consultancy",
+                description: "We trim the excess and focus on what truly matters"
+              },
+              {
+                icon: Clock,
+                title: "Scoping & Roadmap",
+                description: "Clear project limits, timeline and key deliverables"
+              },
+              {
+                icon: Shield,
+                title: "Development",
+                description: "Transparent progress with close collaboration"
+              },
+              {
+                icon: Rocket,
+                title: "Launch & Support",
+                description: "Your MVP, ready to hit the market with ongoing support"
+              }
+            ].map((step, index) => {
+              const Icon = step.icon;
+              return (
+                <div
+                  key={step.title}
+                  className={`transform transition-all duration-500 ease-out ${
+                    isVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
+                  }`}
+                  style={{ transitionDelay: `${index * 100}ms` }}
+                >
+                  <Card className="h-full bg-white/50 backdrop-blur-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-[#4285F4]/10">
+                    <CardContent className="p-6">
+                      <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#4285F4] to-[#2B63D9] flex items-center justify-center mb-4">
+                        <Icon className="h-6 w-6 text-white" />
+                      </div>
+                      <h4 className="font-semibold mb-2">{step.title}</h4>
+                      <p className="text-sm text-muted-foreground">
+                        {step.description}
+                      </p>
+                    </CardContent>
+                  </Card>
                 </div>
-                <div className="text-sm text-muted-foreground">
-                  {stat.label}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

@@ -102,7 +102,7 @@ const Hero = () => {
           
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
             From business idea to launch, we build only what matters—fast, smart, and affordable.
-            We get it. You're not just any entrepreneur - you're the next big thing.
+            We get it. You&apos;re not just any entrepreneur - you&apos;re the next big thing.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-8">

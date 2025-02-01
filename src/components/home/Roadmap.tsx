@@ -1,7 +1,6 @@
 //landing-page/src/components/home/Roadmap.tsx
 "use client";
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2, LightbulbIcon, Code2Icon, RocketIcon } from "lucide-react";
@@ -57,8 +56,8 @@ const roadmapSteps: RoadmapStep[] = [
 const Roadmap = () => {
   const [activeStep, setActiveStep] = useState(1);
   const [isPaused, setIsPaused] = useState(false);
-  const pauseDuration = 5000; // Duration to pause when user interacts (5 seconds)
-  let pauseTimer: NodeJS.Timeout | undefined;
+  const pauseDuration = 8000; // Duration to pause when user interacts (8 seconds)
+  const pauseTimerRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   useEffect(() => {
     let interval: NodeJS.Timeout | undefined;
@@ -75,14 +74,14 @@ const Roadmap = () => {
 
     return () => {
       if (interval) clearInterval(interval);
-      if (pauseTimer) clearTimeout(pauseTimer);
+      if (pauseTimerRef.current) clearTimeout(pauseTimerRef.current);
     };
   }, [isPaused]);
 
   const handleInteraction = () => {
     setIsPaused(true);
-    if (pauseTimer) clearTimeout(pauseTimer);
-    pauseTimer = setTimeout(() => {
+    if (pauseTimerRef.current) clearTimeout(pauseTimerRef.current);
+    pauseTimerRef.current = setTimeout(() => {
       setIsPaused(false);
     }, pauseDuration);
   };

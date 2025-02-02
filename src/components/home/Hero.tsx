@@ -5,7 +5,6 @@ import { useState, useEffect, useRef, JSX } from 'react';
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowDown, User, Send, Target, Code, Rocket, Calendar, Lightbulb } from "lucide-react";
 import { useScroll } from "@/providers/scroll-provider";
-import { useTheme } from "@/providers/theme-provider";
 import { useLanguage } from "@/providers/language-provider";
 
 interface Stat {
@@ -162,7 +161,6 @@ const Hero = () => {
   
   const chatRef = useRef<HTMLDivElement>(null);
   const { scrollToSection } = useScroll();
-  const { theme } = useTheme();
   const { t } = useLanguage();
 
   const chatSequences = createChatSequences(t);

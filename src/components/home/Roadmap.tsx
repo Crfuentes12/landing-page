@@ -5,58 +5,60 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2, LightbulbIcon, Code2Icon, RocketIcon } from "lucide-react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
+import { useLanguage } from "@/providers/language-provider";
 
 interface RoadmapStep {
   id: number;
-  title: string;
-  description: string;
+  titleKey: string;
+  descriptionKey: string;
   icon: React.ElementType;
-  details: string[];
+  detailKeys: string[];
 }
 
 const roadmapSteps: RoadmapStep[] = [
   {
     id: 1,
-    title: "Idea Analysis & Smart Consultancy",
-    description: "We dive deep into your vision and trim the excess to focus on what truly matters.",
+    titleKey: "roadmap.step1.title",
+    descriptionKey: "roadmap.step1.description",
     icon: LightbulbIcon,
-    details: [
-      "Understanding your business vision",
-      "Identifying core features",
-      "Market analysis",
-      "Technical feasibility assessment"
+    detailKeys: [
+      "roadmap.step1.detail1",
+      "roadmap.step1.detail2",
+      "roadmap.step1.detail3",
+      "roadmap.step1.detail4"
     ]
   },
   {
     id: 2,
-    title: "Development & Collaboration",
-    description: "Weekly meetings ensure transparent progress and close collaboration throughout the build.",
+    titleKey: "roadmap.step2.title",
+    descriptionKey: "roadmap.step2.description",
     icon: Code2Icon,
-    details: [
-      "Clear project scope",
-      "Defined timeline",
-      "Key deliverables",
-      "Weekly progress updates"
+    detailKeys: [
+      "roadmap.step2.detail1",
+      "roadmap.step2.detail2",
+      "roadmap.step2.detail3",
+      "roadmap.step2.detail4"
     ]
   },
   {
     id: 3,
-    title: "Launch & Beyond",
-    description: "Your MVP hits the market with our continued support for scaling success.",
+    titleKey: "roadmap.step3.title",
+    descriptionKey: "roadmap.step3.description",
     icon: RocketIcon,
-    details: [
-      "Pre-launch testing",
-      "Market deployment",
-      "Performance monitoring",
-      "Growth support options"
+    detailKeys: [
+      "roadmap.step3.detail1",
+      "roadmap.step3.detail2",
+      "roadmap.step3.detail3",
+      "roadmap.step3.detail4"
     ]
   }
 ];
 
 const Roadmap = () => {
+  const { t } = useLanguage();
   const [activeStep, setActiveStep] = useState(1);
   const [isPaused, setIsPaused] = useState(false);
-  const pauseDuration = 8000; // Duration to pause when user interacts (8 seconds)
+  const pauseDuration = 8000;
   const pauseTimerRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   useEffect(() => {
@@ -101,7 +103,6 @@ const Roadmap = () => {
       x: direction < 0 ? 1000 : -1000,
       opacity: 0
     }),
-    // Add a default key for type safety
     initial: {},
     animate: {},
   };
@@ -113,10 +114,10 @@ const Roadmap = () => {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-[#4285F4] to-[#2B63D9] bg-clip-text text-transparent">
-            How We Make It Happen
+            {t('roadmap.title')}
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            A clear path from vision to reality, focusing only on what truly matters.
+            {t('roadmap.description')}
           </p>
         </div>
 
@@ -176,22 +177,22 @@ const Roadmap = () => {
                   <div className="grid md:grid-cols-2 gap-8">
                     <div>
                       <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-[#4285F4] to-[#2B63D9] bg-clip-text text-transparent">
-                        {roadmapSteps[activeStep - 1].title}
+                        {t(roadmapSteps[activeStep - 1].titleKey)}
                       </h3>
                       <p className="text-muted-foreground mb-6">
-                        {roadmapSteps[activeStep - 1].description}
+                        {t(roadmapSteps[activeStep - 1].descriptionKey)}
                       </p>
                       <ul className="space-y-4">
-                        {roadmapSteps[activeStep - 1].details.map((detail, index) => (
+                        {roadmapSteps[activeStep - 1].detailKeys.map((detailKey, index) => (
                           <motion.li
-                            key={detail}
+                            key={detailKey}
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: index * 0.1 }}
                             className="flex items-center gap-3"
                           >
                             <div className="h-2 w-2 rounded-full bg-[#4285F4]" />
-                            <span>{detail}</span>
+                            <span>{t(detailKey)}</span>
                           </motion.li>
                         ))}
                       </ul>
@@ -221,7 +222,7 @@ const Roadmap = () => {
               }}
               className="border-[#4285F4] text-[#4285F4] hover:bg-[#4285F4]/10"
             >
-              Previous Step
+              {t('roadmap.nav.previous')}
             </Button>
             <Button
               onClick={() => {
@@ -230,7 +231,7 @@ const Roadmap = () => {
               }}
               className="bg-[#4285F4] hover:bg-[#2B63D9] text-white"
             >
-              Next Step
+              {t('roadmap.nav.next')}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>

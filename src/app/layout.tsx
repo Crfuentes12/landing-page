@@ -1,9 +1,10 @@
 // src/app/layout.tsx
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Header, Footer } from "@/components/layout/HeaderAndFooter";
+import  Header  from "@/components/layout/Header";
 import { RootProvider } from "@/providers/root-provider";
 import "./globals.css";
+import { LanguageProvider } from "@/providers/language-provider";
 
 const geistSans = Geist({
   subsets: ["latin"],
@@ -55,13 +56,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="min-h-screen bg-background font-sans antialiased" suppressHydrationWarning>
         <RootProvider>
-          <div className="relative flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-1 pt-16">
-              {children}
-            </main>
-            <Footer />
-          </div>
+        <LanguageProvider>
+            <div className="relative flex min-h-screen flex-col">
+                <Header />
+                  <main className="flex-1 pt-16">
+                    {children}
+                  </main>
+            </div>
+          </LanguageProvider>
         </RootProvider>
       </body>
     </html>

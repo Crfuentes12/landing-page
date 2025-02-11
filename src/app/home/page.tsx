@@ -1,5 +1,7 @@
 //landing-page/src/app/home/page.tsx
 import Hero from "@/components/home/Hero";
+import OurClientsCarousel from '@/components/home/OurClientsCarousel';
+import WhyWeDoThis from '@/components/home/WhyWeDoThis';
 import AboutUs from "@/components/home/AboutUs";
 import FAQ from "@/components/home/FAQ";
 import CTA from "@/components/home/CTA";
@@ -7,6 +9,8 @@ import OurServices from "@/components/home/OurServices";
 import Roadmap from "@/components/home/Roadmap";
 import ScrollToTop from "@/components/ScrollToTop";
 import PricingWrapper from "@/components/home/PricingWrapper";
+import ComparisonMatrix from "@/components/home/ComparisonMatrix";
+import BannerCTA from "@/components/home/BannerCTA";
 
 export default function Home() {
   return (
@@ -16,16 +20,28 @@ export default function Home() {
           <Hero />
         </section>
 
-        <section id="services">
-          <OurServices />
+        <section id="carousel">
+          <OurClientsCarousel />
+        </section>
+
+        <section id="why-we-do-this">
+          <WhyWeDoThis />
         </section>
 
         <section id="roadmap">
           <Roadmap />
         </section>
-        
+
+        <section id="comparison-matrix">
+          <ComparisonMatrix />
+        </section>
+
         <section id="about">
           <AboutUs />
+        </section>
+
+        <section id="banner-cta">
+          <BannerCTA />
         </section>
         
         <section id="pricing">

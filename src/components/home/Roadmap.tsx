@@ -1,239 +1,289 @@
 //landing-page/src/components/home/Roadmap.tsx
 "use client";
-import React, { useState, useEffect, useRef } from 'react';
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle2, LightbulbIcon, Code2Icon, RocketIcon } from "lucide-react";
-import { motion, AnimatePresence, Variants } from "framer-motion";
-import { useLanguage } from "@/providers/language-provider";
+import React, { useState } from 'react';
+import { Card, CardContent } from "@/components/ui/card";
+import { Target, Zap, Clock, Shield, Rocket, LucideIcon, ChevronRight } from "lucide-react";
 
 interface RoadmapStep {
   id: number;
-  titleKey: string;
-  descriptionKey: string;
-  icon: React.ElementType;
-  detailKeys: string[];
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  gradient: string;
+  features: {
+    title: string;
+    description: string;
+  }[];
 }
 
 const roadmapSteps: RoadmapStep[] = [
   {
     id: 1,
-    titleKey: "roadmap.step1.title",
-    descriptionKey: "roadmap.step1.description",
-    icon: LightbulbIcon,
-    detailKeys: [
-      "roadmap.step1.detail1",
-      "roadmap.step1.detail2",
-      "roadmap.step1.detail3",
-      "roadmap.step1.detail4"
+    icon: Target,
+    title: "Idea Analysis",
+    description: "We dive into your vision to understand your needs and validate your market opportunity",
+    gradient: "from-[#4285F4] to-[#2B63D9]",
+    features: [
+      {
+        title: "Market Research",
+        description: "Comprehensive analysis of your target market and competition"
+      },
+      {
+        title: "User Needs Assessment",
+        description: "Deep dive into your potential users' needs and pain points"
+      },
+      {
+        title: "Competitive Analysis",
+        description: "Understanding your market position and competitive advantages"
+      },
+      {
+        title: "Opportunity Validation",
+        description: "Validating your idea's market fit and potential"
+      }
     ]
   },
   {
     id: 2,
-    titleKey: "roadmap.step2.title",
-    descriptionKey: "roadmap.step2.description",
-    icon: Code2Icon,
-    detailKeys: [
-      "roadmap.step2.detail1",
-      "roadmap.step2.detail2",
-      "roadmap.step2.detail3",
-      "roadmap.step2.detail4"
+    icon: Zap,
+    title: "Smart Consultancy",
+    description: "We trim the excess and focus on what truly matters for your MVP success",
+    gradient: "from-[#34A853] to-[#2E7D32]",
+    features: [
+      {
+        title: "Feature Analysis",
+        description: "Identifying and prioritizing essential MVP features"
+      },
+      {
+        title: "Tech Architecture",
+        description: "Designing the optimal technical foundation for your MVP"
+      },
+      {
+        title: "Resource Planning",
+        description: "Strategic allocation of resources for maximum efficiency"
+      },
+      {
+        title: "Risk Mitigation",
+        description: "Identifying and addressing potential challenges early"
+      }
     ]
   },
   {
     id: 3,
-    titleKey: "roadmap.step3.title",
-    descriptionKey: "roadmap.step3.description",
-    icon: RocketIcon,
-    detailKeys: [
-      "roadmap.step3.detail1",
-      "roadmap.step3.detail2",
-      "roadmap.step3.detail3",
-      "roadmap.step3.detail4"
+    icon: Clock,
+    title: "Scoping & Roadmap",
+    description: "Clear project limits, timeline and key deliverables to ensure efficient development",
+    gradient: "from-[#FBBC05] to-[#F57C00]",
+    features: [
+      {
+        title: "Timeline Definition",
+        description: "Creating a clear, achievable development schedule"
+      },
+      {
+        title: "Milestone Planning",
+        description: "Setting specific, measurable project milestones"
+      },
+      {
+        title: "Resource Allocation",
+        description: "Optimizing team and resource distribution"
+      },
+      {
+        title: "Deliverable Mapping",
+        description: "Defining clear, actionable project deliverables"
+      }
+    ]
+  },
+  {
+    id: 4,
+    icon: Shield,
+    title: "Development",
+    description: "Transparent progress with close collaboration and regular updates",
+    gradient: "from-[#EA4335] to-[#C62828]",
+    features: [
+      {
+        title: "Agile Process",
+        description: "Flexible, iterative development approach"
+      },
+      {
+        title: "Quality Focus",
+        description: "Rigorous testing and quality assurance"
+      },
+      {
+        title: "Progress Monitoring",
+        description: "Regular updates and progress tracking"
+      },
+      {
+        title: "Collaborative Development",
+        description: "Close partnership throughout the build process"
+      }
+    ]
+  },
+  {
+    id: 5,
+    icon: Rocket,
+    title: "Launch & Support",
+    description: "Your MVP, ready to hit the market with ongoing support and guidance",
+    gradient: "from-[#9C27B0] to-[#6A1B9A]",
+    features: [
+      {
+        title: "Launch Strategy",
+        description: "Comprehensive deployment and launch planning"
+      },
+      {
+        title: "Performance Optimization",
+        description: "Ensuring optimal MVP performance"
+      },
+      {
+        title: "User Feedback",
+        description: "Implementing feedback collection systems"
+      },
+      {
+        title: "Ongoing Support",
+        description: "Continued guidance and technical support"
+      }
     ]
   }
 ];
 
-const Roadmap = () => {
-  const { t } = useLanguage();
-  const [activeStep, setActiveStep] = useState(1);
-  const [isPaused, setIsPaused] = useState(false);
-  const pauseDuration = 8000;
-  const pauseTimerRef = useRef<NodeJS.Timeout | undefined>(undefined);
+interface StepIndicatorProps {
+  step: RoadmapStep;
+  isActive: boolean;
+  isCompleted: boolean;
+  onClick: () => void;
+}
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout | undefined;
-
-    const startAutoPlay = () => {
-      interval = setInterval(() => {
-        setActiveStep((prev) => (prev % 3) + 1);
-      }, 5000);
-    };
-
-    if (!isPaused) {
-      startAutoPlay();
-    }
-
-    return () => {
-      if (interval) clearInterval(interval);
-      if (pauseTimerRef.current) clearTimeout(pauseTimerRef.current);
-    };
-  }, [isPaused]);
-
-  const handleInteraction = () => {
-    setIsPaused(true);
-    if (pauseTimerRef.current) clearTimeout(pauseTimerRef.current);
-    pauseTimerRef.current = setTimeout(() => {
-      setIsPaused(false);
-    }, pauseDuration);
-  };
-
-  const variants: Variants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? 1000 : -1000,
-      opacity: 0
-    }),
-    center: {
-      zIndex: 1,
-      x: 0,
-      opacity: 1
-    },
-    exit: (direction: number) => ({
-      zIndex: 0,
-      x: direction < 0 ? 1000 : -1000,
-      opacity: 0
-    }),
-    initial: {},
-    animate: {},
-  };
-
-  const CurrentIcon = roadmapSteps[activeStep - 1].icon;
-
+const StepIndicator: React.FC<StepIndicatorProps> = ({ 
+  step, 
+  isActive, 
+  isCompleted, 
+  onClick 
+}) => {
+  const Icon = step.icon;
+  
   return (
-    <section className="py-20 px-6 bg-gradient-to-b from-background to-background/80">
-      <div className="max-w-6xl mx-auto">
+    <div 
+      className="flex items-center group cursor-pointer"
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          onClick();
+        }
+      }}
+    >
+      <div
+        className={`
+          w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-500
+          ${isActive 
+            ? `bg-gradient-to-br ${step.gradient} shadow-lg scale-110` 
+            : isCompleted
+              ? 'bg-[#4285F4] opacity-50'
+              : 'bg-border/30'
+          }
+        `}
+      >
+        <Icon className={`h-8 w-8 ${isActive || isCompleted ? 'text-white' : 'text-muted-foreground'}`} />
+      </div>
+      <div className={`ml-4 transition-all duration-300 ${isActive ? 'opacity-100' : 'opacity-50'}`}>
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium text-muted-foreground">Step {step.id}</span>
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+        </div>
+        <h3 className="font-semibold">{step.title}</h3>
+      </div>
+    </div>
+  );
+};
+
+interface StepContentProps {
+  step: RoadmapStep;
+}
+
+const StepContent: React.FC<StepContentProps> = ({ step }) => {
+  return (
+    <div className="space-y-6">
+      <div>
+        <p className="text-lg text-muted-foreground mb-8">{step.description}</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {step.features.map((feature, index) => (
+            <Card key={index} className="border-[#4285F4]/10 bg-card/50 backdrop-blur-sm">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className={`h-2 w-2 rounded-full bg-gradient-to-br ${step.gradient}`} />
+                  <h4 className="font-medium">{feature.title}</h4>
+                </div>
+                <p className="text-sm text-muted-foreground pl-5">
+                  {feature.description}
+                </p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Roadmap: React.FC = () => {
+  const [activeStep, setActiveStep] = useState<number>(0);
+  
+  return (
+    <section className="py-24 relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-5">
+        <div 
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `radial-gradient(circle at 1px 1px, rgba(66, 133, 244, 0.15) 1px, transparent 0)`,
+            backgroundSize: '40px 40px'
+          }}
+        />
+      </div>
+
+      {/* Content Container */}
+      <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-[#4285F4] to-[#2B63D9] bg-clip-text text-transparent">
-            {t('roadmap.title')}
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#4285F4] to-[#2B63D9]">
+              Our Development Roadmap
+            </span>
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            {t('roadmap.description')}
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+            A structured approach to turning your vision into reality, ensuring every step moves us closer to your successful MVP launch.
           </p>
         </div>
 
-        <div className="relative">
+        <div className="grid grid-cols-1 lg:grid-cols-[400px,1fr] gap-12">
           {/* Step Indicators */}
-          <div className="flex justify-between mb-8 relative">
-            <div className="absolute h-1 bg-border top-1/2 left-0 right-0 -translate-y-1/2 z-0" />
-            <div className="absolute h-1 bg-[#4285F4] top-1/2 left-0 -translate-y-1/2 z-1 transition-all duration-500"
-              style={{ width: `${((activeStep - 1) / 2) * 100}%` }}
-            />
-            
-            {roadmapSteps.map((step) => (
-              <Button
+          <div className="space-y-8">
+            {roadmapSteps.map((step, index) => (
+              <StepIndicator
                 key={step.id}
-                variant="ghost"
-                className={`relative z-10 h-16 w-16 rounded-full border-2 p-0 transition-all duration-300 ${
-                  step.id === activeStep
-                    ? 'border-[#4285F4] bg-white dark:bg-background'
-                    : step.id < activeStep
-                    ? 'border-[#4285F4] bg-white dark:bg-background'
-                    : 'border-border bg-white dark:bg-background'
-                }`}
-                onClick={() => {
-                  setActiveStep(step.id);
-                  handleInteraction();
-                }}
-              >
-                {step.id < activeStep ? (
-                  <CheckCircle2 className="h-6 w-6 text-[#4285F4]" />
-                ) : (
-                  <step.icon className={`h-6 w-6 ${
-                    step.id === activeStep ? 'text-[#4285F4]' : 'text-muted-foreground'
-                  }`} />
-                )}
-              </Button>
+                step={step}
+                isActive={activeStep === index}
+                isCompleted={index < activeStep}
+                onClick={() => setActiveStep(index)}
+              />
             ))}
           </div>
 
-          {/* Content Area */}
-          <div className="relative h-[400px] overflow-hidden">
-            <AnimatePresence initial={false} custom={activeStep}>
-              <motion.div
-                key={activeStep}
-                custom={activeStep}
-                variants={variants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{
-                  x: { type: "spring", stiffness: 300, damping: 30 },
-                  opacity: { duration: 0.2 }
-                }}
-                className="absolute w-full"
-                onHoverStart={handleInteraction}
-              >
-                <Card className="p-8 bg-gradient-to-br from-background to-background/80 border border-[#4285F4]/20">
-                  <div className="grid md:grid-cols-2 gap-8">
-                    <div>
-                      <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-[#4285F4] to-[#2B63D9] bg-clip-text text-transparent">
-                        {t(roadmapSteps[activeStep - 1].titleKey)}
-                      </h3>
-                      <p className="text-muted-foreground mb-6">
-                        {t(roadmapSteps[activeStep - 1].descriptionKey)}
-                      </p>
-                      <ul className="space-y-4">
-                        {roadmapSteps[activeStep - 1].detailKeys.map((detailKey, index) => (
-                          <motion.li
-                            key={detailKey}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.1 }}
-                            className="flex items-center gap-3"
-                          >
-                            <div className="h-2 w-2 rounded-full bg-[#4285F4]" />
-                            <span>{t(detailKey)}</span>
-                          </motion.li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div className="flex items-center justify-center">
-                      <motion.div
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ delay: 0.2 }}
-                      >
-                        <CurrentIcon className="h-48 w-48 text-[#4285F4] opacity-20" />
-                      </motion.div>
-                    </div>
-                  </div>
-                </Card>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-
-          {/* Navigation Buttons */}
-          <div className="flex justify-between mt-8">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setActiveStep((prev) => (prev === 1 ? 3 : prev - 1));
-                handleInteraction();
-              }}
-              className="border-[#4285F4] text-[#4285F4] hover:bg-[#4285F4]/10"
-            >
-              {t('roadmap.nav.previous')}
-            </Button>
-            <Button
-              onClick={() => {
-                setActiveStep((prev) => (prev % 3) + 1);
-                handleInteraction();
-              }}
-              className="bg-[#4285F4] hover:bg-[#2B63D9] text-white"
-            >
-              {t('roadmap.nav.next')}
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+          {/* Step Content */}
+          <div className="relative">
+            <div className="absolute -inset-4 rounded-xl bg-gradient-to-br from-[#4285F4]/5 to-transparent" />
+            <div className="relative">
+              {roadmapSteps.map((step, index) => (
+                <div
+                  key={step.id}
+                  className={`transition-all duration-500 ${
+                    activeStep === index 
+                      ? 'opacity-100 translate-x-0' 
+                      : 'opacity-0 translate-x-4 absolute inset-0 pointer-events-none'
+                  }`}
+                >
+                  {activeStep === index && <StepContent step={step} />}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

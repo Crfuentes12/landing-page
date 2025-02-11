@@ -7,14 +7,39 @@ import { schemas } from "@/lib/validation";
 import { useModal } from "@/providers/modal-provider";
 import { useLanguage } from "@/providers/language-provider";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Mail, Phone, Rocket } from "lucide-react";
+import { 
+  ArrowRight, 
+  Mail, 
+  Rocket,
+  Linkedin,
+  MessageCircle
+} from "lucide-react";
 
-type ContactFormData = Record<string, unknown> & {
-  firstName: string;
-  lastName: string;
+type ContactFormData = {
   email: string;
   message: string;
 };
+
+const socialLinks = [
+  {
+    icon: Mail,
+    href: "mailto:hello@company.com",
+    label: "Email",
+    color: "text-[#4285F4] hover:text-[#2B63D9]"
+  },
+  {
+    icon: Linkedin,
+    href: "https://linkedin.com/company/your-company",
+    label: "LinkedIn",
+    color: "text-[#0A66C2] hover:text-[#084482]"
+  },
+  {
+    icon: MessageCircle,
+    href: "https://wa.me/your-number",
+    label: "WhatsApp",
+    color: "text-[#25D366] hover:text-[#128C7E]"
+  }
+];
 
 const CTA = () => {
   const { t } = useLanguage();
@@ -30,8 +55,6 @@ const CTA = () => {
     handleSubmit
   } = useForm<ContactFormData>({
     initialValues: {
-      firstName: '',
-      lastName: '',
       email: '',
       message: ''
     },
@@ -66,73 +89,46 @@ const CTA = () => {
       
       <div className="relative max-w-6xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 bg-gradient-to-r from-[#4285F4] to-[#2B63D9] bg-clip-text text-transparent">
-              {t('cta.title')}
-            </h2>
-            <p className="text-lg text-muted-foreground mb-8">
-              {t('cta.subtitle')}
-            </p>
+          <div className="space-y-8">
+            <div className="space-y-6">
+              <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#4285F4] to-[#2B63D9] bg-clip-text text-transparent">
+                Ready to Build the Next Big Thing? Let's Talk!
+              </h2>
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                Start now. The <span className="font-semibold text-foreground">right MVP</span> at 
+                the <span className="font-semibold text-foreground">right price</span>—nothing more, 
+                nothing less. We're just a <span className="font-semibold text-foreground">tap away</span>.
+              </p>
+            </div>
             
             <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <Mail className="h-5 w-5 text-[#4285F4]" />
-                <a href={`mailto:${t('cta.contact.email')}`} className="text-muted-foreground hover:text-[#4285F4] transition-colors">
-                  {t('cta.contact.email')}
-                </a>
-              </div>
-              <div className="flex items-center gap-3">
-                <Phone className="h-5 w-5 text-[#4285F4]" />
-                <a href={`tel:${t('cta.contact.phone')}`} className="text-muted-foreground hover:text-[#4285F4] transition-colors">
-                  {t('cta.contact.phone')}
-                </a>
+              <p className="text-sm font-medium text-muted-foreground">
+                Connect via:
+              </p>
+              <div className="flex gap-4">
+                {socialLinks.map((link) => (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group relative"
+                  >
+                    <div className="absolute -inset-0.5 bg-gradient-to-r from-primary to-primary/60 rounded-full opacity-0 group-hover:opacity-100 transition-opacity blur" />
+                    <div className="relative flex items-center justify-center w-12 h-12 bg-background border border-border rounded-full hover:border-primary/50 transition-colors">
+                      <link.icon className={`w-5 h-5 ${link.color} transition-colors`} />
+                    </div>
+                    <span className="absolute top-full left-1/2 -translate-x-1/2 mt-2 text-xs font-medium text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
+                      {link.label}
+                    </span>
+                  </a>
+                ))}
               </div>
             </div>
           </div>
 
           <div className="bg-background rounded-lg p-8 shadow-lg border border-[#4285F4]/10">
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label htmlFor="firstName" className="text-sm font-medium">
-                    {t('cta.form.firstName')}
-                  </label>
-                  <input
-                    id="firstName"
-                    type="text"
-                    value={values.firstName}
-                    onChange={e => handleChange('firstName', e.target.value)}
-                    onBlur={() => handleBlur('firstName')}
-                    className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#4285F4]/50
-                      ${touched.firstName && errors.firstName ? 'border-red-500' : 'border-input'}
-                    `}
-                    placeholder={t('cta.form.firstName.placeholder')}
-                  />
-                  {touched.firstName && errors.firstName && (
-                    <p className="text-sm text-red-500">{t(errors.firstName)}</p>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="lastName" className="text-sm font-medium">
-                    {t('cta.form.lastName')}
-                  </label>
-                  <input
-                    id="lastName"
-                    type="text"
-                    value={values.lastName}
-                    onChange={e => handleChange('lastName', e.target.value)}
-                    onBlur={() => handleBlur('lastName')}
-                    className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#4285F4]/50
-                      ${touched.lastName && errors.lastName ? 'border-red-500' : 'border-input'}
-                    `}
-                    placeholder={t('cta.form.lastName.placeholder')}
-                  />
-                  {touched.lastName && errors.lastName && (
-                    <p className="text-sm text-red-500">{t(errors.lastName)}</p>
-                  )}
-                </div>
-              </div>
-
               <div className="space-y-2">
                 <label htmlFor="email" className="text-sm font-medium">
                   {t('cta.form.email')}
@@ -174,7 +170,7 @@ const CTA = () => {
               </div>
 
               <Button 
-                className="w-full group bg-[#4285F4] hover:bg-[#2B63D9]" 
+                className="w-full group bg-[#4285F4] hover:bg-[#2B63D9] text-white" 
                 type="submit" 
                 disabled={isSubmitting}
               >

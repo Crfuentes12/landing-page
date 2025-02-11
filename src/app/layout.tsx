@@ -1,10 +1,11 @@
 // src/app/layout.tsx
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import  Header  from "@/components/layout/Header";
+import Header from "@/components/layout/Header";
 import { RootProvider } from "@/providers/root-provider";
-import "./globals.css";
 import { LanguageProvider } from "@/providers/language-provider";
+import { ThemeProvider } from "@/providers/theme-provider";
+import "./globals.css";
 
 const geistSans = Geist({
   subsets: ["latin"],
@@ -49,22 +50,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${geistSans.className} ${geistMono.className}`} suppressHydrationWarning>
       <head>
         <meta name="format-detection" content="telephone=no, date=no, email=no, address=no"/>
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)"/>
+        <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)"/>
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
       </head>
       <body className="min-h-screen bg-background font-sans antialiased" suppressHydrationWarning>
-        <RootProvider>
-        <LanguageProvider>
-            <div className="relative flex min-h-screen flex-col">
+        <ThemeProvider defaultTheme="system">
+          <RootProvider>
+            <LanguageProvider>
+              <div className="relative flex min-h-screen flex-col">
                 <Header />
-                  <main className="flex-1 pt-16">
-                    {children}
-                  </main>
-            </div>
-          </LanguageProvider>
-        </RootProvider>
+                <main className="flex-1 pt-16">
+                  {children}
+                </main>
+              </div>
+            </LanguageProvider>
+          </RootProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

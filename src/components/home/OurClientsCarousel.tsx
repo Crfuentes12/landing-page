@@ -1,6 +1,7 @@
+// /landing-page/src/components/home/OurClientsCarousel.tsx
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useTheme } from '@/providers/theme-provider';
 
@@ -22,7 +23,26 @@ const LOGOS: Logo[] = [
 const OurClientsCarousel = () => {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const { theme } = useTheme();
-  const isDark = theme === 'dark' || (theme === 'system' && window?.matchMedia('(prefers-color-scheme: dark)').matches);
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    // Move the dark mode check to useEffect to avoid window reference during SSR
+    setIsDark(
+      theme === 'dark' || 
+      (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+    );
+
+    // Add listener for system theme changes
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e: MediaQueryListEvent) => {
+      if (theme === 'system') {
+        setIsDark(e.matches);
+      }
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, [theme]);
 
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
@@ -56,15 +76,11 @@ const OurClientsCarousel = () => {
   const extendedLogos = [...LOGOS, ...LOGOS, ...LOGOS];
 
   const gradientStyle = {
-    background: isDark 
-      ? 'linear-gradient(to right, hsl(var(--background)), transparent)' 
-      : 'linear-gradient(to right, hsl(var(--background)), transparent)'
+    background: 'linear-gradient(to right, hsl(var(--background)), transparent)'
   };
 
   const reversedGradientStyle = {
-    background: isDark 
-      ? 'linear-gradient(to left, hsl(var(--background)), transparent)' 
-      : 'linear-gradient(to left, hsl(var(--background)), transparent)'
+    background: 'linear-gradient(to left, hsl(var(--background)), transparent)'
   };
 
   return (
@@ -108,13 +124,7 @@ const OurClientsCarousel = () => {
                 sizes="192px"
                 className={`
                   object-contain transition-all duration-300
-                  ${isDark ? [
-                    'brightness-0 invert opacity-70',
-                    'filter-gpu transform-gpu'
-                  ].join(' ') : [
-                    'opacity-80',
-                    'transform-gpu'
-                  ].join(' ')}
+                  ${isDark ? 'brightness-0 invert opacity-70 filter-gpu transform-gpu' : 'opacity-80 transform-gpu'}
                 `}
                 priority={index < 6}
                 loading={index < 6 ? 'eager' : 'lazy'}

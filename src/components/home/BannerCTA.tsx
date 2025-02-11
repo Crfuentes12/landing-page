@@ -9,7 +9,13 @@ const BannerCTA = () => {
   const bannerRef = useRef(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
-  const handleMouseMove = (e: { currentTarget: { getBoundingClientRect: () => any; }; clientX: number; clientY: number; }) => {
+  const handleMouseMove = (e: { 
+    currentTarget: { 
+      getBoundingClientRect: () => DOMRect;
+    }; 
+    clientX: number; 
+    clientY: number; 
+  }) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width;
     const y = (e.clientY - rect.top) / rect.height;

@@ -5,7 +5,6 @@ import WhyWeDoThis from '@/components/home/WhyWeDoThis';
 import AboutUs from "@/components/home/AboutUs";
 import FAQ from "@/components/home/FAQ";
 import CTA from "@/components/home/CTA";
-import OurServices from "@/components/home/OurServices";
 import Roadmap from "@/components/home/Roadmap";
 import ScrollToTop from "@/components/ScrollToTop";
 import PricingWrapper from "@/components/home/PricingWrapper";

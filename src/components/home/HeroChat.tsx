@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { User, Send, Target, Code, Rocket, Calendar, Lightbulb, Sparkles, ShoppingCart, Brain, ClipboardList, MessageSquare, Bot, Zap } from "lucide-react";
+import { User, Send, Target, Code, Rocket, Lightbulb, Sparkles, ShoppingCart, Brain, ClipboardList, MessageSquare, Bot, Zap } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Position {

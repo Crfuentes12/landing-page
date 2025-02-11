@@ -92,12 +92,12 @@ const CTA = () => {
           <div className="space-y-8">
             <div className="space-y-6">
               <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#4285F4] to-[#2B63D9] bg-clip-text text-transparent">
-                Ready to Build the Next Big Thing? Let's Talk!
+                Ready to Build the Next Big Thing? Let&apos;s Talk!
               </h2>
               <p className="text-lg text-muted-foreground leading-relaxed">
                 Start now. The <span className="font-semibold text-foreground">right MVP</span> at 
                 the <span className="font-semibold text-foreground">right price</span>—nothing more, 
-                nothing less. We're just a <span className="font-semibold text-foreground">tap away</span>.
+                nothing less. We&apos;re just a <span className="font-semibold text-foreground">tap away</span>.
               </p>
             </div>
             

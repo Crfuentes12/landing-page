@@ -1,10 +1,10 @@
 //landing-page/src/components/home/WhyWeDoThis.tsx
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowUpRight, Target, Zap, Shield } from 'lucide-react';
+import { Target, Zap, Shield } from 'lucide-react';
 
 interface FeatureCardProps {
   icon: React.ElementType;
@@ -81,11 +81,6 @@ export default function WhyWeDoThis() {
   const opacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.3, 1, 1, 0.3]);
   const y = useTransform(scrollYProgress, [0, 0.5, 1], [100, 0, -100]);
 
-  const highlightVariants = {
-    hidden: { width: "0%" },
-    visible: { width: "100%", transition: { duration: 0.8, ease: "easeOut" } }
-  };
-
   const textVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { 
@@ -151,7 +146,7 @@ export default function WhyWeDoThis() {
           >
             <p className="text-lg text-muted-foreground leading-relaxed">
               Too many visionary founders struggle to bring their ideas to life, because they face 
-              <span className="font-semibold text-foreground"> barriers that shouldn't exist</span>. 
+              <span className="font-semibold text-foreground"> barriers that shouldn&apos;t exist</span>. 
               High costs due to unnecessary features and bad advice kill great concepts before they 
               even reach the market.
             </p>
@@ -166,7 +161,7 @@ export default function WhyWeDoThis() {
             <p className="text-lg text-muted-foreground leading-relaxed">
               We&apos;ve seen it happen too many times. We know the frustration of having a groundbreaking 
               idea but being held back by unnecessary complexity. 
-              <span className="font-semibold text-foreground"> That's why we&apos;re here—to break down these barriers.</span>
+              <span className="font-semibold text-foreground"> That&apos;s why we&apos;re here—to break down these barriers.</span>
             </p>
           </motion.div>
         </div>

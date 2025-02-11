@@ -1,4 +1,4 @@
-//landing-page/src/components/home/BannerCTA.tsx
+// src/components/home/BannerCTA.tsx
 'use client';
 
 import React, { useRef, useState } from 'react';
@@ -23,7 +23,7 @@ const BannerCTA = () => {
   };
 
   const scrollToCTA = () => {
-    const ctaSection = document.getElementById('contact');
+    const ctaSection = document.querySelector('.cta');
     if (ctaSection) {
       ctaSection.scrollIntoView({ behavior: 'smooth' });
     }

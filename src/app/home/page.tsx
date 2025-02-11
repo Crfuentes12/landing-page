@@ -1,5 +1,6 @@
-//landing-page/src/app/home/page.tsx
-import dynamic from 'next/dynamic'
+// src/app/home/page.tsx
+'use client';
+
 import Hero from "@/components/home/Hero";
 import OurClientsCarousel from '@/components/home/OurClientsCarousel';
 import WhyWeDoThis from '@/components/home/WhyWeDoThis';
@@ -10,11 +11,7 @@ import Roadmap from "@/components/home/Roadmap";
 import PricingWrapper from "@/components/home/PricingWrapper";
 import ComparisonMatrix from "@/components/home/ComparisonMatrix";
 import BannerCTA from "@/components/home/BannerCTA";
-
-// Dynamically import ScrollToTop with SSR disabled
-const ScrollToTop = dynamic(() => import("@/components/ScrollToTop"), {
-  ssr: false // This will only render the component on the client side
-});
+import ScrollToTop from "@/components/ScrollToTop";
 
 export default function Home() {
   return (
@@ -56,7 +53,7 @@ export default function Home() {
           <FAQ />
         </section>
         
-        <section id="contact">
+        <section className="cta" id="contact">
           <CTA />
         </section>
       </div>

@@ -2,8 +2,72 @@
 "use client";
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
-import { Target, Zap, Clock, Shield, Rocket, LucideIcon, ChevronRight } from "lucide-react";
+import { Target, Zap, Route, Shield, CodeXml, Rocket, LucideIcon, ChevronRight } from "lucide-react";
+import { motion } from 'framer-motion';
 
+// Feature Card Types and Component
+interface FeatureCardProps {
+  icon: React.ElementType;
+  title: string;
+  description: string;
+  gradient: string;
+  delay: number;
+}
+
+const FeatureCard: React.FC<FeatureCardProps> = ({ 
+  icon: Icon, 
+  title, 
+  description, 
+  gradient, 
+  delay
+}) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay, duration: 0.8, ease: "easeOut" }}
+    >
+      <Card className="h-full group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 bg-card/50 backdrop-blur-sm border-[#4285F4]/10">
+        <CardContent className="p-8">
+          <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${gradient} 
+            flex items-center justify-center mb-6 transform group-hover:scale-110 transition-transform duration-300`}
+          >
+            <Icon className="h-7 w-7 text-white" />
+          </div>
+          <h3 className="text-xl font-semibold mb-4 group-hover:text-[#4285F4] transition-colors duration-300">
+            {title}
+          </h3>
+          <p className="text-muted-foreground leading-relaxed">
+            {description}
+          </p>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+};
+
+const features = [
+  {
+    icon: Target,
+    title: "Vision First Approach",
+    description: "We understand that every great product starts with a visionary idea. Our focus is on preserving your vision while making it market-ready.",
+    gradient: "from-[#4285F4] to-[#2B63D9]"
+  },
+  {
+    icon: Zap,
+    title: "Efficient Development",
+    description: "No unnecessary complexity. We build exactly what you need to validate your idea and enter the market confidently.",
+    gradient: "from-[#34A853] to-[#2E7D32]"
+  },
+  {
+    icon: Shield,
+    title: "Future-Proof Foundation",
+    description: "While we focus on MVP essentials, we ensure your foundation is solid and scalable for future growth.",
+    gradient: "from-[#EA4335] to-[#C62828]"
+  }
+];
+
+// Roadmap Types and Components
 interface RoadmapStep {
   id: number;
   icon: LucideIcon;
@@ -69,7 +133,7 @@ const roadmapSteps: RoadmapStep[] = [
   },
   {
     id: 3,
-    icon: Clock,
+    icon: Route,
     title: "Scoping & Roadmap",
     description: "Clear project limits, timeline and key deliverables to ensure efficient development",
     gradient: "from-[#FBBC05] to-[#F57C00]",
@@ -94,7 +158,7 @@ const roadmapSteps: RoadmapStep[] = [
   },
   {
     id: 4,
-    icon: Shield,
+    icon: CodeXml,
     title: "Development",
     description: "Transparent progress with close collaboration and regular updates",
     gradient: "from-[#EA4335] to-[#C62828]",
@@ -203,7 +267,7 @@ const StepContent: React.FC<StepContentProps> = ({ step }) => {
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-lg text-muted-foreground mb-8">{step.description}</p>
+        <p className="text-lg text-muted-foreground mb-8 font-bold">{step.description}</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {step.features.map((feature, index) => (
             <Card key={index} className="border-[#4285F4]/10 bg-card/50 backdrop-blur-sm">
@@ -242,12 +306,36 @@ const Roadmap: React.FC = () => {
 
       {/* Content Container */}
       <div className="max-w-7xl mx-auto px-6">
+        {/* New Main Title */}
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#4285F4] to-[#2B63D9]">
-              Our Development Roadmap
+              How We Make It Happen
             </span>
           </h2>
+        </div>
+
+        {/* Feature Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
+          {features.map((feature, index) => (
+            <FeatureCard
+              key={feature.title}
+              icon={feature.icon}
+              title={feature.title}
+              description={feature.description}
+              gradient={feature.gradient}
+              delay={0.2 + index * 0.2}
+            />
+          ))}
+        </div>
+
+        {/* Roadmap Section */}
+        <div className="text-center mb-16">
+          <h3 className="text-2xl md:text-3xl font-bold mb-6">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#4285F4] to-[#2B63D9]">
+              Roadmap to your MVP
+            </span>
+          </h3>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
             A structured approach to turning your vision into reality, ensuring every step moves us closer to your successful MVP launch.
           </p>

@@ -96,7 +96,7 @@ const Hero = () => {
 
       {/* Scroll indicator */}
       <button 
-        onClick={() => scrollToSection('about')}
+        onClick={() => scrollToSection('why-we-do-this')}
         className="absolute bottom-8 animate-bounce z-10 transform transition-transform duration-800 hover:scale-110"
         aria-label="Scroll to About section"
       >

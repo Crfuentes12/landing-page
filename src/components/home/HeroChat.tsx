@@ -266,216 +266,206 @@ const chatSequences: ChatMessage[][] = [
 ];
 
 const HeroChat: React.FC<{ position: Position; setPosition: (position: Position) => void }> = ({ position, setPosition }) => {
-    const [currentSequenceIndex, setCurrentSequenceIndex] = useState(0);
-    const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
-    const [isTyping, setIsTyping] = useState(false);
-    const [showPreview, setShowPreview] = useState(false);
-    const [typingText, setTypingText] = useState('');
-    const [showAssistantMessage, setShowAssistantMessage] = useState(true);
-    const [isAnimating, setIsAnimating] = useState(false);
-    
-    const chatRef = useRef<HTMLDivElement>(null);
+  const [currentSequenceIndex, setCurrentSequenceIndex] = useState(0);
+  const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
+  const [isTyping, setIsTyping] = useState(false);
+  const [typingText, setTypingText] = useState('');
+  const [showAssistantMessage, setShowAssistantMessage] = useState(true);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [messageStage, setMessageStage] = useState<'typing' | 'preview'>('typing');
   
-    useEffect(() => {
-      if (!isAnimating) {
-        startChatSequence();
-      }
-  
-      const handleMouseMove = (e: MouseEvent) => {
-        const { clientX, clientY } = e;
-        const centerX = window.innerWidth / 2;
-        const centerY = window.innerHeight / 2;
-        
-        const moveX = (clientX - centerX) / 35;
-        const moveY = (clientY - centerY) / 35;
-        
-        setPosition({ x: moveX, y: moveY });
-      };
-  
-      window.addEventListener('mousemove', handleMouseMove);
-      return () => window.removeEventListener('mousemove', handleMouseMove);
-    }, [isAnimating]);
-  
-    const startChatSequence = () => {
-      const currentSequence = chatSequences[currentSequenceIndex];
+  const chatRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isAnimating) {
+      startChatSequence();
+    }
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const { clientX, clientY } = e;
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
       
-      if (currentMessageIndex < currentSequence.length && !isAnimating) {
-        setIsAnimating(true);
-        setIsTyping(true);
-        setTypingText('');
-        setShowAssistantMessage(true);
-        
-        setTimeout(() => {
-          setIsTyping(false);
-          let currentText = '';
-          const message = currentSequence[currentMessageIndex].assistant;
-          let currentIndex = 0;
-  
-          const typeText = () => {
-            if (currentIndex < message.length) {
-              currentText = message.substring(0, currentIndex + 1);
-              setTypingText(currentText);
-              currentIndex++;
-              setTimeout(typeText, 45);
-            } else {
-              setTimeout(() => {
-                setShowPreview(true);
-                setTimeout(() => {
-                  setShowPreview(false);
-                  setTimeout(() => {
-                    setShowAssistantMessage(false);
-                    setCurrentMessageIndex(0);
-                    setTypingText('');
-                    setCurrentSequenceIndex((prev) => 
-                      prev === chatSequences.length - 1 ? 0 : prev + 1
-                    );
-                    setIsAnimating(false);
-                  }, 500);
-                }, 5000);
-              }, 800);
-            }
-          };
-  
-          typeText();
-        }, 1500);
-      }
+      const moveX = (clientX - centerX) / 35;
+      const moveY = (clientY - centerY) / 35;
+      
+      setPosition({ x: moveX, y: moveY });
     };
-  
-    const renderTimelinePreview = (timeline: TimelineItem[]) => (
-      <motion.div 
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        className="space-y-3"
-      >
-        {timeline.map((item, index) => (
-          <div key={index} className="flex items-start gap-3">
-            <div className="mt-1">{item.icon}</div>
-            <div>
-              <div className="font-medium text-sm text-gray-900 dark:text-gray-100">{item.title}</div>
-              <div className="text-xs text-gray-700 dark:text-gray-300">{item.description}</div>
-            </div>
-          </div>
-        ))}
-      </motion.div>
-    );
-  
-    const renderFeaturesPreview = (features: FeatureItem[]) => (
-      <motion.div 
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        className="grid grid-cols-1 gap-4"
-      >
-        {features.map((feature, index) => (
-          <div key={index} className="space-y-1">
-            <div className="flex items-center gap-2">
-              {feature.icon}
-              <div className="font-medium text-sm text-gray-900 dark:text-gray-100">{feature.title}</div>
-            </div>
-            <div className="text-xs text-gray-700 dark:text-gray-300 ml-6">{feature.description}</div>
-          </div>
-        ))}
-      </motion.div>
-    );
-  
-    const renderPreview = (preview: Preview) => {
-      switch (preview.type) {
-        case 'timeline':
-          return preview.content.timeline && renderTimelinePreview(preview.content.timeline);
-        case 'features':
-          return preview.content.features && renderFeaturesPreview(preview.content.features);
-        default:
-          return null;
-      }
-    };
-  
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [isAnimating, setPosition]);
+
+  const startChatSequence = () => {
     const currentSequence = chatSequences[currentSequenceIndex];
-    const currentMessage = currentSequence[currentMessageIndex];
-  
-    return (
-      <div 
-        ref={chatRef}
-        className="relative w-full max-w-md"
-        style={{
-          transform: `perspective(2000px) rotateY(${position.x}deg) rotateX(${-position.y}deg)`,
-          transition: 'transform 0.2s ease-out'
-        }}
-      >
-        <AnimatePresence mode="wait">
-          <motion.div 
-            key={`user-${currentSequenceIndex}`}
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.5 }}
-            className="flex items-start gap-3 justify-end mb-4"
-          >
-            <div className="space-y-1">
-              <div className="text-xs text-gray-400 dark:text-gray-500 text-right">{currentMessage.user.name}</div>
-              <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl rounded-tr-none px-4 py-2 text-sm inline-block shadow-lg shadow-blue-500/20">
-                {currentMessage.user.message}
-              </div>
+    
+    if (currentMessageIndex < currentSequence.length && !isAnimating) {
+      setIsAnimating(true);
+      setIsTyping(true);
+      setTypingText('');
+      setShowAssistantMessage(true);
+      setMessageStage('typing');
+      
+      setTimeout(() => {
+        setIsTyping(false);
+        let currentText = '';
+        const message = currentSequence[currentMessageIndex].assistant;
+        let currentIndex = 0;
+
+        const typeText = () => {
+          if (currentIndex < message.length) {
+            currentText = message.substring(0, currentIndex + 1);
+            setTypingText(currentText);
+            currentIndex++;
+            setTimeout(typeText, 45);
+          } else {
+            setTimeout(() => {
+              setMessageStage('preview');
+              setTimeout(() => {
+                setShowAssistantMessage(false);
+                setCurrentMessageIndex(0);
+                setTypingText('');
+                setCurrentSequenceIndex((prev) => 
+                  prev === chatSequences.length - 1 ? 0 : prev + 1
+                );
+                setIsAnimating(false);
+              }, 5000);
+            }, 800);
+          }
+        };
+
+        typeText();
+      }, 1500);
+    }
+  };
+
+  const renderTimelinePreview = (timeline: TimelineItem[]) => (
+    <motion.div 
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      className="space-y-3"
+    >
+      {timeline.map((item, index) => (
+        <div key={index} className="flex items-start gap-3">
+          <div className="mt-1">{item.icon}</div>
+          <div>
+            <div className="font-medium text-sm text-gray-900 dark:text-gray-100">{item.title}</div>
+            <div className="text-xs text-gray-700 dark:text-gray-300">{item.description}</div>
+          </div>
+        </div>
+      ))}
+    </motion.div>
+  );
+
+  const renderFeaturesPreview = (features: FeatureItem[]) => (
+    <motion.div 
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      className="grid grid-cols-1 gap-4"
+    >
+      {features.map((feature, index) => (
+        <div key={index} className="space-y-1">
+          <div className="flex items-center gap-2">
+            {feature.icon}
+            <div className="font-medium text-sm text-gray-900 dark:text-gray-100">{feature.title}</div>
+          </div>
+          <div className="text-xs text-gray-700 dark:text-gray-300 ml-6">{feature.description}</div>
+        </div>
+      ))}
+    </motion.div>
+  );
+
+  const renderPreview = (preview: Preview) => {
+    switch (preview.type) {
+      case 'timeline':
+        return preview.content.timeline && renderTimelinePreview(preview.content.timeline);
+      case 'features':
+        return preview.content.features && renderFeaturesPreview(preview.content.features);
+      default:
+        return null;
+    }
+  };
+
+  const currentSequence = chatSequences[currentSequenceIndex];
+  const currentMessage = currentSequence[currentMessageIndex];
+
+  return (
+    <div 
+      ref={chatRef}
+      className="relative w-full max-w-md"
+      style={{
+        transform: `perspective(2000px) rotateY(${position.x}deg) rotateX(${-position.y}deg)`,
+        transition: 'transform 0.2s ease-out'
+      }}
+    >
+      <AnimatePresence mode="wait">
+        <motion.div 
+          key={`user-${currentSequenceIndex}`}
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -50 }}
+          transition={{ duration: 0.5 }}
+          className="flex items-start gap-3 justify-end mb-4"
+        >
+          <div className="space-y-1">
+            <div className="text-xs text-gray-400 dark:text-gray-500 text-right">{currentMessage.user.name}</div>
+            <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl rounded-tr-none px-4 py-2 text-sm inline-block shadow-lg shadow-blue-500/20">
+              {currentMessage.user.message}
             </div>
-            <div className="bg-gray-100 dark:bg-gray-800 rounded-full p-1.5">
-              <User className="h-4 w-4 text-blue-400" />
+          </div>
+          <div className="bg-gray-100 dark:bg-gray-800 rounded-full p-1.5">
+            <User className="h-4 w-4 text-blue-400" />
+          </div>
+        </motion.div>
+
+        {showAssistantMessage && (
+          <motion.div 
+            key={`assistant-${currentSequenceIndex}`}
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 50 }}
+            transition={{ duration: 0.5 }}
+            className="flex items-start gap-3"
+          >
+            <div className="h-7 w-7 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 p-1.5 shadow-lg shadow-blue-500/20">
+              <Send className="h-4 w-4 text-white" />
+            </div>
+            <div className="space-y-3 max-w-[85%]">
+              <div className="bg-gray-100 dark:bg-gray-800 backdrop-blur-sm rounded-2xl rounded-tl-none px-4 py-2 text-sm text-gray-900 dark:text-gray-100 shadow-lg border border-gray-200 dark:border-gray-700">
+                {isTyping ? (
+                  <motion.span 
+                    className="flex items-center gap-1"
+                    initial={{ opacity: 0.5 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5, repeat: Infinity, repeatType: "reverse" }}
+                  >
+                    <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-bounce"></span>
+                    <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '0.2s' }}></span>
+                    <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '0.4s' }}></span>
+                  </motion.span>
+                ) : (
+                  <span>{typingText}</span>
+                )}
+              </div>
+              {messageStage === 'preview' && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                  transition={{ duration: 0.4 }}
+                  className="bg-gray-100 dark:bg-gray-800 backdrop-blur-md rounded-2xl p-4 transform duration-500 border border-gray-200 dark:border-gray-700 shadow-lg"
+                >
+                  {renderPreview(currentMessage.preview)}
+                </motion.div>
+              )}
             </div>
           </motion.div>
-  
-          {showAssistantMessage && (
-            <motion.div 
-              key={`assistant-${currentSequenceIndex}`}
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 50 }}
-              transition={{ duration: 0.5 }}
-              className="flex items-start gap-3"
-            >
-              <div className="h-7 w-7 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 p-1.5 shadow-lg shadow-blue-500/20">
-                <Send className="h-4 w-4 text-white" />
-              </div>
-              <div className="space-y-3 max-w-[85%]">
-                <div className="bg-gray-100 dark:bg-gray-800 backdrop-blur-sm rounded-2xl rounded-tl-none px-4 py-2 text-sm text-gray-900 dark:text-gray-100 shadow-lg border border-gray-200 dark:border-gray-700">
-                  {isTyping ? (
-                    <motion.span 
-                      className="flex items-center gap-1"
-                      initial={{ opacity: 0.5 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.5, repeat: Infinity, repeatType: "reverse" }}
-                    >
-                      <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-bounce"></span>
-                      <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '0.2s' }}></span>
-                      <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '0.4s' }}></span>
-                    </motion.span>
-                  ) : (
-                    <motion.span
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      {typingText}
-                    </motion.span>
-                  )}
-                </div>
-                <AnimatePresence mode="wait">
-                  {showPreview && (
-                    <motion.div 
-                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                      transition={{ duration: 0.4 }}
-                      className="bg-gray-100 dark:bg-gray-800 backdrop-blur-md rounded-2xl p-4 transform transition-all duration-500 border border-gray-200 dark:border-gray-700 shadow-lg"
-                    >
-                      {renderPreview(currentMessage.preview)}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    );
-  };
-  
-  export default HeroChat;
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+export default HeroChat;

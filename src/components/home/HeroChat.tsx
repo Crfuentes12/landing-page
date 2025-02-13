@@ -1,7 +1,7 @@
 //landing-page/src/components/home/HeroChat.tsx
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { User, Send, Target, Code, Rocket, Lightbulb, Sparkles, ShoppingCart, Brain, ClipboardList, MessageSquare, Bot, Zap } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -276,27 +276,7 @@ const HeroChat: React.FC<{ position: Position; setPosition: (position: Position)
   
   const chatRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!isAnimating) {
-      startChatSequence();
-    }
-
-    const handleMouseMove = (e: MouseEvent) => {
-      const { clientX, clientY } = e;
-      const centerX = window.innerWidth / 2;
-      const centerY = window.innerHeight / 2;
-      
-      const moveX = (clientX - centerX) / 35;
-      const moveY = (clientY - centerY) / 35;
-      
-      setPosition({ x: moveX, y: moveY });
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [isAnimating, setPosition]);
-
-  const startChatSequence = () => {
+  const startChatSequence = useCallback(() => {
     const currentSequence = chatSequences[currentSequenceIndex];
     
     if (currentMessageIndex < currentSequence.length && !isAnimating) {
@@ -337,7 +317,27 @@ const HeroChat: React.FC<{ position: Position; setPosition: (position: Position)
         typeText();
       }, 1500);
     }
-  };
+  }, [currentSequenceIndex, currentMessageIndex, isAnimating]);
+
+  useEffect(() => {
+    if (!isAnimating) {
+      startChatSequence();
+    }
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const { clientX, clientY } = e;
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+      
+      const moveX = (clientX - centerX) / 35;
+      const moveY = (clientY - centerY) / 35;
+      
+      setPosition({ x: moveX, y: moveY });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [isAnimating, setPosition, startChatSequence]);
 
   const renderTimelinePreview = (timeline: TimelineItem[]) => (
     <motion.div 

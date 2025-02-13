@@ -41,7 +41,7 @@ const Pricing = () => {
 
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [_error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
   
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -97,6 +97,13 @@ const Pricing = () => {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to reset chat';
       setError(errorMessage);
+      // Display error to user
+      if (chatContainerRef.current) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'flex justify-center';
+        errorDiv.innerHTML = `<div class="bg-red-100 text-red-700 px-4 py-2 rounded-lg">${errorMessage}</div>`;
+        chatContainerRef.current.appendChild(errorDiv);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -150,6 +157,13 @@ const Pricing = () => {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to send message';
       setError(errorMessage);
+      // Display error to user
+      if (chatContainerRef.current) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'flex justify-center';
+        errorDiv.innerHTML = `<div class="bg-red-100 text-red-700 px-4 py-2 rounded-lg">${errorMessage}</div>`;
+        chatContainerRef.current.appendChild(errorDiv);
+      }
       setChatState(prev => ({
         ...prev,
         messages: [...prev.messages, newMessage]
@@ -195,6 +209,11 @@ const Pricing = () => {
               <div className="text-6xl font-bold">
                 {formatCurrency(chatState.priceRange.min)} - {formatCurrency(chatState.priceRange.max)}
               </div>
+              {error && (
+                <div className="mt-4 bg-red-100 text-red-700 px-4 py-2 rounded-lg">
+                  {error}
+                </div>
+              )}
             </div>
 
             {/* Right side - Chat */}

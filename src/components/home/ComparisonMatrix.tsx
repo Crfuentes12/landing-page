@@ -112,7 +112,7 @@ const comparisonData: ComparisonItem[] = [
   }
 ];
 
-const ServiceIcon = ({ type, description }: { type: 'check' | 'minus' | 'x', description: string }) => {
+const ServiceIcon = ({ type }: { type: 'check' | 'minus' | 'x', description: string }) => {
   const icons = {
     check: Check,
     minus: MinusIcon,

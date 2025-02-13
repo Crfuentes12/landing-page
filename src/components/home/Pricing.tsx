@@ -41,7 +41,7 @@ const Pricing = () => {
 
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [_error, setError] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
   
   const chatContainerRef = useRef<HTMLDivElement>(null);

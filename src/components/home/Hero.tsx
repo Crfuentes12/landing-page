@@ -15,8 +15,8 @@ interface Stat {
 
 const stats: Stat[] = [
   { label: 'MVPs builded', value: '10+', accent: 'from-[#4285F4] to-[#2B63D9]' },
-  { label: 'Years of Experience', value: '12+', accent: 'from-[#4285F4] to-[#2B63D9]' },
-  { label: 'happy clients', value: '50+', accent: 'from-[#4285F4] to-[#2B63D9]' },
+  { label: 'Years of Experience', value: '8+', accent: 'from-[#4285F4] to-[#2B63D9]' },
+  { label: 'happy clients', value: '15+', accent: 'from-[#4285F4] to-[#2B63D9]' },
   { label: 'Team size', value: '2', accent: 'from-[#4285F4] to-[#2B63D9]' }
 ];
 
@@ -55,7 +55,7 @@ const Hero = () => {
             </h1>
             
             <p className="text-xl text-muted-foreground">
-              From vision to reality, we build MVPs that matter. Fast development, smart solutions, business-first approach.
+              Launch your Software MVP in 6 weeks and save 30% of development costs.
             </p>
           </div>
           

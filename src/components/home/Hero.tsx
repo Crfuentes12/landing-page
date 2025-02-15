@@ -1,7 +1,6 @@
 //landing-page/src/components/home/Hero.tsx
 "use client";
 
-import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowDown } from "lucide-react";
 import { useScroll } from "@/providers/scroll-provider";
@@ -21,7 +20,6 @@ const stats: Stat[] = [
 ];
 
 const Hero = () => {
-  const [position, setPosition] = useState({ x: 0, y: 0 });
   const { scrollToSection } = useScroll();
 
   return (

@@ -1,15 +1,24 @@
-//landing-page/src/components/home/Pricing.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Send, RefreshCw } from 'lucide-react';
+import { Send, RefreshCw, Globe } from 'lucide-react';
 import Lottie from 'lottie-react';
 import typingAnimation from '@/assets/typing-animation.json';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { motion, AnimatePresence } from 'framer-motion';
+
+type SupportedLanguage = 'en' | 'es' | 'fr' | 'de';
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: number;
+  id?: string;
 }
 
 interface PriceRange {
@@ -17,32 +26,101 @@ interface PriceRange {
   max: number;
 }
 
+interface ProjectMetadata {
+  projectType?: string;
+  industry?: string;
+  businessModel?: string;
+  targetAudience?: string;
+  technicalRequirements?: string[];
+  integrations?: string[];
+  scaleExpectations?: string;
+  timeline?: string;
+  budget?: string;
+  uniqueSellingPoints?: string[];
+  challengesIdentified?: string[];
+  competitiveAdvantages?: string[];
+  lastUpdateTimestamp: number;
+}
+
 interface ChatState {
   messages: Message[];
   priceRange: PriceRange;
   isLocked: boolean;
+  metadata: ProjectMetadata;
+  conversationId?: string;
+  sessionId?: string;
 }
 
+const languageOptions: Record<SupportedLanguage, string> = {
+  en: 'English',
+  es: 'Español',
+  fr: 'Français',
+  de: 'Deutsch'
+};
+
+const initialMessages: Record<SupportedLanguage, string> = {
+  en: "Hi! I'm here to help you get a competitive price for your project. What type of project are you looking to build?",
+  es: "¡Hola! Estoy aquí para ayudarte a obtener un precio competitivo para tu proyecto. ¿Qué tipo de proyecto quieres construir?",
+  fr: "Bonjour ! Je suis là pour vous aider à obtenir un prix compétitif pour votre projet. Quel type de projet souhaitez-vous construire ?",
+  de: "Hallo! Ich bin hier, um Ihnen bei der Ermittlung eines wettbewerbsfähigen Preises für Ihr Projekt zu helfen. Welche Art von Projekt möchten Sie entwickeln?"
+};
+
+const placeholderText: Record<SupportedLanguage, { input: string; locked: string }> = {
+  en: {
+    input: "Type your message...",
+    locked: "Chat is locked. Press reset to start over."
+  },
+  es: {
+    input: "Escribe tu mensaje...",
+    locked: "Chat bloqueado. Presiona reiniciar para comenzar de nuevo."
+  },
+  fr: {
+    input: "Tapez votre message...",
+    locked: "Chat verrouillé. Appuyez sur réinitialiser pour recommencer."
+  },
+  de: {
+    input: "Nachricht eingeben...",
+    locked: "Chat gesperrt. Drücken Sie Reset, um neu zu beginnen."
+  }
+};
+
+const formatPrice = (price: number) => {
+  const rounded = Math.round(price / 1000);
+  const hasDecimal = price % 1000 !== 0;
+  if (hasDecimal) {
+    const decimal = ((price % 1000) / 1000).toFixed(1).substring(2);
+    return `${Math.floor(price / 1000)},${decimal}k`;
+  }
+  return `${rounded}k`;
+};
+
 const Pricing = () => {
+  const [language, setLanguage] = useState<SupportedLanguage>('en');
   const [chatState, setChatState] = useState<ChatState>({
     messages: [
       {
         role: 'assistant',
-        content: "Hi! I'm here to help you get a competitive price for your project. What type of project are you looking to build?",
-        timestamp: Date.now()
+        content: initialMessages.en,
+        timestamp: Date.now(),
+        id: 'initial'
       }
     ],
     priceRange: {
-      min: 7000,
-      max: 10000
+      min: 5000,
+      max: 12000
     },
-    isLocked: false
+    isLocked: false,
+    metadata: {
+      lastUpdateTimestamp: Date.now()
+    }
   });
 
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
+  const [animatedMin, setAnimatedMin] = useState(5000);
+  const [animatedMax, setAnimatedMax] = useState(12000);
   
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -50,6 +128,40 @@ const Pricing = () => {
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  useEffect(() => {
+    const animatePrice = () => {
+      const duration = 500; // Animation duration in ms
+      const steps = 20; // Number of steps in animation
+      const startTime = Date.now();
+      
+      const startMin = animatedMin;
+      const startMax = animatedMax;
+      const targetMin = chatState.priceRange.min;
+      const targetMax = chatState.priceRange.max;
+      
+      const animate = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        const easedProgress = 1 - Math.pow(1 - progress, 3); // Cubic easing
+        
+        const currentMin = startMin + (targetMin - startMin) * easedProgress;
+        const currentMax = startMax + (targetMax - startMax) * easedProgress;
+        
+        setAnimatedMin(currentMin);
+        setAnimatedMax(currentMax);
+        
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        }
+      };
+      
+      animate();
+    };
+    
+    animatePrice();
+  }, [chatState.priceRange]);
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -67,42 +179,57 @@ const Pricing = () => {
     }
   }, [inputMessage]);
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      maximumFractionDigits: 0
-    }).format(amount);
+  const changeLanguage = (newLanguage: SupportedLanguage) => {
+    setLanguage(newLanguage);
+    handleReset(newLanguage);
   };
 
-  const handleReset = async () => {
+  const handleReset = async (newLanguage?: SupportedLanguage) => {
     setIsLoading(true);
     setError(null);
     
     try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [{
+            role: 'assistant',
+            content: initialMessages[newLanguage || language]
+          }],
+          language: newLanguage || language
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to reset chat');
+      }
+
+      const data = await response.json();
+
       setChatState({
         messages: [
           {
             role: 'assistant',
-            content: "Hi! I'm here to help you get a competitive price for your project. What type of project are you looking to build?",
-            timestamp: Date.now()
+            content: initialMessages[newLanguage || language],
+            timestamp: Date.now(),
+            id: 'reset-' + Date.now()
           }
         ],
-        priceRange: {
-          min: 7000,
-          max: 10000
+        priceRange: data.priceRange || {
+          min: 5000,
+          max: 12000
         },
-        isLocked: false
+        isLocked: false,
+        metadata: {
+          lastUpdateTimestamp: Date.now()
+        },
+        conversationId: data.conversationId,
+        sessionId: data.sessionId
       });
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to reset chat';
       setError(errorMessage);
-      if (chatContainerRef.current) {
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'flex justify-center';
-        errorDiv.innerHTML = `<div class="bg-red-100 text-red-700 px-4 py-2 rounded-lg">${errorMessage}</div>`;
-        chatContainerRef.current.appendChild(errorDiv);
-      }
     } finally {
       setIsLoading(false);
     }
@@ -114,8 +241,14 @@ const Pricing = () => {
     const newMessage: Message = {
       role: 'user',
       content: inputMessage.trim(),
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      id: 'user-' + Date.now()
     };
+
+    setChatState(prev => ({
+      ...prev,
+      messages: [...prev.messages, newMessage]
+    }));
 
     setIsLoading(true);
     setError(null);
@@ -129,7 +262,10 @@ const Pricing = () => {
           messages: [...chatState.messages, newMessage].map(m => ({
             role: m.role,
             content: m.content
-          }))
+          })),
+          language,
+          conversationId: chatState.conversationId,
+          sessionId: chatState.sessionId
         })
       });
 
@@ -139,33 +275,34 @@ const Pricing = () => {
       
       const data = await response.json();
 
-      setChatState(prev => ({
-        ...prev,
-        messages: [
-          ...prev.messages,
-          newMessage,
-          {
-            role: 'assistant',
-            content: data.message,
-            timestamp: Date.now()
-          }
-        ],
-        priceRange: data.priceRange || prev.priceRange,
-        isLocked: data.isLocked || false
-      }));
+      setChatState(prev => {
+        const newPriceRange = data.priceRange && 
+          typeof data.priceRange.min === 'number' && 
+          typeof data.priceRange.max === 'number'
+          ? data.priceRange
+          : prev.priceRange;
+
+        return {
+          ...prev,
+          messages: [
+            ...prev.messages,
+            {
+              role: 'assistant',
+              content: data.message,
+              timestamp: Date.now(),
+              id: 'assistant-' + Date.now()
+            }
+          ],
+          priceRange: newPriceRange,
+          metadata: data.metadata || prev.metadata,
+          conversationId: data.conversationId,
+          sessionId: data.sessionId,
+          isLocked: data.nextAction === 'locked'
+        };
+      });
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to send message';
       setError(errorMessage);
-      if (chatContainerRef.current) {
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'flex justify-center';
-        errorDiv.innerHTML = `<div class="bg-red-100 text-red-700 px-4 py-2 rounded-lg">${errorMessage}</div>`;
-        chatContainerRef.current.appendChild(errorDiv);
-      }
-      setChatState(prev => ({
-        ...prev,
-        messages: [...prev.messages, newMessage]
-      }));
     } finally {
       setIsLoading(false);
     }
@@ -185,73 +322,117 @@ const Pricing = () => {
   return (
     <section className="py-20 px-6">
       <div className="max-w-6xl mx-auto">
-        {/* Title and Description */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/80 to-primary">
+          <h2 className="text-4xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/80 to-primary dark:from-primary/90 dark:via-primary/70 dark:to-primary/90">
             Get Your Project Estimate
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground dark:text-muted-foreground/90 max-w-2xl mx-auto">
             Our AI assistant helps assess your project scope to provide you with a competitive pricing estimation. 
             With our smart planning approach, we can significantly reduce costs while maintaining quality.
           </p>
         </div>
 
-        {/* Blue Box Section */}
-        <div className="bg-[#4285F4]/80 rounded-3xl p-12">
+        <div className="bg-blue-100/80 dark:bg-blue-950/30 rounded-3xl p-12 relative">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
-            {/* Left side - Pricing Display */}
-            <div className="w-full lg:w-1/2 text-white">
+            <div className="w-full lg:w-1/2 text-blue-950 dark:text-blue-100">
               <h2 className="text-4xl font-bold mb-6">
                 Your Estimation is
               </h2>
-              <div className="text-6xl font-bold">
-                {formatCurrency(chatState.priceRange.min)} - {formatCurrency(chatState.priceRange.max)}
-              </div>
+              <motion.div 
+                className="text-6xl font-bold"
+                key={`${animatedMin}-${animatedMax}`}
+              >
+                €{formatPrice(animatedMin)} - {formatPrice(animatedMax)}
+              </motion.div>
               {error && (
-                <div className="mt-4 bg-red-100 text-red-700 px-4 py-2 rounded-lg">
+                <div className="mt-4 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-100 px-4 py-2 rounded-lg">
                   {error}
                 </div>
               )}
             </div>
 
-            {/* Right side - Chat */}
-            <Card className="w-full lg:w-1/2 h-[500px] bg-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] flex flex-col">
+            <Card className="w-full lg:w-1/2 h-[500px] bg-white dark:bg-gray-900 shadow-[8px_8px_0px_0px_rgba(80,150,255,1),8px_8px_0px_0px_rgba(0,0,0,0.05),12px_12px_30px_rgba(0,0,0,0.2)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,0.1),8px_8px_0px_0px_rgba(255,255,255,0.05),12px_12px_30px_rgba(0,0,0,0.5)] flex flex-col">
               <CardContent className="flex flex-col h-full p-0">
+                <div className="p-4 border-b dark:border-gray-800 flex justify-end">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="sm" className="gap-2">
+                        <Globe className="h-4 w-4" />
+                        {languageOptions[language]}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      {(Object.entries(languageOptions) as [SupportedLanguage, string][]).map(([code, name]) => (
+                        <DropdownMenuItem
+                          key={code}
+                          onClick={() => changeLanguage(code)}
+                          className="gap-2"
+                        >
+                          {name}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+
                 <div
                   ref={chatContainerRef}
                   className="flex-1 overflow-y-auto p-6 space-y-4"
                 >
-                  {chatState.messages.map((message, index) => (
-                    <div
-                      key={index}
-                      className={`flex ${
-                        message.role === 'user' ? 'justify-end' : 'justify-start'
-                      }`}
-                    >
-                      <div
-                        className={`max-w-[80%] rounded-lg p-3 ${
-                          message.role === 'user'
-                            ? 'bg-[#4285F4] text-white'
-                            : 'bg-gray-100'
+                  <AnimatePresence>
+                    {chatState.messages.map((message) => (
+                      <motion.div
+                        key={message.id}
+                        initial={{ 
+                          opacity: 0, 
+                          x: message.role === 'user' ? 20 : -20,
+                          y: 20 
+                        }}
+                        animate={{ 
+                          opacity: 1, 
+                          x: 0,
+                          y: 0 
+                        }}
+                        exit={{ opacity: 0 }}
+                        transition={{ 
+                          type: "spring",
+                          stiffness: 500,
+                          damping: 40
+                        }}
+                        className={`flex ${
+                          message.role === 'user' ? 'justify-end' : 'justify-start'
                         }`}
                       >
-                        <p className="whitespace-pre-wrap">{message.content}</p>
-                      </div>
-                    </div>
-                  ))}
+                        <div
+                          className={`max-w-[80%] rounded-lg p-3 ${
+                            message.role === 'user'
+                              ? 'bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100'
+                              : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
+                          }`}
+                        >
+                          <p className="whitespace-pre-wrap">{message.content}</p>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
                   {isLoading && (
-                    <div className="flex justify-start">
+                    <motion.div 
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="flex justify-start"
+                    >
                       <div className="w-16 h-16">
                         <Lottie
                           animationData={typingAnimation}
                           loop={true}
                         />
                       </div>
-                    </div>
+                    </motion.div>
                   )}
                 </div>
 
-                <div className="border-t p-4">
+                <div className="border-t dark:border-gray-800 p-4">
                   <div className="flex gap-2">
                     <textarea
                       ref={textareaRef}
@@ -260,20 +441,20 @@ const Pricing = () => {
                       onKeyPress={handleKeyPress}
                       placeholder={
                         chatState.isLocked
-                          ? "Chat is locked. Press reset to start over."
-                          : "Type your message..."
+                          ? placeholderText[language].locked
+                          : placeholderText[language].input
                       }
                       disabled={isLoading || chatState.isLocked}
-                      className="flex-1 resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4285F4] focus-visible:ring-offset-2 disabled:opacity-50"
+                      className="flex-1 resize-none rounded-md border border-input bg-background dark:bg-gray-900 dark:border-gray-700 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 dark:focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:opacity-50"
                       rows={1}
                     />
                     <div className="flex gap-2">
                       {chatState.isLocked ? (
                         <Button
-                          onClick={handleReset}
+                          onClick={() => handleReset()}
                           disabled={isLoading}
                           variant="outline"
-                          className="hover:bg-[#4285F4]/10"
+                          className="hover:bg-blue-100/50 dark:hover:bg-blue-900/30"
                         >
                           <RefreshCw className="h-5 w-5" />
                         </Button>
@@ -281,7 +462,7 @@ const Pricing = () => {
                         <Button
                           onClick={handleSendMessage}
                           disabled={isLoading || !inputMessage.trim()}
-                          className="bg-[#4285F4] hover:bg-[#4285F4]/90"
+                          className="bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100 hover:bg-blue-200 dark:hover:bg-blue-800"
                         >
                           <Send className="h-5 w-5" />
                         </Button>

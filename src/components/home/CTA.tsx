@@ -2,15 +2,17 @@
 //landing-page/src/components/home/CTA.tsx
 "use client";
 
+import { useState } from "react";
 import { useForm } from "@/hooks/use-form";
 import { schemas } from "@/lib/validation";
 import { useModal } from "@/providers/modal-provider";
 import { useLanguage } from "@/providers/language-provider";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Rocket } from "lucide-react";
+import { ArrowRight, Rocket, AlertCircle } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faWhatsapp, faLinkedin, faInstagram } from '@fortawesome/free-brands-svg-icons';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 type ContactFormData = {
   email: string;
@@ -21,7 +23,7 @@ interface SocialLink {
   icon: IconDefinition;
   href: string;
   label: string;
-  color: string;
+  hoverColor: string;
 }
 
 const socialLinks: SocialLink[] = [
@@ -29,34 +31,52 @@ const socialLinks: SocialLink[] = [
     icon: faWhatsapp,
     href: "https://wa.me/your-number",
     label: "WhatsApp",
-    color: "text-[#25D366] hover:text-[#128C7E]"
+    hoverColor: "hover:text-[#25D366]"
   },
   {
     icon: faLinkedin,
     href: "https://linkedin.com/company/your-company",
     label: "LinkedIn",
-    color: "text-[#0A66C2] hover:text-[#084482]"
+    hoverColor: "hover:text-[#0A66C2]"
   },
   {
     icon: faInstagram,
-    href: "https://instagram.com/your-company",
+    href: "https://instagram.com/company/your-company",
     label: "Instagram",
-    color: "text-[#E4405F] hover:text-[#C13584]"
+    hoverColor: "hover:text-[#E4405F]"
   }
 ];
+
+async function submitContactForm(data: ContactFormData) {
+  const response = await fetch('/api/contact', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to submit form');
+  }
+
+  return response.json();
+}
 
 const CTA = () => {
   const { t } = useLanguage();
   const { openModal } = useModal();
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const {
     values,
     errors,
     touched,
-    isSubmitting,
     handleChange,
     handleBlur,
-    handleSubmit
+    handleSubmit,
   } = useForm<ContactFormData>({
     initialValues: {
       email: '',
@@ -64,25 +84,42 @@ const CTA = () => {
     },
     validationSchema: schemas.contactForm,
     onSubmit: async (values) => {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      openModal(
-        <div className="p-6 text-center">
-          <div className="mb-4 flex justify-center">
-            <Rocket className="h-12 w-12 text-primary" />
+      try {
+        setIsSubmitting(true);
+        setSubmitError(null);
+        await submitContactForm(values);
+        
+        openModal(
+          <div className="p-6 text-center">
+            <div className="mb-4 flex justify-center">
+              <Rocket className="h-12 w-12 text-primary" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2">
+              {t('cta.success.title')}
+            </h3>
+            <p className="text-muted-foreground">
+              {t('cta.success.message').replace('{email}', values.email)}
+            </p>
           </div>
-          <h3 className="text-lg font-semibold mb-2">
-            {t('cta.success.title')}
-          </h3>
-          <p className="text-muted-foreground">
-            {t('cta.success.message').replace('{email}', values.email)}
-          </p>
-        </div>
-      );
+        );
+
+        // Reset form values
+        handleChange('email', '');
+        handleChange('message', '');
+      } catch (error) {
+        setSubmitError(
+          error instanceof Error 
+            ? error.message 
+            : 'Failed to submit form. Please try again.'
+        );
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   });
 
   return (
-    <section className="relative py-20 px-6 overflow-hidden bg-primary/5">
+    <section className="relative py-20 px-6 overflow-hidden bg-primary/5 dark:bg-primary/[0.02]">
       {/* Background Pattern */}
       <div className="absolute inset-0" 
         style={{
@@ -95,7 +132,7 @@ const CTA = () => {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8">
             <div className="space-y-6">
-              <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#4285F4] to-[#2B63D9] bg-clip-text text-transparent leading-tight">
+              <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#4285F4] to-[#2B63D9] dark:from-[#5C9FFF] dark:to-[#3B7DFF] bg-clip-text text-transparent leading-tight">
                 Ready to Build the Next Big Thing? Let&apos;s Talk!
               </h2>
               <p className="text-lg text-muted-foreground leading-relaxed">
@@ -105,34 +142,36 @@ const CTA = () => {
               </p>
             </div>
             
-            <div className="flex gap-4">
+            <div className="flex gap-6">
               {socialLinks.map((link) => (
                 <a
                   key={link.label}
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group relative"
+                  className="transition-transform hover:scale-110 duration-200"
                 >
-                  <div className="absolute -inset-0.5 bg-gradient-to-r from-primary to-primary/60 rounded-full opacity-0 group-hover:opacity-100 transition-opacity blur" />
-                  <div className="relative flex items-center justify-center w-12 h-12 bg-background border border-border rounded-full hover:border-primary/50 transition-colors">
-                    <FontAwesomeIcon 
-                      icon={link.icon} 
-                      className={`w-5 h-5 ${link.color} transition-colors`} 
-                    />
-                  </div>
-                  <span className="absolute top-full left-1/2 -translate-x-1/2 mt-2 text-xs font-medium text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
-                    {link.label}
-                  </span>
+                  <FontAwesomeIcon 
+                    icon={link.icon} 
+                    className={`w-8 h-8 text-muted-foreground ${link.hoverColor} dark:text-muted-foreground dark:hover:text-white transition-colors duration-200`}
+                    size="2x"
+                  />
                 </a>
               ))}
             </div>
           </div>
 
-          <div className="bg-background rounded-lg p-8 shadow-lg border border-[#4285F4]/10">
+          <div className="bg-background dark:bg-gray-900 rounded-lg p-8 shadow-lg border border-[#4285F4]/10 dark:border-white/5">
+            {submitError && (
+              <Alert variant="destructive" className="mb-6">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{submitError}</AlertDescription>
+              </Alert>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-medium">
+                <label htmlFor="email" className="text-sm font-medium text-foreground dark:text-gray-200">
                   {t('cta.form.email')}
                 </label>
                 <input
@@ -141,18 +180,20 @@ const CTA = () => {
                   value={values.email}
                   onChange={e => handleChange('email', e.target.value)}
                   onBlur={() => handleBlur('email')}
-                  className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#4285F4]/50
-                    ${touched.email && errors.email ? 'border-red-500' : 'border-input'}
+                  className={`w-full px-4 py-2 bg-background dark:bg-gray-800 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#4285F4]/50 dark:focus:ring-[#5C9FFF]/50 text-foreground dark:text-white placeholder-muted-foreground dark:placeholder-gray-400
+                    ${touched.email && errors.email 
+                      ? 'border-red-500 dark:border-red-400' 
+                      : 'border-input dark:border-gray-700'}
                   `}
                   placeholder={t('cta.form.email.placeholder')}
                 />
                 {touched.email && errors.email && (
-                  <p className="text-sm text-red-500">{t(errors.email)}</p>
+                  <p className="text-sm text-red-500 dark:text-red-400">{t(errors.email)}</p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="message" className="text-sm font-medium">
+                <label htmlFor="message" className="text-sm font-medium text-foreground dark:text-gray-200">
                   {t('cta.form.message')}
                 </label>
                 <textarea
@@ -161,18 +202,20 @@ const CTA = () => {
                   value={values.message}
                   onChange={e => handleChange('message', e.target.value)}
                   onBlur={() => handleBlur('message')}
-                  className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#4285F4]/50
-                    ${touched.message && errors.message ? 'border-red-500' : 'border-input'}
+                  className={`w-full px-4 py-2 bg-background dark:bg-gray-800 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#4285F4]/50 dark:focus:ring-[#5C9FFF]/50 text-foreground dark:text-white placeholder-muted-foreground dark:placeholder-gray-400
+                    ${touched.message && errors.message 
+                      ? 'border-red-500 dark:border-red-400' 
+                      : 'border-input dark:border-gray-700'}
                   `}
                   placeholder={t('cta.form.message.placeholder')}
                 />
                 {touched.message && errors.message && (
-                  <p className="text-sm text-red-500">{t(errors.message)}</p>
+                  <p className="text-sm text-red-500 dark:text-red-400">{t(errors.message)}</p>
                 )}
               </div>
 
               <Button 
-                className="w-full group bg-[#4285F4] hover:bg-[#2B63D9] text-white" 
+                className="w-full group bg-[#4285F4] hover:bg-[#2B63D9] dark:bg-[#5C9FFF] dark:hover:bg-[#3B7DFF] text-white" 
                 type="submit" 
                 disabled={isSubmitting}
               >

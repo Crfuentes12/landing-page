@@ -2,19 +2,14 @@
 'use client';
 
 import { useRef } from 'react';
-import { motion, useScroll, useTransform, useInView } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 
 export default function WhyWeDoThis() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(containerRef, { once: false, margin: "-100px" });
-  
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
+  const isInView = useInView(containerRef, { 
+    once: true, 
+    margin: "-100px" 
   });
-
-  const opacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.3, 1, 1, 0.3]);
-  const y = useTransform(scrollYProgress, [0, 0.5, 1], [100, 0, -100]);
 
   const textVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -26,7 +21,7 @@ export default function WhyWeDoThis() {
   };
 
   return (
-    <section className="py-24 relative overflow-hidden">
+    <section className="pt-24 pb-4 relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div 
@@ -40,7 +35,9 @@ export default function WhyWeDoThis() {
 
       <motion.div
         ref={containerRef}
-        style={{ opacity, y }}
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+        transition={{ duration: 0.8 }}
         className="max-w-7xl mx-auto px-6 relative z-10"
       >
         {/* Section Header */}

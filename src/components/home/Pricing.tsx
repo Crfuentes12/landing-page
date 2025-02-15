@@ -97,7 +97,6 @@ const Pricing = () => {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to reset chat';
       setError(errorMessage);
-      // Display error to user
       if (chatContainerRef.current) {
         const errorDiv = document.createElement('div');
         errorDiv.className = 'flex justify-center';
@@ -157,7 +156,6 @@ const Pricing = () => {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to send message';
       setError(errorMessage);
-      // Display error to user
       if (chatContainerRef.current) {
         const errorDiv = document.createElement('div');
         errorDiv.className = 'flex justify-center';
@@ -189,17 +187,17 @@ const Pricing = () => {
       <div className="max-w-6xl mx-auto">
         {/* Title and Description */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4">
+          <h2 className="text-4xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/80 to-primary">
             Get Your Project Estimate
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Our AI assistant helps optimize your project scope to provide the most competitive pricing.
-            Through smart planning, we can significantly reduce costs while maintaining quality.
+            Our AI assistant helps assess your project scope to provide you with a competitive pricing estimation. 
+            With our smart planning approach, we can significantly reduce costs while maintaining quality.
           </p>
         </div>
 
         {/* Blue Box Section */}
-        <div className="bg-[#4285F4] rounded-3xl p-12">
+        <div className="bg-[#4285F4]/80 rounded-3xl p-12">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
             {/* Left side - Pricing Display */}
             <div className="w-full lg:w-1/2 text-white">

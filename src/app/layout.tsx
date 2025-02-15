@@ -6,6 +6,14 @@ import { RootProvider } from "@/providers/root-provider";
 import { LanguageProvider } from "@/providers/language-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
 import "./globals.css";
+import { config } from '@fortawesome/fontawesome-svg-core'
+import '@fortawesome/fontawesome-svg-core/styles.css'
+config.autoAddCss = false
+
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faWhatsapp, faLinkedin, faInstagram } from '@fortawesome/free-brands-svg-icons'
+
+library.add(faWhatsapp, faLinkedin, faInstagram)
 
 const geistSans = Geist({
   subsets: ["latin"],

@@ -5,7 +5,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Target, Zap, Route, Shield, CodeXml, Rocket, LucideIcon, ChevronRight } from "lucide-react";
 import { motion } from 'framer-motion';
 
-// Feature Card Types and Component
 interface FeatureCardProps {
   icon: React.ElementType;
   title: string;
@@ -57,17 +56,16 @@ const features = [
     icon: Zap,
     title: "Efficient Development",
     description: "No unnecessary complexity. We build exactly what you need to validate your idea and enter the market confidently.",
-    gradient: "from-[#34A853] to-[#2E7D32]"
+    gradient: "from-[#FF9800] to-[#F57C00]"
   },
   {
     icon: Shield,
     title: "Future-Proof Foundation",
     description: "While we focus on MVP essentials, we ensure your foundation is solid and scalable for future growth.",
-    gradient: "from-[#EA4335] to-[#C62828]"
+    gradient: "from-[#34A853] to-[#2E7D32]"
   }
 ];
 
-// Roadmap Types and Components
 interface RoadmapStep {
   id: number;
   icon: LucideIcon;
@@ -85,12 +83,12 @@ const roadmapSteps: RoadmapStep[] = [
     id: 1,
     icon: Target,
     title: "Idea Analysis",
-    description: "We dive into your vision to understand your needs and validate your market opportunity",
+    description: "We dive into your vision to understand your needs and analyze your market.",
     gradient: "from-[#4285F4] to-[#2B63D9]",
     features: [
       {
-        title: "Market Research",
-        description: "Comprehensive analysis of your target market and competition"
+        title: "Industry Insights",
+        description: "Looking at market trends and industry dynamics to build the best MVP for you"
       },
       {
         title: "User Needs Assessment",
@@ -135,7 +133,7 @@ const roadmapSteps: RoadmapStep[] = [
     id: 3,
     icon: Route,
     title: "Scoping & Roadmap",
-    description: "Clear project limits, timeline and key deliverables to ensure efficient development",
+    description: "We define clear project limits, timeline and key deliverables to ensure efficient development.",
     gradient: "from-[#FBBC05] to-[#F57C00]",
     features: [
       {
@@ -147,8 +145,8 @@ const roadmapSteps: RoadmapStep[] = [
         description: "Setting specific, measurable project milestones"
       },
       {
-        title: "Resource Allocation",
-        description: "Optimizing team and resource distribution"
+        title: "Project Scope",
+        description: "Giving you clear expectations"
       },
       {
         title: "Deliverable Mapping",
@@ -224,38 +222,36 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({
   const Icon = step.icon;
   
   return (
-    <div 
-      className="flex items-center group cursor-pointer"
+    <button 
+      className="flex items-center w-full group hover:scale-105 transition-all duration-300 
+                select-none focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none
+                [&:not(:focus-visible)]:ring-0 [&:not(:focus-visible)]:outline-none"
       onClick={onClick}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          onClick();
-        }
-      }}
+      type="button"
     >
       <div
         className={`
           w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-500
+          group-hover:shadow-lg group-hover:scale-105 relative z-10
           ${isActive 
             ? `bg-gradient-to-br ${step.gradient} shadow-lg scale-110` 
             : isCompleted
-              ? 'bg-[#4285F4] opacity-50'
-              : 'bg-border/30'
+              ? 'bg-[#4285F4] opacity-50 group-hover:opacity-75'
+              : 'bg-border/30 group-hover:bg-border/50'
           }
         `}
       >
-        <Icon className={`h-8 w-8 ${isActive || isCompleted ? 'text-white' : 'text-muted-foreground'}`} />
+        <Icon className={`h-8 w-8 ${isActive || isCompleted ? 'text-white' : 'text-muted-foreground'} 
+          group-hover:scale-110 transition-transform duration-300`} />
       </div>
-      <div className={`ml-4 transition-all duration-300 ${isActive ? 'opacity-100' : 'opacity-50'}`}>
+      <div className={`ml-4 transition-all duration-300 text-left ${isActive ? 'opacity-100' : 'opacity-50 group-hover:opacity-75'}`}>
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-muted-foreground">Step {step.id}</span>
           <ChevronRight className="h-4 w-4 text-muted-foreground" />
         </div>
         <h3 className="font-semibold">{step.title}</h3>
       </div>
-    </div>
+    </button>
   );
 };
 
@@ -270,7 +266,7 @@ const StepContent: React.FC<StepContentProps> = ({ step }) => {
         <p className="text-lg text-muted-foreground mb-8 font-bold">{step.description}</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {step.features.map((feature, index) => (
-            <Card key={index} className="border-[#4285F4]/10 bg-card/50 backdrop-blur-sm">
+            <Card key={index} className="border-[#4285F4]/10 bg-card/50 backdrop-blur-sm hover:shadow-md transition-all duration-300">
               <CardContent className="p-6">
                 <div className="flex items-center gap-3 mb-2">
                   <div className={`h-2 w-2 rounded-full bg-gradient-to-br ${step.gradient}`} />
@@ -293,7 +289,6 @@ const Roadmap: React.FC = () => {
   
   return (
     <section className="py-24 relative overflow-hidden">
-      {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div 
           className="absolute inset-0"
@@ -304,9 +299,7 @@ const Roadmap: React.FC = () => {
         />
       </div>
 
-      {/* Content Container */}
       <div className="max-w-7xl mx-auto px-6">
-        {/* New Main Title */}
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#4285F4] to-[#2B63D9]">
@@ -315,7 +308,6 @@ const Roadmap: React.FC = () => {
           </h2>
         </div>
 
-        {/* Feature Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
           {features.map((feature, index) => (
             <FeatureCard
@@ -329,7 +321,6 @@ const Roadmap: React.FC = () => {
           ))}
         </div>
 
-        {/* Roadmap Section */}
         <div className="text-center mb-16">
           <h3 className="text-2xl md:text-3xl font-bold mb-6">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#4285F4] to-[#2B63D9]">
@@ -337,12 +328,11 @@ const Roadmap: React.FC = () => {
             </span>
           </h3>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            A structured approach to turning your vision into reality, ensuring every step moves us closer to your successful MVP launch.
+            Our structured approach to turning your vision into reality, ensures that every step moves us closer to your successful MVP launch.
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[400px,1fr] gap-12">
-          {/* Step Indicators */}
           <div className="space-y-8">
             {roadmapSteps.map((step, index) => (
               <StepIndicator
@@ -355,7 +345,6 @@ const Roadmap: React.FC = () => {
             ))}
           </div>
 
-          {/* Step Content */}
           <div className="relative">
             <div className="absolute -inset-4 rounded-xl bg-gradient-to-br from-[#4285F4]/5 to-transparent" />
             <div className="relative">

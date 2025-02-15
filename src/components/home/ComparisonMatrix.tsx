@@ -10,21 +10,21 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { XIcon, MinusIcon, Check, Sparkles } from "lucide-react";
+import { XIcon, Check, Sparkles, CircleIcon } from "lucide-react";
 
 interface ComparisonItem {
   criteria: string;
   gradient: string;
   ourService: {
-    icon: 'check' | 'minus' | 'x';
+    icon: 'check' | 'circle' | 'x';
     description: string;
   };
   traditional: {
-    icon: 'check' | 'minus' | 'x';
+    icon: 'check' | 'circle' | 'x';
     description: string;
   };
   noCode: {
-    icon: 'check' | 'minus' | 'x';
+    icon: 'check' | 'circle' | 'x';
     description: string;
   };
 }
@@ -38,11 +38,11 @@ const comparisonData: ComparisonItem[] = [
       description: "Comprehensive strategic planning with focus on key business objectives"
     },
     traditional: {
-      icon: 'minus',
+      icon: 'circle',
       description: "Standard project planning approach"
     },
     noCode: {
-      icon: 'minus',
+      icon: 'circle',
       description: "Basic planning capabilities"
     }
   },
@@ -54,11 +54,11 @@ const comparisonData: ComparisonItem[] = [
       description: "Optimized pricing structure with maximum value delivery"
     },
     traditional: {
-      icon: 'minus',
+      icon: 'circle',
       description: "Traditional pricing models with overhead"
     },
     noCode: {
-      icon: 'minus',
+      icon: 'circle',
       description: "Subscription-based pricing with limitations"
     }
   },
@@ -70,7 +70,7 @@ const comparisonData: ComparisonItem[] = [
       description: "Rapid, flexible development with continuous adaptation"
     },
     traditional: {
-      icon: 'minus',
+      icon: 'circle',
       description: "Structured but slower development process"
     },
     noCode: {
@@ -86,7 +86,7 @@ const comparisonData: ComparisonItem[] = [
       description: "Cutting-edge technical solutions with AI integration"
     },
     traditional: {
-      icon: 'minus',
+      icon: 'circle',
       description: "Strong technical capabilities but higher costs"
     },
     noCode: {
@@ -112,16 +112,16 @@ const comparisonData: ComparisonItem[] = [
   }
 ];
 
-const ServiceIcon = ({ type }: { type: 'check' | 'minus' | 'x', description: string }) => {
+const ServiceIcon = ({ type }: { type: 'check' | 'circle' | 'x', description: string }) => {
   const icons = {
     check: Check,
-    minus: MinusIcon,
+    circle: CircleIcon,
     x: XIcon
   };
   
   const colors = {
     check: "text-emerald-500",
-    minus: "text-amber-500",
+    circle: "text-amber-500",
     x: "text-red-500"
   };
   
@@ -201,7 +201,8 @@ const ComparisonMatrix = () => {
             Choose Your Perfect Fit
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Compare approaches and find the best solution for your MVP development needs
+            Compare approaches and find the best solution for your MVP development needs.
+            <span className="block mt-2 text-sm italic">Hover over any icon for a deeper explanation</span>
           </p>
         </motion.div>
 

@@ -5,11 +5,6 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { User, Send, Target, Code, Rocket, Lightbulb, Sparkles, ShoppingCart, Brain, ClipboardList, MessageSquare, Bot, Zap } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 
-interface Position {
-  x: number;
-  y: number;
-}
-
 interface TimelineItem {
   title: string;
   description: string;
@@ -265,7 +260,7 @@ const chatSequences: ChatMessage[][] = [
   ]
 ];
 
-const HeroChat: React.FC<{ position: Position; setPosition: (position: Position) => void }> = ({ position, setPosition }) => {
+const HeroChat: React.FC = () => {
   const [currentSequenceIndex, setCurrentSequenceIndex] = useState(0);
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const [isTyping, setIsTyping] = useState(false);
@@ -323,21 +318,7 @@ const HeroChat: React.FC<{ position: Position; setPosition: (position: Position)
     if (!isAnimating) {
       startChatSequence();
     }
-
-    const handleMouseMove = (e: MouseEvent) => {
-      const { clientX, clientY } = e;
-      const centerX = window.innerWidth / 2;
-      const centerY = window.innerHeight / 2;
-      
-      const moveX = (clientX - centerX) / 35;
-      const moveY = (clientY - centerY) / 35;
-      
-      setPosition({ x: moveX, y: moveY });
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [isAnimating, setPosition, startChatSequence]);
+  }, [isAnimating, startChatSequence]);
 
   const renderTimelinePreview = (timeline: TimelineItem[]) => (
     <motion.div 
@@ -395,10 +376,6 @@ const HeroChat: React.FC<{ position: Position; setPosition: (position: Position)
     <div 
       ref={chatRef}
       className="relative w-full max-w-md"
-      style={{
-        transform: `perspective(2000px) rotateY(${position.x}deg) rotateX(${-position.y}deg)`,
-        transition: 'transform 0.2s ease-out'
-      }}
     >
       <AnimatePresence mode="wait">
         <motion.div 
@@ -434,7 +411,7 @@ const HeroChat: React.FC<{ position: Position; setPosition: (position: Position)
             </div>
             <div className="space-y-3 max-w-[85%]">
               <div className="bg-gray-100 dark:bg-gray-800 backdrop-blur-sm rounded-2xl rounded-tl-none px-4 py-2 text-sm text-gray-900 dark:text-gray-100 shadow-lg border border-gray-200 dark:border-gray-700">
-                {isTyping ? (
+              {isTyping ? (
                   <motion.span 
                     className="flex items-center gap-1"
                     initial={{ opacity: 0.5 }}

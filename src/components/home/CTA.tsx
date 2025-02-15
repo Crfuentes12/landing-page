@@ -7,37 +7,41 @@ import { schemas } from "@/lib/validation";
 import { useModal } from "@/providers/modal-provider";
 import { useLanguage } from "@/providers/language-provider";
 import { Button } from "@/components/ui/button";
-import { 
-  ArrowRight, 
-  Mail, 
-  Rocket,
-  Linkedin,
-  MessageCircle
-} from "lucide-react";
+import { ArrowRight, Rocket } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faWhatsapp, faLinkedin, faInstagram } from '@fortawesome/free-brands-svg-icons';
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
 type ContactFormData = {
   email: string;
   message: string;
 };
 
-const socialLinks = [
+interface SocialLink {
+  icon: IconDefinition;
+  href: string;
+  label: string;
+  color: string;
+}
+
+const socialLinks: SocialLink[] = [
   {
-    icon: Mail,
-    href: "mailto:hello@company.com",
-    label: "Email",
-    color: "text-[#4285F4] hover:text-[#2B63D9]"
+    icon: faWhatsapp,
+    href: "https://wa.me/your-number",
+    label: "WhatsApp",
+    color: "text-[#25D366] hover:text-[#128C7E]"
   },
   {
-    icon: Linkedin,
+    icon: faLinkedin,
     href: "https://linkedin.com/company/your-company",
     label: "LinkedIn",
     color: "text-[#0A66C2] hover:text-[#084482]"
   },
   {
-    icon: MessageCircle,
-    href: "https://wa.me/your-number",
-    label: "WhatsApp",
-    color: "text-[#25D366] hover:text-[#128C7E]"
+    icon: faInstagram,
+    href: "https://instagram.com/your-company",
+    label: "Instagram",
+    color: "text-[#E4405F] hover:text-[#C13584]"
   }
 ];
 
@@ -91,7 +95,7 @@ const CTA = () => {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8">
             <div className="space-y-6">
-              <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#4285F4] to-[#2B63D9] bg-clip-text text-transparent">
+              <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#4285F4] to-[#2B63D9] bg-clip-text text-transparent leading-tight">
                 Ready to Build the Next Big Thing? Let&apos;s Talk!
               </h2>
               <p className="text-lg text-muted-foreground leading-relaxed">
@@ -101,29 +105,27 @@ const CTA = () => {
               </p>
             </div>
             
-            <div className="space-y-4">
-              <p className="text-sm font-medium text-muted-foreground">
-                Connect via:
-              </p>
-              <div className="flex gap-4">
-                {socialLinks.map((link) => (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group relative"
-                  >
-                    <div className="absolute -inset-0.5 bg-gradient-to-r from-primary to-primary/60 rounded-full opacity-0 group-hover:opacity-100 transition-opacity blur" />
-                    <div className="relative flex items-center justify-center w-12 h-12 bg-background border border-border rounded-full hover:border-primary/50 transition-colors">
-                      <link.icon className={`w-5 h-5 ${link.color} transition-colors`} />
-                    </div>
-                    <span className="absolute top-full left-1/2 -translate-x-1/2 mt-2 text-xs font-medium text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
-                      {link.label}
-                    </span>
-                  </a>
-                ))}
-              </div>
+            <div className="flex gap-4">
+              {socialLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group relative"
+                >
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-primary to-primary/60 rounded-full opacity-0 group-hover:opacity-100 transition-opacity blur" />
+                  <div className="relative flex items-center justify-center w-12 h-12 bg-background border border-border rounded-full hover:border-primary/50 transition-colors">
+                    <FontAwesomeIcon 
+                      icon={link.icon} 
+                      className={`w-5 h-5 ${link.color} transition-colors`} 
+                    />
+                  </div>
+                  <span className="absolute top-full left-1/2 -translate-x-1/2 mt-2 text-xs font-medium text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
+                    {link.label}
+                  </span>
+                </a>
+              ))}
             </div>
           </div>
 

@@ -610,7 +610,7 @@ class ConversationManager {
   }
 }
 
-async function POST(request: Request) {
+export async function POST(request: Request) {
   try {
     const { 
       messages: incomingMessages, 

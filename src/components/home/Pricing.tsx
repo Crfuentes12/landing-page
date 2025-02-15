@@ -132,7 +132,7 @@ const Pricing = () => {
   useEffect(() => {
     const animatePrice = () => {
       const duration = 500; // Animation duration in ms
-      const steps = 20; // Number of steps in animation
+      // Remove unused steps variable
       const startTime = Date.now();
       
       const startMin = animatedMin;
@@ -161,7 +161,7 @@ const Pricing = () => {
     };
     
     animatePrice();
-  }, [chatState.priceRange]);
+  }, [chatState.priceRange, animatedMin, animatedMax]); 
 
   useEffect(() => {
     if (chatContainerRef.current) {

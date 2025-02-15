@@ -93,8 +93,6 @@ interface PromptContent {
   priceAnalysis: string;
 }
 
-type Prompts = Record<SupportedLanguage, PromptContent>;
-
 const getSystemPrompts = (language: string = 'en'): PromptContent => {
   const prompts = {
     en: {
@@ -612,7 +610,7 @@ class ConversationManager {
   }
 }
 
-export async function POST(request: Request) {
+async function POST(request: Request) {
   try {
     const { 
       messages: incomingMessages, 
@@ -627,7 +625,7 @@ export async function POST(request: Request) {
     
     let messages: ChatCompletionMessageParam[] = [];
     let currentPriceRange = conversation?.last_price_range || INITIAL_PRICE_RANGE;
-    let priceHistory: PriceHistory = conversation?.price_history || {
+    const priceHistory: PriceHistory = conversation?.price_history || {
       ranges: [{
         ...INITIAL_PRICE_RANGE,
         timestamp: Date.now()

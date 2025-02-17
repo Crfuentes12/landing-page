@@ -85,14 +85,9 @@ const placeholderText: Record<SupportedLanguage, { input: string; locked: string
 };
 
 const formatPrice = (price: number) => {
-  const rounded = Math.round(price / 1000);
-  const hasDecimal = price % 1000 !== 0;
-  if (hasDecimal) {
-    const decimal = ((price % 1000) / 1000).toFixed(1).substring(2);
-    return `${Math.floor(price / 1000)},${decimal}k`;
-  }
-  return `${rounded}k`;
+  return price.toLocaleString('de-DE');
 };
+
 
 const Pricing = () => {
   const [language, setLanguage] = useState<SupportedLanguage>('en');
@@ -130,38 +125,45 @@ const Pricing = () => {
   }, []);
 
   useEffect(() => {
-    const animatePrice = () => {
-      const duration = 500; // Animation duration in ms
-      // Remove unused steps variable
-      const startTime = Date.now();
-      
-      const startMin = animatedMin;
-      const startMax = animatedMax;
-      const targetMin = chatState.priceRange.min;
-      const targetMax = chatState.priceRange.max;
-      
-      const animate = () => {
-        const elapsed = Date.now() - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        
-        const easedProgress = 1 - Math.pow(1 - progress, 3); // Cubic easing
-        
-        const currentMin = startMin + (targetMin - startMin) * easedProgress;
-        const currentMax = startMax + (targetMax - startMax) * easedProgress;
-        
-        setAnimatedMin(currentMin);
-        setAnimatedMax(currentMax);
-        
-        if (progress < 1) {
-          requestAnimationFrame(animate);
+    // If nothing changed, do nothing.
+    if (
+      animatedMin === chatState.priceRange.min &&
+      animatedMax === chatState.priceRange.max
+    ) {
+      return;
+    }
+  
+    let timer: NodeJS.Timeout | null = null;
+  
+    timer = setInterval(() => {
+      setAnimatedMin((prev) => {
+        if (prev < chatState.priceRange.min) {
+          const newValue = prev + 10;
+          return Math.min(newValue, chatState.priceRange.min);
+        } else if (prev > chatState.priceRange.min) {
+          const newValue = prev - 10;
+          return Math.max(newValue, chatState.priceRange.min);
         }
-      };
-      
-      animate();
+        return prev; // already at target
+      });
+  
+      setAnimatedMax((prev) => {
+        if (prev < chatState.priceRange.max) {
+          const newValue = prev + 10;
+          return Math.min(newValue, chatState.priceRange.max);
+        } else if (prev > chatState.priceRange.max) {
+          const newValue = prev - 10;
+          return Math.max(newValue, chatState.priceRange.max);
+        }
+        return prev; // already at target
+      });
+    }, 10); // update every 10ms
+  
+    return () => {
+      if (timer) clearInterval(timer);
     };
-    
-    animatePrice();
-  }, [chatState.priceRange, animatedMin, animatedMax]); 
+  }, [chatState.priceRange, animatedMin, animatedMax]);
+  
 
   useEffect(() => {
     if (chatContainerRef.current) {

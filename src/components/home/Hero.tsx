@@ -61,9 +61,9 @@ const Hero = () => {
             <Button 
               size="lg" 
               className="bg-[#4285F4] hover:bg-[#2B63D9] text-white group transition-all duration-300 text-lg py-6"
-              onClick={() => scrollToSection('contact')}
+              onClick={() => scrollToSection('pricing')}
             >
-              Talk To Us Now!
+              Get Your Price Estimation
               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Button>
             <Button 

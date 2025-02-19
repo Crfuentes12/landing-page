@@ -3,7 +3,6 @@
 
 import React, { useRef, useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { ArrowUpRight } from "lucide-react";
 
 const BannerCTA = () => {
   const bannerRef = useRef(null);

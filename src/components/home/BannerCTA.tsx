@@ -65,7 +65,6 @@ const BannerCTA = () => {
           >
             <span className="relative z-10 flex items-center">
               Get Started Today
-              <ArrowUpRight className="ml-2 w-5 h-5 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
             </span>
             <div className="absolute inset-0 bg-gradient-to-r from-primary-foreground/0 via-primary-foreground/5 to-primary-foreground/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           </Button>

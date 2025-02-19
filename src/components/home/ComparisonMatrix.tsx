@@ -121,8 +121,8 @@ const ServiceIcon = ({ type }: { type: 'check' | 'circle' | 'x', description: st
   
   const colors = {
     check: "text-emerald-500",
-    circle: "text-amber-500",
-    x: "text-red-500"
+    circle: "text-gray-300",
+    x: "text-gray-300"
   };
   
   const Icon = icons[type];
@@ -130,7 +130,7 @@ const ServiceIcon = ({ type }: { type: 'check' | 'circle' | 'x', description: st
   return (
     <Icon 
       className={`w-8 h-8 ${colors[type]}`}
-      strokeWidth={2.5}
+      strokeWidth={2}
     />
   );
 };

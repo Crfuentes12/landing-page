@@ -34,7 +34,7 @@ const ScrollToTop = () => {
   return (
     <Button
       onClick={scrollToTop}
-      className="fixed bottom-8 right-8 rounded-full p-3 shadow-lg"
+      className="fixed bottom-8 right-8 rounded-full p-3 shadow-lg z-50"
       size="icon"
       aria-label="Scroll to top"
     >

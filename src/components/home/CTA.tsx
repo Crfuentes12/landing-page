@@ -8,9 +8,9 @@ import { schemas } from "@/lib/validation";
 import { useModal } from "@/providers/modal-provider";
 import { useLanguage } from "@/providers/language-provider";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Rocket, AlertCircle } from "lucide-react";
+import { ArrowRight, Rocket, AlertCircle, Mail } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faWhatsapp, faLinkedin, faInstagram } from '@fortawesome/free-brands-svg-icons';
+import { faLinkedin } from '@fortawesome/free-brands-svg-icons';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
@@ -20,30 +20,26 @@ type ContactFormData = {
 };
 
 interface SocialLink {
-  icon: IconDefinition;
+  icon: IconDefinition | React.ComponentType;
   href: string;
   label: string;
   hoverColor: string;
+  isLucide?: boolean;
 }
 
 const socialLinks: SocialLink[] = [
   {
-    icon: faWhatsapp,
-    href: "https://wa.me/your-number",
-    label: "WhatsApp",
-    hoverColor: "hover:text-[#25D366]"
+    icon: Mail,
+    href: "mailto:your-email@example.com",
+    label: "Email",
+    hoverColor: "hover:text-[#2B63D9]",
+    isLucide: true
   },
   {
     icon: faLinkedin,
     href: "https://linkedin.com/company/your-company",
     label: "LinkedIn",
     hoverColor: "hover:text-[#0A66C2]"
-  },
-  {
-    icon: faInstagram,
-    href: "https://instagram.com/company/your-company",
-    label: "Instagram",
-    hoverColor: "hover:text-[#E4405F]"
   }
 ];
 
@@ -151,11 +147,15 @@ const CTA = () => {
                   rel="noopener noreferrer"
                   className="transition-transform hover:scale-110 duration-200"
                 >
-                  <FontAwesomeIcon 
-                    icon={link.icon} 
-                    className={`w-8 h-8 text-muted-foreground ${link.hoverColor} dark:text-muted-foreground dark:hover:text-white transition-colors duration-200`}
-                    size="2x"
-                  />
+                  {link.isLucide ? (
+                    <Mail className={`w-8 h-8 text-muted-foreground ${link.hoverColor} dark:text-muted-foreground dark:hover:text-white transition-colors duration-200`} />
+                  ) : (
+                    <FontAwesomeIcon 
+                      icon={link.icon as IconDefinition} 
+                      className={`w-8 h-8 text-muted-foreground ${link.hoverColor} dark:text-muted-foreground dark:hover:text-white transition-colors duration-200`}
+                      size="2x"
+                    />
+                  )}
                 </a>
               ))}
             </div>

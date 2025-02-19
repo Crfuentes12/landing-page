@@ -63,14 +63,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
-      </head>
-      <body className="min-h-screen bg-background font-sans antialiased" suppressHydrationWarning>
+        </head>
+      <body className="min-h-screen bg-background font-sans antialiased overflow-x-hidden" suppressHydrationWarning>
         <ThemeProvider defaultTheme="system">
           <RootProvider>
             <LanguageProvider>
-              <div className="relative flex min-h-screen flex-col">
+              <div className="relative flex min-h-screen flex-col overflow-hidden">
                 <Header />
-                <main className="flex-1 pt-16">
+                <main className="flex-1 pt-16 w-full">
                   {children}
                 </main>
               </div>

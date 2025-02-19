@@ -24,9 +24,22 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleLinkClick = () => {
+    setIsMenuOpen(false);
+  };
+
+  const navLinks = [
+    { href: "#why-we-do-this", label: "Our Mission" },
+    { href: "#roadmap", label: "Services" },
+    { href: "#about", label: "About" },
+    { href: "#pricing", label: "Pricing" },
+    { href: "#faq", label: "FAQ" },
+    { href: "#contact", label: "Contact" },
+  ];
+
   return (
     <header 
-    className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 
         ${isScrolled ? 'bg-background/80 backdrop-blur-md shadow-sm' : 'bg-transparent'}
       `}
     >
@@ -39,18 +52,16 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            <Link href="#about" className="text-sm hover:text-primary transition-colors">
-              {t('nav.about')}
-            </Link>
-            <Link href="#services" className="text-sm hover:text-primary transition-colors">
-              {t('nav.services')}
-            </Link>
-            <Link href="#pricing" className="text-sm hover:text-primary transition-colors">
-              {t('nav.pricing')}
-            </Link>
-            <Link href="#contact" className="text-sm hover:text-primary transition-colors">
-              {t('nav.contact')}
-            </Link>
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-sm hover:text-primary transition-colors"
+                onClick={handleLinkClick}
+              >
+                {link.label}
+              </Link>
+            ))}
           </nav>
 
           {/* Desktop Controls */}
@@ -73,6 +84,7 @@ const Header = () => {
           <button 
             className="md:hidden"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           >
             {isMenuOpen ? (
               <X className="h-6 w-6" />
@@ -90,18 +102,16 @@ const Header = () => {
         } overflow-hidden bg-background border-t`}
       >
         <div className="px-6 py-4 space-y-4">
-          <Link href="#about" className="block py-2 text-sm hover:text-primary">
-            {t('nav.about')}
-          </Link>
-          <Link href="#services" className="block py-2 text-sm hover:text-primary">
-            {t('nav.services')}
-          </Link>
-          <Link href="#pricing" className="block py-2 text-sm hover:text-primary">
-            {t('nav.pricing')}
-          </Link>
-          <Link href="#contact" className="block py-2 text-sm hover:text-primary">
-            {t('nav.contact')}
-          </Link>
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="block py-2 text-sm hover:text-primary"
+              onClick={handleLinkClick}
+            >
+              {link.label}
+            </Link>
+          ))}
           <div className="pt-4 flex flex-col gap-2">
             <LanguageSwitch />
             <Button

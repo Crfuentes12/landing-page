@@ -29,14 +29,16 @@ const Header = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="font-bold text-xl">
-            YourLogo
+            SprintLaunchers
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            <Link href="#about" className="text-sm hover:text-primary transition-colors">About</Link>
+            <Link href="why-we-do-this" className="text-sm hover:text-primary transition-colors">Our Mission</Link>
             <Link href="#services" className="text-sm hover:text-primary transition-colors">Services</Link>
+            <Link href="#about" className="text-sm hover:text-primary transition-colors">About</Link>
             <Link href="#pricing" className="text-sm hover:text-primary transition-colors">Pricing</Link>
+            <Link href="#faq" className="text-sm hover:text-primary transition-colors">FAQ</Link>
             <Link href="#contact" className="text-sm hover:text-primary transition-colors">Contact</Link>
           </nav>
 
@@ -67,10 +69,12 @@ const Header = () => {
         } overflow-hidden bg-background border-t`}
       >
         <div className="px-6 py-4 space-y-4">
-          <Link href="#about" className="block py-2 text-sm hover:text-primary">About</Link>
-          <Link href="#services" className="block py-2 text-sm hover:text-primary">Services</Link>
-          <Link href="#pricing" className="block py-2 text-sm hover:text-primary">Pricing</Link>
-          <Link href="#contact" className="block py-2 text-sm hover:text-primary">Contact</Link>
+        <Link href="why-we-do-this" className="text-sm hover:text-primary transition-colors">Our Mission</Link>
+            <Link href="#services" className="text-sm hover:text-primary transition-colors">Services</Link>
+            <Link href="#about" className="text-sm hover:text-primary transition-colors">About</Link>
+            <Link href="#pricing" className="text-sm hover:text-primary transition-colors">Pricing</Link>
+            <Link href="#faq" className="text-sm hover:text-primary transition-colors">FAQ</Link>
+            <Link href="#contact" className="text-sm hover:text-primary transition-colors">Contact</Link>
           <div className="pt-4 space-y-2">
             <Button variant="outline" className="w-full">Log In</Button>
             <Button className="w-full">Get Started</Button>

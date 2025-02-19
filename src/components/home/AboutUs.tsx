@@ -66,7 +66,7 @@ const founders: Founder[] = [
     name: "Robin",
     title: "Startup & Innovation Lead",
     mission: "Transforming complex ideas into focused, market-ready MVPs",
-    imagePath: "/robin.jpeg",
+    imagePath: "/robin.jpg",
     skills: [
       { id: 1, name: "Business Strategy", coordinate: { q: 0, r: 0 } },
       { id: 2, name: "Product Development", coordinate: { q: 2, r: -1 } },
@@ -85,7 +85,7 @@ const founders: Founder[] = [
     name: "Chris",
     title: "Tech Architecture & AI Lead",
     mission: "Building scalable foundations for tomorrow's innovations",
-    imagePath: "/chris.jpg",
+    imagePath: "/chris1.jpg",
     skills: [
       { id: 1, name: "System Architecture", coordinate: { q: 0, r: 0 } },
       { id: 2, name: "AI Development", coordinate: { q: 1, r: -1 } },

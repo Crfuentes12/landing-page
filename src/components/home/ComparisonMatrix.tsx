@@ -112,7 +112,7 @@ const comparisonData: ComparisonItem[] = [
   }
 ];
 
-const ServiceIcon = ({ type, description }: { type: 'check' | 'circle' | 'x'; description: string }) => {
+const ServiceIcon = ({ type }: { type: 'check' | 'circle' | 'x' }) => {
   const icons = {
     check: Check,
     circle: CircleIcon,
@@ -165,7 +165,6 @@ const ComparisonRow = ({
                 <div className="py-4 sm:py-6 px-2 sm:px-4 h-full flex items-center justify-center">
                   <ServiceIcon 
                     type={item[service].icon}
-                    description={item[service].description}
                   />
                 </div>
               </TooltipTrigger>

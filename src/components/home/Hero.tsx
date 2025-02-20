@@ -23,7 +23,7 @@ const Hero = () => {
   const { scrollToSection } = useScroll();
 
   return (
-    <section className="relative min-h-[100dvh] flex flex-col justify-start md:justify-center items-center px-4 md:px-6 pt-16 md:pt-0 pb-20 overflow-hidden">
+    <section className="relative min-h-screen flex flex-col justify-start md:justify-center items-center px-4 md:px-6 pt-16 md:pt-0 pb-20 overflow-hidden">
       {/* Gradient Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-background/80" />
       
@@ -91,13 +91,15 @@ const Hero = () => {
           </div>
         </div>
 
-        {/* Right side - Chat simulation */}
+        {/* Right side - Chat simulation with fixed height */}
         <div className="w-full max-w-md mx-auto lg:mx-0">
-          <HeroChat />
+          <div className="h-[450px] md:h-[500px]"> {/* Fixed height container */}
+            <HeroChat />
+          </div>
         </div>
       </div>
 
-      {/* Scroll indicator with more bottom spacing */}
+      {/* Scroll indicator */}
       <button 
         onClick={() => scrollToSection('why-we-do-this')}
         className="absolute bottom-6 md:bottom-10 animate-bounce z-10 transform transition-transform duration-800 hover:scale-110"

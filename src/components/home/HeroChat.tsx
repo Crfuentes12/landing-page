@@ -375,72 +375,77 @@ const HeroChat: React.FC = () => {
   return (
     <div 
       ref={chatRef}
-      className="relative w-full bg-none backdrop-blur-sm rounded-2xl p-4 md:p-6 border border-none dark:border-gray-800"
+      className="relative w-full bg-none backdrop-blur-sm rounded-2xl p-4 md:p-6 border border-none dark:border-gray-800 h-full"
     >
-      <AnimatePresence mode="wait">
-        <motion.div 
-          key={`user-${currentSequenceIndex}`}
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
-          transition={{ duration: 0.5 }}
-          className="flex items-start gap-2 md:gap-3 justify-end mb-3 md:mb-4"
-        >
-          <div className="space-y-1">
-            <div className="text-xs text-gray-400 dark:text-gray-500 text-right">{currentMessage.user.name}</div>
-            <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl rounded-tr-none px-3 md:px-4 py-2 text-xs md:text-sm inline-block shadow-lg shadow-blue-500/20">
-              {currentMessage.user.message}
-            </div>
-          </div>
-          <div className="bg-gray-100 dark:bg-gray-800 rounded-full p-1.5 hidden sm:block">
-            <User className="h-3 w-3 md:h-4 md:w-4 text-blue-400" />
-          </div>
-        </motion.div>
-
-        {showAssistantMessage && (
+      {/* Container with minimum height to prevent layout shifts */}
+      <div className="min-h-[400px] flex flex-col">
+        <AnimatePresence mode="wait">
           <motion.div 
-            key={`assistant-${currentSequenceIndex}`}
-            initial={{ opacity: 0, x: -20 }}
+            key={`user-${currentSequenceIndex}`}
+            initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
+            exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.5 }}
-            className="flex items-start gap-2 md:gap-3"
+            className="flex items-start gap-2 md:gap-3 justify-end mb-3 md:mb-4"
           >
-            <div className="h-6 w-6 md:h-7 md:w-7 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 p-1.5 shadow-lg shadow-blue-500/20">
-              <Send className="h-3 w-3 md:h-4 md:w-4 text-white" />
-            </div>
-            <div className="space-y-2 md:space-y-3 max-w-[85%]">
-              <div className="bg-gray-100 dark:bg-gray-800 backdrop-blur-sm rounded-2xl rounded-tl-none px-3 md:px-4 py-2 text-xs md:text-sm text-gray-900 dark:text-gray-100 shadow-lg border border-gray-200 dark:border-gray-700">
-                {isTyping ? (
-                  <motion.span 
-                    className="flex items-center gap-1"
-                    initial={{ opacity: 0.5 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.5, repeat: Infinity, repeatType: "reverse" }}
-                  >
-                    <span className="h-1 w-1 md:h-1.5 md:w-1.5 rounded-full bg-blue-400 animate-bounce"></span>
-                    <span className="h-1 w-1 md:h-1.5 md:w-1.5 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '0.2s' }}></span>
-                    <span className="h-1 w-1 md:h-1.5 md:w-1.5 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '0.4s' }}></span>
-                  </motion.span>
-                ) : (
-                  <span>{typingText}</span>
-                )}
+            <div className="space-y-1">
+              <div className="text-xs text-gray-400 dark:text-gray-500 text-right">
+                {currentMessage.user.name}
               </div>
-              {messageStage === 'preview' && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                  transition={{ duration: 0.4 }}
-                  className="bg-gray-100 dark:bg-gray-800 backdrop-blur-md rounded-2xl p-3 md:p-4 transform duration-500 border border-gray-200 dark:border-gray-700 shadow-lg"
-                >
-                  {renderPreview(currentMessage.preview)}
-                </motion.div>
-              )}
+              <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl rounded-tr-none px-3 md:px-4 py-2 text-xs md:text-sm inline-block shadow-lg shadow-blue-500/20">
+                {currentMessage.user.message}
+              </div>
+            </div>
+            <div className="bg-gray-100 dark:bg-gray-800 rounded-full p-1.5 hidden sm:block">
+              <User className="h-3 w-3 md:h-4 md:w-4 text-blue-400" />
             </div>
           </motion.div>
-        )}
-      </AnimatePresence>
+
+          {showAssistantMessage && (
+            <motion.div 
+              key={`assistant-${currentSequenceIndex}`}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              transition={{ duration: 0.5 }}
+              className="flex items-start gap-2 md:gap-3"
+            >
+              <div className="h-6 w-6 md:h-7 md:w-7 flex-shrink-0 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 p-1.5 shadow-lg shadow-blue-500/20">
+                <Send className="h-3 w-3 md:h-4 md:w-4 text-white" />
+              </div>
+              <div className="space-y-2 md:space-y-3 max-w-[85%]">
+                <div className="bg-gray-100 dark:bg-gray-800 backdrop-blur-sm rounded-2xl rounded-tl-none px-3 md:px-4 py-2 text-xs md:text-sm text-gray-900 dark:text-gray-100 shadow-lg border border-gray-200 dark:border-gray-700">
+                  {isTyping ? (
+                    <motion.span 
+                      className="flex items-center gap-1"
+                      initial={{ opacity: 0.5 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.5, repeat: Infinity, repeatType: "reverse" }}
+                    >
+                      <span className="h-1 w-1 md:h-1.5 md:w-1.5 rounded-full bg-blue-400 animate-bounce"></span>
+                      <span className="h-1 w-1 md:h-1.5 md:w-1.5 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '0.2s' }}></span>
+                      <span className="h-1 w-1 md:h-1.5 md:w-1.5 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '0.4s' }}></span>
+                    </motion.span>
+                  ) : (
+                    <span>{typingText}</span>
+                  )}
+                </div>
+                {messageStage === 'preview' && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                    transition={{ duration: 0.4 }}
+                    className="bg-gray-100 dark:bg-gray-800 backdrop-blur-md rounded-2xl p-3 md:p-4 transform duration-500 border border-gray-200 dark:border-gray-700 shadow-lg"
+                  >
+                    {renderPreview(currentMessage.preview)}
+                  </motion.div>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 };

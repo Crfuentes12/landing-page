@@ -39,11 +39,6 @@ const faqs = [
     answerKey: 'faq.answers.confidentiality',
   },
   {
-    id: '7',
-    questionKey: 'faq.questions.pricing',
-    answerKey: 'faq.answers.pricing',
-  },
-  {
     id: '8',
     questionKey: 'faq.questions.fundraising',
     answerKey: 'faq.answers.fundraising',
@@ -131,19 +126,6 @@ const FAQ = () => {
               </motion.div>
             ))}
           </AnimatePresence>
-        </div>
-
-        {/* Contact Section */}
-        <div className="mt-12 text-center">
-          <p className="text-muted-foreground">
-            {t('faq.more.questions')}{' '}
-            <a 
-              href="#contact" 
-              className="text-[#4285F4] hover:underline font-medium transition-colors duration-300"
-            >
-              {t('faq.contact.support')}
-            </a>
-          </p>
         </div>
       </div>
     </section>

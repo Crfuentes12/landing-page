@@ -63,7 +63,7 @@ export default function WhyWeDoThis() {
           transition={{ delay: 0.2, duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h3 className="text-2xl md:text-3xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-[#4285F4] to-[#2B63D9]">
+          <h3 className="text-2xl md:text-3xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-[#000000] to-[#a1a1a1]">
             We believe every bold idea deserves a chance.
           </h3>
         </motion.div>

@@ -83,7 +83,7 @@ const roadmapSteps: RoadmapStep[] = [
     id: 1,
     icon: Target,
     title: "Idea Analysis",
-    description: "We dive into your vision to understand your needs and analyze your market.",
+    description: "1. We dive into your vision to understand your needs and analyze your market.",
     gradient: "from-[#4285F4] to-[#2B63D9]",
     features: [
       {
@@ -108,7 +108,7 @@ const roadmapSteps: RoadmapStep[] = [
     id: 2,
     icon: Zap,
     title: "Smart Consultancy",
-    description: "We trim the excess and focus on what truly matters for your MVP success",
+    description: "2. We trim the excess and focus on what truly matters for your MVP success",
     gradient: "from-[#34A853] to-[#2E7D32]",
     features: [
       {
@@ -133,7 +133,7 @@ const roadmapSteps: RoadmapStep[] = [
     id: 3,
     icon: Route,
     title: "Scoping & Roadmap",
-    description: "We define clear project limits, timeline and key deliverables to ensure efficient development.",
+    description: "3. We define clear project limits, timeline and key deliverables to ensure efficient development.",
     gradient: "from-[#FBBC05] to-[#F57C00]",
     features: [
       {
@@ -158,7 +158,7 @@ const roadmapSteps: RoadmapStep[] = [
     id: 4,
     icon: CodeXml,
     title: "Development",
-    description: "Transparent progress with close collaboration and regular updates",
+    description: "4. We provide you with a transparent progress, including close collaboration and regular updates. You are always in control!",
     gradient: "from-[#EA4335] to-[#C62828]",
     features: [
       {
@@ -183,7 +183,7 @@ const roadmapSteps: RoadmapStep[] = [
     id: 5,
     icon: Rocket,
     title: "Launch & Support",
-    description: "Your MVP, ready to hit the market with ongoing support and guidance",
+    description: "5. We deliver your MVP, ready to hit the market. If needed, we provide you with ongoing support and guidance",
     gradient: "from-[#9C27B0] to-[#6A1B9A]",
     features: [
       {
@@ -191,12 +191,12 @@ const roadmapSteps: RoadmapStep[] = [
         description: "Comprehensive deployment and launch planning"
       },
       {
-        title: "Performance Optimization",
-        description: "Ensuring optimal MVP performance"
-      },
-      {
         title: "User Feedback",
         description: "Implementing feedback collection systems"
+      },
+      {
+        title: "Performance Optimization",
+        description: "Ensuring optimal MVP performance"
       },
       {
         title: "Ongoing Support",
@@ -328,7 +328,7 @@ const Roadmap: React.FC = () => {
             </span>
           </h3>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Our structured approach to turning your vision into reality, ensures that every step moves us closer to your successful MVP launch.
+          Our structured approach to turn your vision into reality.
           </p>
         </div>
 

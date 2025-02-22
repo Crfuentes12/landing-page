@@ -3,8 +3,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Header from "@/components/layout/Header";
 import { RootProvider } from "@/providers/root-provider";
-import { LanguageProvider } from "@/providers/language-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
+import { LanguageProvider } from "@/providers/language-provider";
+import { LanguageSelector } from "@/components/language-selector";
 import "./globals.css";
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
@@ -15,66 +16,64 @@ import { faWhatsapp, faLinkedin, faInstagram } from '@fortawesome/free-brands-sv
 
 library.add(faWhatsapp, faLinkedin, faInstagram)
 
-const geistSans = Geist({
-  subsets: ["latin"],
-});
+const geistSans = Geist({ subsets: ["latin"] });
+const geistMono = Geist_Mono({ subsets: ["latin"] });
 
-const geistMono = Geist_Mono({
-  subsets: ["latin"],
-});
-
-export const metadata: Metadata = {
-  title: "Your Digital Solutions Partner | YourLogo",
-  description: "Transform your digital presence with our expert web development, mobile app, and digital marketing solutions.",
-  keywords: "web development, mobile apps, digital marketing, SEO, cloud solutions",
-  authors: [{ name: "YourLogo Team" }],
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: "https://yourdomain.com",
-    siteName: "YourLogo",
-    title: "YourLogo - Digital Solutions Partner",
-    description: "Transform your digital presence with our expert solutions",
-    images: [
-      {
-        url: "https://yourdomain.com/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "YourLogo",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "YourLogo - Digital Solutions Partner",
-    description: "Transform your digital presence with our expert solutions",
-    images: ["https://yourdomain.com/twitter-image.jpg"],
-    creator: "@yourlogo",
-  },
+const getMetadata = (lang: "en" | "es" | "fr") => {
+  const meta = {
+    en: { title: "SprintLaunchers | Build your MVP quick", description: "Launch your Software MVP in 6 weeks and save 30% of development costs.", locale: "en_US" },
+    es: { title: "SprintLaunchers | Construye tu MVP rápido", description: "Lanza tu Software MVP en 6 semanas y ahorra un 30% en costos de desarrollo.", locale: "es_ES" },
+    fr: { title: "SprintLaunchers | Développez votre MVP rapidement", description: "Lancez votre MVP logiciel en 6 semaines et économisez 30% des coûts de développement.", locale: "fr_FR" },
+  };
+  return {
+    ...meta[lang],
+    authors: [{ name: "SprintLaunchers Team" }],
+    openGraph: {
+      type: "website",
+      url: "https://yourdomain.com",
+      siteName: "SprintLaunchers",
+      title: meta[lang].title,
+      description: meta[lang].description,
+      locale: meta[lang].locale,
+      images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "SprintLaunchers MVP" }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: meta[lang].title,
+      description: meta[lang].description,
+      images: ["/twitter-image.jpg"],
+      creator: "@SprintLaunchers",
+    },
+  };
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
+    <LanguageProvider>
+      <LanguageSelector />
+      <LayoutWrapper>{children}</LayoutWrapper>
+    </LanguageProvider>
+  );
+}
+
+function LayoutWrapper({ children }: { children: React.ReactNode }) {
+  return (
     <html lang="en" className={`${geistSans.className} ${geistMono.className}`} suppressHydrationWarning>
       <head>
-        <meta name="format-detection" content="telephone=no, date=no, email=no, address=no"/>
-        <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)"/>
-        <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)"/>
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
+        <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)" />
+        <link rel="icon" href="/logos/sprintlaunchers-icon.png" />
+        <link rel="apple-touch-icon" href="/logos/sprintlaunchers-icon.png" />
         <link rel="manifest" href="/manifest.json" />
-        </head>
+      </head>
       <body className="min-h-screen bg-background font-sans antialiased overflow-x-hidden" suppressHydrationWarning>
         <ThemeProvider defaultTheme="system">
           <RootProvider>
-            <LanguageProvider>
-              <div className="relative flex min-h-screen flex-col overflow-hidden">
-                <Header />
-                <main className="flex-1 pt-16 w-full">
-                  {children}
-                </main>
-              </div>
-            </LanguageProvider>
+            <div className="relative flex min-h-screen flex-col overflow-hidden">
+              <Header />
+              <main className="flex-1 pt-16 w-full">{children}</main>
+            </div>
           </RootProvider>
         </ThemeProvider>
       </body>

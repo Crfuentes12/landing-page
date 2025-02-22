@@ -69,7 +69,7 @@ const founders: Founder[] = [
     imagePath: "/robin.jpg",
     skills: [
       { id: 1, name: "MVP Strategy", coordinate: { q: 0, r: 0 } },
-      { id: 2, name: "Software Product Development", coordinate: { q: 2, r: -1 } },
+      { id: 2, name: "IT Product Development", coordinate: { q: 2, r: -1 } },
       { id: 3, name: "Market Analysis", coordinate: { q: 1, r: -2 } },
       { id: 4, name: "Growth Hacking", coordinate: { q: 3, r: 0 } },
       { id: 5, name: "Team Leadership", coordinate: { q: 4, r: -1 } },

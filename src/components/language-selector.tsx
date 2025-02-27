@@ -39,14 +39,6 @@ export function LanguageSelector() {
 
   return (
     <div className="language-selector fixed top-4 right-4 z-50">
-      <button
-        onClick={toggleDropdown}
-        className="flex items-center gap-1 bg-white dark:bg-gray-800 rounded-md px-3 py-2 shadow-md border border-gray-200 dark:border-gray-700"
-        aria-expanded={isOpen}
-        aria-haspopup="listbox"
-      >
-      </button>
-
       {isOpen && (
         <div className="absolute top-full right-0 mt-1 w-40 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none">
           <ul 

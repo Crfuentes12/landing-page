@@ -29,7 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 function LayoutWrapper({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${geistSans.className} ${geistMono.className}`} suppressHydrationWarning>
+    <html lang="es" className={`${geistSans.className} ${geistMono.className}`} suppressHydrationWarning>
       <head>
         <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
         <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 type Language = 'en' | 'es' | 'de';
 
@@ -125,6 +125,12 @@ const translations = {
     "cta.form.button.send": "Get MVP Estimate",
     "cta.success.title": "Thanks for reaching out!",
     "cta.success.message": "We'll get back to you at {email} within 24 hours with a detailed estimate.",
+    
+    // Form validation messages
+    "cta.validation.required": "This field is required",
+    "cta.validation.email": "Please enter a valid email address",
+    "cta.validation.minLength": "Message must be at least 10 characters",
+    "cta.validation.maxLength": "Message is too long (maximum 5000 characters)",
     
     // AboutUs Section
     "about.title": "Who We Are",
@@ -426,6 +432,12 @@ const translations = {
     "cta.success.title": "¡Gracias por contactarnos!",
     "cta.success.message": "Nos pondremos en contacto contigo en {email} dentro de 24 horas con una estimación detallada.",
     
+    // Form validation messages
+    "cta.validation.required": "Este campo es obligatorio",
+    "cta.validation.email": "Por favor, introduce una dirección de correo electrónico válida",
+    "cta.validation.minLength": "El mensaje debe tener al menos 10 caracteres",
+    "cta.validation.maxLength": "El mensaje es demasiado largo (máximo 5000 caracteres)",
+    
     // AboutUs Section
     "about.title": "Quiénes Somos",
     "about.description": "Combinamos experiencia técnica profunda con experiencia en startups para transformar tu visión en realidad. Nuestro enfoque está en construir MVPs que importan.",
@@ -726,6 +738,12 @@ const translations = {
     "cta.success.title": "Vielen Dank für Ihre Anfrage!",
     "cta.success.message": "Wir werden uns innerhalb von 24 Stunden mit einer detaillierten Schätzung bei Ihnen unter {email} melden.",
     
+    // Form validation messages
+    "cta.validation.required": "Dieses Feld ist erforderlich",
+    "cta.validation.email": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+    "cta.validation.minLength": "Die Nachricht muss mindestens 10 Zeichen lang sein",
+    "cta.validation.maxLength": "Die Nachricht ist zu lang (maximal 5000 Zeichen)",
+    
     // AboutUs Section
     "about.title": "Wer Wir Sind",
     "about.description": "Wir kombinieren tiefgreifende technische Expertise mit Startup-Erfahrung, um Ihre Vision in die Realität umzusetzen. Unser Fokus liegt auf dem Aufbau von MVPs, die wirklich wichtig sind.",
@@ -916,7 +934,26 @@ const translations = {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguage] = useState<Language>('en');
+  // Set Spanish as the default language
+  const [language, setLanguage] = useState<Language>('es');
+
+  // Use useEffect to ensure it persists across sessions
+  useEffect(() => {
+    // Check if there's a saved language preference
+    const savedLanguage = localStorage.getItem('preferredLanguage');
+    
+    if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'es' || savedLanguage === 'de')) {
+      setLanguage(savedLanguage as Language);
+    } else {
+      // Set Spanish as default and save it
+      localStorage.setItem('preferredLanguage', 'es');
+    }
+  }, []);
+
+  // Update localStorage when language changes
+  useEffect(() => {
+    localStorage.setItem('preferredLanguage', language);
+  }, [language]);
 
   const t = (key: string): string => {
     return translations[language][key as keyof typeof translations[typeof language]] || key;

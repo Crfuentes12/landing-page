@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '@/providers/language-provider';
-import { Globe } from 'lucide-react';
 
 export function LanguageSelector() {
   const { language, setLanguage, t } = useLanguage();
@@ -46,10 +45,6 @@ export function LanguageSelector() {
         aria-expanded={isOpen}
         aria-haspopup="listbox"
       >
-        <Globe className="h-4 w-4 text-gray-600 dark:text-gray-300" />
-        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-          {languages.find(lang => lang.code === language)?.name || 'Language'}
-        </span>
       </button>
 
       {isOpen && (

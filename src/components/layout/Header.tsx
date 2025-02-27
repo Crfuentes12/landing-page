@@ -1,4 +1,4 @@
-// src/components/Header.tsx
+//src/components/layout/Header.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -20,7 +20,6 @@ const Header = () => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 0);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -30,12 +29,12 @@ const Header = () => {
   };
 
   const navLinks = [
-    { href: "#why-we-do-this", label: "Our Mission" },
-    { href: "#roadmap", label: "Services" },
-    { href: "#about", label: "About" },
-    { href: "#pricing", label: "Pricing" },
-    { href: "#faq", label: "FAQ" },
-    { href: "#contact", label: "Contact" },
+    { href: "#why-we-do-this", labelKey: "nav.mission" },
+    { href: "#roadmap", labelKey: "nav.services" },
+    { href: "#about", labelKey: "nav.about" },
+    { href: "#pricing", labelKey: "nav.pricing" },
+    { href: "#faq", labelKey: "nav.faq" },
+    { href: "#contact", labelKey: "nav.contact" },
   ];
 
   return (
@@ -57,7 +56,6 @@ const Header = () => {
               priority
             />
           </Link>
-
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
@@ -67,11 +65,10 @@ const Header = () => {
                 className="text-sm hover:text-primary transition-colors"
                 onClick={handleLinkClick}
               >
-                {link.label}
+                {t(link.labelKey)}
               </Link>
             ))}
           </nav>
-
           {/* Desktop Controls */}
           <div className="hidden md:flex items-center gap-4">
             <LanguageSwitch />
@@ -83,7 +80,6 @@ const Header = () => {
               {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
             </Button>
           </div>
-
           {/* Mobile Menu Button */}
           <button
             className="md:hidden"
@@ -94,7 +90,6 @@ const Header = () => {
           </button>
         </div>
       </div>
-
       {/* Mobile Menu */}
       <div
         className={`md:hidden transition-all duration-300 ease-in-out ${
@@ -109,7 +104,7 @@ const Header = () => {
               className="block py-2 text-sm hover:text-primary"
               onClick={handleLinkClick}
             >
-              {link.label}
+              {t(link.labelKey)}
             </Link>
           ))}
           <div className="pt-4 flex flex-col gap-2">

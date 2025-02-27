@@ -4,22 +4,25 @@ import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Target, Zap, Route, Shield, CodeXml, Rocket, LucideIcon, ChevronRight } from "lucide-react";
 import { motion } from 'framer-motion';
+import { useLanguage } from "@/providers/language-provider";
 
 interface FeatureCardProps {
   icon: React.ElementType;
-  title: string;
-  description: string;
+  titleKey: string;
+  descriptionKey: string;
   gradient: string;
   delay: number;
 }
 
 const FeatureCard: React.FC<FeatureCardProps> = ({ 
   icon: Icon, 
-  title, 
-  description, 
+  titleKey, 
+  descriptionKey, 
   gradient, 
   delay
 }) => {
+  const { t } = useLanguage();
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -34,10 +37,10 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
             <Icon className="h-7 w-7 text-white" />
           </div>
           <h3 className="text-xl font-semibold mb-4 group-hover:text-[#4285F4] transition-colors duration-300">
-            {title}
+            {t(titleKey)}
           </h3>
           <p className="text-muted-foreground leading-relaxed">
-            {description}
+            {t(descriptionKey)}
           </p>
         </CardContent>
       </Card>
@@ -48,20 +51,20 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
 const features = [
   {
     icon: Target,
-    title: "Vision First Approach",
-    description: "We understand that every great product starts with a visionary idea. Our focus is on preserving your vision while making it market-ready.",
+    titleKey: "roadmap.feature1.title",
+    descriptionKey: "roadmap.feature1.description",
     gradient: "from-[#4285F4] to-[#2B63D9]"
   },
   {
     icon: Zap,
-    title: "Efficient Development",
-    description: "No unnecessary complexity. We build exactly what you need to validate your idea and enter the market confidently.",
+    titleKey: "roadmap.feature2.title",
+    descriptionKey: "roadmap.feature2.description",
     gradient: "from-[#FF9800] to-[#F57C00]"
   },
   {
     icon: Shield,
-    title: "Future-Proof Foundation",
-    description: "While we focus on MVP essentials, we ensure your foundation is solid and scalable for future growth.",
+    titleKey: "roadmap.feature3.title",
+    descriptionKey: "roadmap.feature3.description",
     gradient: "from-[#34A853] to-[#2E7D32]"
   }
 ];
@@ -69,12 +72,12 @@ const features = [
 interface RoadmapStep {
   id: number;
   icon: LucideIcon;
-  title: string;
-  description: string;
+  titleKey: string;
+  descriptionKey: string;
   gradient: string;
   features: {
-    title: string;
-    description: string;
+    titleKey: string;
+    descriptionKey: string;
   }[];
 }
 
@@ -82,125 +85,125 @@ const roadmapSteps: RoadmapStep[] = [
   {
     id: 1,
     icon: Target,
-    title: "Idea Analysis",
-    description: "1. We dive into your vision to understand your needs and analyze your market.",
+    titleKey: "roadmap.step1.title",
+    descriptionKey: "roadmap.step1.description",
     gradient: "from-[#4285F4] to-[#2B63D9]",
     features: [
       {
-        title: "Industry Insights",
-        description: "Looking at market trends and industry dynamics to build the best MVP for you"
+        titleKey: "roadmap.step1.feature1.title",
+        descriptionKey: "roadmap.step1.feature1.description"
       },
       {
-        title: "User Needs Assessment",
-        description: "Deep dive into your potential users' needs and pain points"
+        titleKey: "roadmap.step1.feature2.title",
+        descriptionKey: "roadmap.step1.feature2.description"
       },
       {
-        title: "Competitive Analysis",
-        description: "Understanding your market position and competitive advantages"
+        titleKey: "roadmap.step1.feature3.title",
+        descriptionKey: "roadmap.step1.feature3.description"
       },
       {
-        title: "Opportunity Validation",
-        description: "Validating your idea's market fit and potential"
+        titleKey: "roadmap.step1.feature4.title",
+        descriptionKey: "roadmap.step1.feature4.description"
       }
     ]
   },
   {
     id: 2,
     icon: Zap,
-    title: "Smart Consultancy",
-    description: "2. We trim the excess and focus on what truly matters for your MVP success",
+    titleKey: "roadmap.step2.title",
+    descriptionKey: "roadmap.step2.description",
     gradient: "from-[#34A853] to-[#2E7D32]",
     features: [
       {
-        title: "Feature Analysis",
-        description: "Identifying and prioritizing essential MVP features"
+        titleKey: "roadmap.step2.feature1.title",
+        descriptionKey: "roadmap.step2.feature1.description"
       },
       {
-        title: "Tech Architecture",
-        description: "Designing the optimal technical foundation for your MVP"
+        titleKey: "roadmap.step2.feature2.title",
+        descriptionKey: "roadmap.step2.feature2.description"
       },
       {
-        title: "Resource Planning",
-        description: "Strategic allocation of resources for maximum efficiency"
+        titleKey: "roadmap.step2.feature3.title",
+        descriptionKey: "roadmap.step2.feature3.description"
       },
       {
-        title: "Risk Mitigation",
-        description: "Identifying and addressing potential challenges early"
+        titleKey: "roadmap.step2.feature4.title",
+        descriptionKey: "roadmap.step2.feature4.description"
       }
     ]
   },
   {
     id: 3,
     icon: Route,
-    title: "Scoping & Roadmap",
-    description: "3. We define clear project limits, timeline and key deliverables to ensure efficient development.",
+    titleKey: "roadmap.step3.title",
+    descriptionKey: "roadmap.step3.description",
     gradient: "from-[#FBBC05] to-[#F57C00]",
     features: [
       {
-        title: "Timeline Definition",
-        description: "Creating a clear, achievable development schedule"
+        titleKey: "roadmap.step3.feature1.title",
+        descriptionKey: "roadmap.step3.feature1.description"
       },
       {
-        title: "Milestone Planning",
-        description: "Setting specific, measurable project milestones"
+        titleKey: "roadmap.step3.feature2.title",
+        descriptionKey: "roadmap.step3.feature2.description"
       },
       {
-        title: "Project Scope",
-        description: "Giving you clear expectations"
+        titleKey: "roadmap.step3.feature3.title",
+        descriptionKey: "roadmap.step3.feature3.description"
       },
       {
-        title: "Deliverable Mapping",
-        description: "Defining clear, actionable project deliverables"
+        titleKey: "roadmap.step3.feature4.title",
+        descriptionKey: "roadmap.step3.feature4.description"
       }
     ]
   },
   {
     id: 4,
     icon: CodeXml,
-    title: "Development",
-    description: "4. We provide you with a transparent progress, including close collaboration and regular updates. You are always in control!",
+    titleKey: "roadmap.step4.title",
+    descriptionKey: "roadmap.step4.description",
     gradient: "from-[#EA4335] to-[#C62828]",
     features: [
       {
-        title: "Agile Process",
-        description: "Flexible, iterative development approach"
+        titleKey: "roadmap.step4.feature1.title",
+        descriptionKey: "roadmap.step4.feature1.description"
       },
       {
-        title: "Quality Focus",
-        description: "Rigorous testing and quality assurance"
+        titleKey: "roadmap.step4.feature2.title",
+        descriptionKey: "roadmap.step4.feature2.description"
       },
       {
-        title: "Progress Monitoring",
-        description: "Regular updates and progress tracking"
+        titleKey: "roadmap.step4.feature3.title",
+        descriptionKey: "roadmap.step4.feature3.description"
       },
       {
-        title: "Collaborative Development",
-        description: "Close partnership throughout the build process"
+        titleKey: "roadmap.step4.feature4.title",
+        descriptionKey: "roadmap.step4.feature4.description"
       }
     ]
   },
   {
     id: 5,
     icon: Rocket,
-    title: "Launch & Support",
-    description: "5. We deliver your MVP, ready to hit the market. If needed, we provide you with ongoing support and guidance",
+    titleKey: "roadmap.step5.title",
+    descriptionKey: "roadmap.step5.description",
     gradient: "from-[#9C27B0] to-[#6A1B9A]",
     features: [
       {
-        title: "Launch Strategy",
-        description: "Comprehensive deployment and launch planning"
+        titleKey: "roadmap.step5.feature1.title",
+        descriptionKey: "roadmap.step5.feature1.description"
       },
       {
-        title: "User Feedback",
-        description: "Implementing feedback collection systems"
+        titleKey: "roadmap.step5.feature2.title",
+        descriptionKey: "roadmap.step5.feature2.description"
       },
       {
-        title: "Performance Optimization",
-        description: "Ensuring optimal MVP performance"
+        titleKey: "roadmap.step5.feature3.title",
+        descriptionKey: "roadmap.step5.feature3.description"
       },
       {
-        title: "Ongoing Support",
-        description: "Continued guidance and technical support"
+        titleKey: "roadmap.step5.feature4.title",
+        descriptionKey: "roadmap.step5.feature4.description"
       }
     ]
   }
@@ -220,6 +223,7 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({
   onClick 
 }) => {
   const Icon = step.icon;
+  const { t } = useLanguage();
   
   return (
     <button 
@@ -249,7 +253,7 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({
           <span className="text-sm font-medium text-muted-foreground">Step {step.id}</span>
           <ChevronRight className="h-4 w-4 text-muted-foreground" />
         </div>
-        <h3 className="font-semibold">{step.title}</h3>
+        <h3 className="font-semibold">{t(step.titleKey)}</h3>
       </div>
     </button>
   );
@@ -260,20 +264,22 @@ interface StepContentProps {
 }
 
 const StepContent: React.FC<StepContentProps> = ({ step }) => {
+  const { t } = useLanguage();
+  
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-lg text-muted-foreground mb-8 font-bold">{step.description}</p>
+        <p className="text-lg text-muted-foreground mb-8 font-bold">{t(step.descriptionKey)}</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {step.features.map((feature, index) => (
             <Card key={index} className="border-[#4285F4]/10 bg-card/50 backdrop-blur-sm hover:shadow-md transition-all duration-300">
               <CardContent className="p-6">
                 <div className="flex items-center gap-3 mb-2">
                   <div className={`h-2 w-2 rounded-full bg-gradient-to-br ${step.gradient}`} />
-                  <h4 className="font-medium">{feature.title}</h4>
+                  <h4 className="font-medium">{t(feature.titleKey)}</h4>
                 </div>
                 <p className="text-sm text-muted-foreground pl-5">
-                  {feature.description}
+                  {t(feature.descriptionKey)}
                 </p>
               </CardContent>
             </Card>
@@ -286,9 +292,10 @@ const StepContent: React.FC<StepContentProps> = ({ step }) => {
 
 const Roadmap: React.FC = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
+  const { t } = useLanguage();
   
   return (
-    <section className="py-24 relative overflow-hidden">
+    <section className="py-24 relative overflow-hidden" id="roadmap">
       <div className="absolute inset-0 opacity-5">
         <div 
           className="absolute inset-0"
@@ -303,7 +310,7 @@ const Roadmap: React.FC = () => {
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#4285F4] to-[#2B63D9]">
-              How We Make It Happen
+              {t('roadmap.title')}
             </span>
           </h2>
         </div>
@@ -311,10 +318,10 @@ const Roadmap: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
           {features.map((feature, index) => (
             <FeatureCard
-              key={feature.title}
+              key={feature.titleKey}
               icon={feature.icon}
-              title={feature.title}
-              description={feature.description}
+              titleKey={feature.titleKey}
+              descriptionKey={feature.descriptionKey}
               gradient={feature.gradient}
               delay={0.2 + index * 0.2}
             />
@@ -324,11 +331,11 @@ const Roadmap: React.FC = () => {
         <div className="text-center mb-16">
           <h3 className="text-2xl md:text-3xl font-bold mb-6">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#4285F4] to-[#2B63D9]">
-              Roadmap to your MVP
+              {t('roadmap.features.title')}
             </span>
           </h3>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-          Our structured approach to turn your vision into reality.
+            {t('roadmap.subtitle')}
           </p>
         </div>
 

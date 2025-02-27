@@ -5,6 +5,7 @@ import { useRef } from 'react';
 import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
+import { useLanguage } from "@/providers/language-provider";
 
 interface HexCoordinate {
   q: number;
@@ -12,19 +13,19 @@ interface HexCoordinate {
 }
 
 interface Skill {
-  name: string;
+  nameKey: string;
   id: number;
   coordinate: HexCoordinate;
   isEmpty?: boolean;
 }
 
 interface Founder {
-  name: string;
-  title: string;
-  mission: string;
+  nameKey: string;
+  titleKey: string;
+  missionKey: string;
   imagePath: string;
   skills: Skill[];
-  keyAchievement: string;
+  achievementKey: string;
 }
 
 class HexagonGrid {
@@ -61,48 +62,51 @@ class HexagonGrid {
   }
 }
 
-const founders: Founder[] = [
-  {
-    name: "Robin",
-    title: "Startup & Innovation Lead",
-    mission: "Transforming complex ideas into focused, market-ready MVPs",
-    imagePath: "/robin.jpg",
-    skills: [
-      { id: 1, name: "MVP Strategy", coordinate: { q: 0, r: 0 } },
-      { id: 2, name: "IT Product Development", coordinate: { q: 2, r: -1 } },
-      { id: 3, name: "Market Analysis", coordinate: { q: 1, r: -2 } },
-      { id: 4, name: "Growth Hacking", coordinate: { q: 3, r: 0 } },
-      { id: 5, name: "Team Leadership", coordinate: { q: 4, r: -1 } },
-      { id: 6, name: "", coordinate: { q: 1, r: -1 }, isEmpty: true },
-      { id: 7, name: "", coordinate: { q: 2, r: -2 }, isEmpty: true },
-      { id: 8, name: "", coordinate: { q: 3, r: -2 }, isEmpty: true },
-      { id: 9, name: "", coordinate: { q: 4, r: -2 }, isEmpty: true },
-      { id: 10, name: "", coordinate: { q: 5, r: -1 }, isEmpty: true }
-    ],
-    keyAchievement: "10+ Successful MVPs launched",
-  },
-  {
-    name: "Chris",
-    title: "Tech Architecture & AI Lead",
-    mission: "Building scalable foundations for tomorrow's innovations",
-    imagePath: "/chris1.jpg",
-    skills: [
-      { id: 1, name: "System Architecture", coordinate: { q: 0, r: 0 } },
-      { id: 2, name: "AI Development", coordinate: { q: 1, r: -1 } },
-      { id: 3, name: "MVP Engineering", coordinate: { q: 3, r: -1 } },
-      { id: 4, name: "Cloud Infrastructure", coordinate: { q: 2, r: -2 } },
-      { id: 5, name: "Tech Leadership", coordinate: { q: 4, r: -2 } },
-      { id: 6, name: "", coordinate: { q: 2, r: 0 }, isEmpty: true },
-      { id: 7, name: "", coordinate: { q: 3, r: 0 }, isEmpty: true },
-      { id: 8, name: "", coordinate: { q: 4, r: -1 }, isEmpty: true },
-      { id: 9, name: "", coordinate: { q: 1, r: -2 }, isEmpty: true },
-      { id: 10, name: "", coordinate: { q: 3, r: -2 }, isEmpty: true }
-    ],
-    keyAchievement: "12+ Years of Tech Experience",
-  }
-];
+const getFounders = (): Founder[] => {
+  return [
+    {
+      nameKey: "about.robin.name",
+      titleKey: "about.robin.title",
+      missionKey: "about.robin.mission",
+      imagePath: "/robin.jpg",
+      skills: [
+        { id: 1, nameKey: "about.robin.skill1", coordinate: { q: 0, r: 0 } },
+        { id: 2, nameKey: "about.robin.skill2", coordinate: { q: 2, r: -1 } },
+        { id: 3, nameKey: "about.robin.skill3", coordinate: { q: 1, r: -2 } },
+        { id: 4, nameKey: "about.robin.skill4", coordinate: { q: 3, r: 0 } },
+        { id: 5, nameKey: "about.robin.skill5", coordinate: { q: 4, r: -1 } },
+        { id: 6, nameKey: "", coordinate: { q: 1, r: -1 }, isEmpty: true },
+        { id: 7, nameKey: "", coordinate: { q: 2, r: -2 }, isEmpty: true },
+        { id: 8, nameKey: "", coordinate: { q: 3, r: -2 }, isEmpty: true },
+        { id: 9, nameKey: "", coordinate: { q: 4, r: -2 }, isEmpty: true },
+        { id: 10, nameKey: "", coordinate: { q: 5, r: -1 }, isEmpty: true }
+      ],
+      achievementKey: "about.robin.achievement",
+    },
+    {
+      nameKey: "about.chris.name",
+      titleKey: "about.chris.title",
+      missionKey: "about.chris.mission",
+      imagePath: "/chris1.jpg",
+      skills: [
+        { id: 1, nameKey: "about.chris.skill1", coordinate: { q: 0, r: 0 } },
+        { id: 2, nameKey: "about.chris.skill2", coordinate: { q: 1, r: -1 } },
+        { id: 3, nameKey: "about.chris.skill3", coordinate: { q: 3, r: -1 } },
+        { id: 4, nameKey: "about.chris.skill4", coordinate: { q: 2, r: -2 } },
+        { id: 5, nameKey: "about.chris.skill5", coordinate: { q: 4, r: -2 } },
+        { id: 6, nameKey: "", coordinate: { q: 2, r: 0 }, isEmpty: true },
+        { id: 7, nameKey: "", coordinate: { q: 3, r: 0 }, isEmpty: true },
+        { id: 8, nameKey: "", coordinate: { q: 4, r: -1 }, isEmpty: true },
+        { id: 9, nameKey: "", coordinate: { q: 1, r: -2 }, isEmpty: true },
+        { id: 10, nameKey: "", coordinate: { q: 3, r: -2 }, isEmpty: true }
+      ],
+      achievementKey: "about.chris.achievement",
+    }
+  ];
+};
 
 const HexagonSkillGrid = ({ skills, isInView }: { skills: Skill[]; isInView: boolean }) => {
+  const { t } = useLanguage();
   const hexGrid = new HexagonGrid(50);
   const offsetX = 100;
   const offsetY = 200;
@@ -178,7 +182,7 @@ const HexagonSkillGrid = ({ skills, isInView }: { skills: Skill[]; isInView: boo
               >
                 <div className="h-full flex items-center justify-center">
                   <p className="text-xs font-medium text-foreground text-center px-1">
-                    {skill.name}
+                    {skill.nameKey ? t(skill.nameKey) : ""}
                   </p>
                 </div>
               </foreignObject>
@@ -191,6 +195,7 @@ const HexagonSkillGrid = ({ skills, isInView }: { skills: Skill[]; isInView: boo
 };
 
 const FounderCard = ({ founder, index }: { founder: Founder; index: number }) => {
+  const { t } = useLanguage();
   const cardRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(cardRef, { once: true, margin: "-100px" });
 
@@ -207,7 +212,7 @@ const FounderCard = ({ founder, index }: { founder: Founder; index: number }) =>
             <div className="relative w-24 h-24 rounded-lg overflow-hidden border border-[#4285F4]/10 mb-6">
               <Image
                 src={founder.imagePath}
-                alt={`${founder.name}'s profile`}
+                alt={`${t(founder.nameKey)}'s profile`}
                 fill
                 className="object-cover"
                 sizes="96px"
@@ -215,9 +220,9 @@ const FounderCard = ({ founder, index }: { founder: Founder; index: number }) =>
               />
             </div>
             <div className="space-y-2">
-              <h3 className="text-2xl font-bold text-foreground">{founder.name}</h3>
-              <p className="text-lg text-muted-foreground">{founder.title}</p>
-              <p className="text-sm text-[#4285F4] font-medium">{founder.keyAchievement}</p>
+              <h3 className="text-2xl font-bold text-foreground">{t(founder.nameKey)}</h3>
+              <p className="text-lg text-muted-foreground">{t(founder.titleKey)}</p>
+              <p className="text-sm text-[#4285F4] font-medium">{t(founder.achievementKey)}</p>
             </div>
           </div>
 
@@ -228,9 +233,9 @@ const FounderCard = ({ founder, index }: { founder: Founder; index: number }) =>
 
             <div className="space-y-4">
               <h4 className="text-sm font-semibold text-[#4285F4] tracking-wide text-center">
-                MISSION
+                {t('about.mission.title')}
               </h4>
-              <p className="text-muted-foreground leading-relaxed text-center">{founder.mission}</p>
+              <p className="text-muted-foreground leading-relaxed text-center">{t(founder.missionKey)}</p>
             </div>
           </div>
         </CardContent>
@@ -240,6 +245,8 @@ const FounderCard = ({ founder, index }: { founder: Founder; index: number }) =>
 };
 
 const AboutUs = () => {
+  const { t } = useLanguage();
+  const founders = getFounders();
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
@@ -263,17 +270,17 @@ const AboutUs = () => {
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#4285F4] to-[#2B63D9]">
-              Who We Are
+              {t('about.title')}
             </span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            We combine deep technical expertise with startup experience to transform your vision into reality. Our focus is on building MVPs that matter.
+            {t('about.description')}
           </p>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
           {founders.map((founder, index) => (
-            <FounderCard key={founder.name} founder={founder} index={index} />
+            <FounderCard key={founder.nameKey} founder={founder} index={index} />
           ))}
         </div>
       </div>

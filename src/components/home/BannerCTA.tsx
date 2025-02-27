@@ -3,8 +3,10 @@
 
 import React, { useRef, useState } from 'react';
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/providers/language-provider";
 
 const BannerCTA = () => {
+  const { t } = useLanguage();
   const bannerRef = useRef(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
@@ -22,7 +24,7 @@ const BannerCTA = () => {
   };
 
   const scrollToCTA = () => {
-    const ctaSection = document.querySelector('.cta');
+    const ctaSection = document.querySelector('#contact');
     if (ctaSection) {
       ctaSection.scrollIntoView({ behavior: 'smooth' });
     }
@@ -48,12 +50,12 @@ const BannerCTA = () => {
         <div className="text-center max-w-4xl mx-auto">
           {/* Main heading */}
           <h2 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-primary/90">
-            We&apos;re not just MVP-developers
+            {t('banner.title')}
           </h2>
 
           {/* Subheading */}
           <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto">
-            We&apos;re problem-solvers, business thinkers and startup insiders. We believe in creating real value. If you have the vision, we have the roadmap to make it real!
+            {t('banner.description')}
           </p>
 
           {/* CTA Button */}
@@ -63,7 +65,7 @@ const BannerCTA = () => {
             className="group relative px-8 py-6 text-lg bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300"
           >
             <span className="relative z-10 flex items-center">
-              Get Started Today
+              {t('banner.button')}
             </span>
             <div className="absolute inset-0 bg-gradient-to-r from-primary-foreground/0 via-primary-foreground/5 to-primary-foreground/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           </Button>

@@ -11,106 +11,109 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { XIcon, Check, Sparkles, CircleIcon } from "lucide-react";
+import { useLanguage } from "@/providers/language-provider";
 
 interface ComparisonItem {
-  criteria: string;
+  criteriaKey: string;
   gradient: string;
   ourService: {
     icon: 'check' | 'circle' | 'x';
-    description: string;
+    descriptionKey: string;
   };
   traditional: {
     icon: 'check' | 'circle' | 'x';
-    description: string;
+    descriptionKey: string;
   };
   noCode: {
     icon: 'check' | 'circle' | 'x';
-    description: string;
+    descriptionKey: string;
   };
 }
 
-const comparisonData: ComparisonItem[] = [
-  {
-    criteria: "Strategic Planning",
-    gradient: "from-blue-500/20 to-purple-500/20",
-    ourService: {
-      icon: 'check',
-      description: "Comprehensive strategic planning with focus on key business objectives"
+const getComparisonData = (): ComparisonItem[] => {
+  return [
+    {
+      criteriaKey: "comparison.strategic.title",
+      gradient: "from-blue-500/20 to-purple-500/20",
+      ourService: {
+        icon: 'check',
+        descriptionKey: "comparison.strategic.our"
+      },
+      traditional: {
+        icon: 'circle',
+        descriptionKey: "comparison.strategic.traditional"
+      },
+      noCode: {
+        icon: 'circle',
+        descriptionKey: "comparison.strategic.nocode"
+      }
     },
-    traditional: {
-      icon: 'circle',
-      description: "Standard project planning approach"
+    {
+      criteriaKey: "comparison.cost.title",
+      gradient: "from-amber-500/20 to-yellow-500/20",
+      ourService: {
+        icon: 'check',
+        descriptionKey: "comparison.cost.our"
+      },
+      traditional: {
+        icon: 'circle',
+        descriptionKey: "comparison.cost.traditional"
+      },
+      noCode: {
+        icon: 'circle',
+        descriptionKey: "comparison.cost.nocode"
+      }
     },
-    noCode: {
-      icon: 'circle',
-      description: "Basic planning capabilities"
+    {
+      criteriaKey: "comparison.agility.title",
+      gradient: "from-orange-500/20 to-red-500/20",
+      ourService: {
+        icon: 'check',
+        descriptionKey: "comparison.agility.our"
+      },
+      traditional: {
+        icon: 'circle',
+        descriptionKey: "comparison.agility.traditional"
+      },
+      noCode: {
+        icon: 'x',
+        descriptionKey: "comparison.agility.nocode"
+      }
+    },
+    {
+      criteriaKey: "comparison.expertise.title",
+      gradient: "from-emerald-500/20 to-teal-500/20",
+      ourService: {
+        icon: 'check',
+        descriptionKey: "comparison.expertise.our"
+      },
+      traditional: {
+        icon: 'circle',
+        descriptionKey: "comparison.expertise.traditional"
+      },
+      noCode: {
+        icon: 'x',
+        descriptionKey: "comparison.expertise.nocode"
+      }
+    },
+    {
+      criteriaKey: "comparison.scalability.title",
+      gradient: "from-pink-500/20 to-rose-500/20",
+      ourService: {
+        icon: 'check',
+        descriptionKey: "comparison.scalability.our"
+      },
+      traditional: {
+        icon: 'x',
+        descriptionKey: "comparison.scalability.traditional"
+      },
+      noCode: {
+        icon: 'x',
+        descriptionKey: "comparison.scalability.nocode"
+      }
     }
-  },
-  {
-    criteria: "Cost Efficiency",
-    gradient: "from-amber-500/20 to-yellow-500/20",
-    ourService: {
-      icon: 'check',
-      description: "Optimized pricing structure with maximum value delivery"
-    },
-    traditional: {
-      icon: 'circle',
-      description: "Traditional pricing models with overhead"
-    },
-    noCode: {
-      icon: 'circle',
-      description: "Subscription-based pricing with limitations"
-    }
-  },
-  {
-    criteria: "Development Agility",
-    gradient: "from-orange-500/20 to-red-500/20",
-    ourService: {
-      icon: 'check',
-      description: "Rapid, flexible development with continuous adaptation"
-    },
-    traditional: {
-      icon: 'circle',
-      description: "Structured but slower development process"
-    },
-    noCode: {
-      icon: 'x',
-      description: "Limited development capabilities"
-    }
-  },
-  {
-    criteria: "Technical Expertise",
-    gradient: "from-emerald-500/20 to-teal-500/20",
-    ourService: {
-      icon: 'check',
-      description: "Cutting-edge technical solutions with AI integration"
-    },
-    traditional: {
-      icon: 'circle',
-      description: "Strong technical capabilities but higher costs"
-    },
-    noCode: {
-      icon: 'x',
-      description: "Restricted to platform capabilities"
-    }
-  },
-  {
-    criteria: "Scalability",
-    gradient: "from-pink-500/20 to-rose-500/20",
-    ourService: {
-      icon: 'check',
-      description: "Built for growth with future-proof architecture"
-    },
-    traditional: {
-      icon: 'x',
-      description: "Complex and costly scaling process"
-    },
-    noCode: {
-      icon: 'x',
-      description: "Platform limitations affect scalability"
-    }
-  }
-];
+  ];
+};
 
 const ServiceIcon = ({ type }: { type: 'check' | 'circle' | 'x' }) => {
   const icons = {
@@ -144,6 +147,7 @@ const ComparisonRow = ({
   index: number;
   isInView: boolean;
 }) => {
+  const { t } = useLanguage();
   const serviceTypes = ['ourService', 'traditional', 'noCode'] as const;
 
   return (
@@ -154,7 +158,7 @@ const ComparisonRow = ({
       className="group"
     >
       <td className="py-4 sm:py-6 px-3 sm:px-6 min-w-[120px] sm:min-w-0">
-        <span className="font-medium text-base sm:text-lg text-primary/80">{item.criteria}</span>
+        <span className="font-medium text-base sm:text-lg text-primary/80">{t(item.criteriaKey)}</span>
       </td>
       
       {serviceTypes.map((service, idx) => (
@@ -169,7 +173,7 @@ const ComparisonRow = ({
                 </div>
               </TooltipTrigger>
               <TooltipContent side="top" className="max-w-[200px] sm:max-w-xs p-3">
-                <p className="text-sm">{item[service].description}</p>
+                <p className="text-sm">{t(item[service].descriptionKey)}</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -180,8 +184,10 @@ const ComparisonRow = ({
 };
 
 const ComparisonMatrix = () => {
+  const { t } = useLanguage();
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
+  const comparisonData = getComparisonData();
 
   return (
     <section className="py-12 sm:py-24 relative overflow-hidden" ref={sectionRef}>
@@ -197,11 +203,11 @@ const ComparisonMatrix = () => {
           className="text-center mb-8 sm:mb-16"
         >
           <h2 className="text-3xl sm:text-4xl font-bold mb-4 sm:mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/80 to-primary">
-            Choose Your Perfect Fit
+            {t('comparison.title')}
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-            Compare approaches and find the best solution for your MVP development needs.
-            <span className="block mt-2 text-xs sm:text-sm italic">Hover over any icon for a deeper explanation</span>
+            {t('comparison.description')}
+            <span className="block mt-2 text-xs sm:text-sm italic">{t('comparison.hover')}</span>
           </p>
         </motion.div>
 
@@ -212,26 +218,26 @@ const ComparisonMatrix = () => {
                 <thead>
                   <tr>
                     <th className="py-4 sm:py-6 px-3 sm:px-6 text-left font-semibold text-muted-foreground w-1/4">
-                      Criteria
+                      {t('comparison.criteria')}
                     </th>
                     <th className="py-4 sm:py-6 px-2 sm:px-4 w-1/4 relative bg-primary/5">
                       <div className="relative font-semibold text-primary flex items-center justify-center gap-2 text-sm sm:text-base">
-                        Our MVP Service
+                        {t('comparison.our.service')}
                         <Sparkles className="w-4 h-4 text-primary animate-pulse" />
                       </div>
                     </th>
                     <th className="py-4 sm:py-6 px-2 sm:px-4 font-semibold text-muted-foreground w-1/4 text-sm sm:text-base">
-                      Traditional Agency
+                      {t('comparison.traditional')}
                     </th>
                     <th className="py-4 sm:py-6 px-2 sm:px-4 font-semibold text-muted-foreground w-1/4 text-sm sm:text-base">
-                      No-Code Tools
+                      {t('comparison.nocode')}
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   {comparisonData.map((item, index) => (
                     <ComparisonRow
-                      key={item.criteria}
+                      key={item.criteriaKey}
                       item={item}
                       index={index}
                       isInView={isInView}

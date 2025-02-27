@@ -1,3 +1,6 @@
+// src/components/home/Pricing.tsx
+"use client";
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,8 +14,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLanguage } from "@/providers/language-provider";
 
-type SupportedLanguage = 'en' | 'es' | 'fr' | 'de';
+type SupportedLanguage = 'en' | 'es' | 'de';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -54,48 +58,26 @@ interface ChatState {
 const languageOptions: Record<SupportedLanguage, string> = {
   en: 'English',
   es: 'Español',
-  fr: 'Français',
   de: 'Deutsch'
 };
 
 const initialMessages: Record<SupportedLanguage, string> = {
   en: "Hi! I'm here to help you get a competitive price for your project. What type of project are you looking to build?",
   es: "¡Hola! Estoy aquí para ayudarte a obtener un precio competitivo para tu proyecto. ¿Qué tipo de proyecto quieres construir?",
-  fr: "Bonjour ! Je suis là pour vous aider à obtenir un prix compétitif pour votre projet. Quel type de projet souhaitez-vous construire ?",
   de: "Hallo! Ich bin hier, um Ihnen bei der Ermittlung eines wettbewerbsfähigen Preises für Ihr Projekt zu helfen. Welche Art von Projekt möchten Sie entwickeln?"
-};
-
-const placeholderText: Record<SupportedLanguage, { input: string; locked: string }> = {
-  en: {
-    input: "Type your message...",
-    locked: "Chat is locked. Press reset to start over."
-  },
-  es: {
-    input: "Escribe tu mensaje...",
-    locked: "Chat bloqueado. Presiona reiniciar para comenzar de nuevo."
-  },
-  fr: {
-    input: "Tapez votre message...",
-    locked: "Chat verrouillé. Appuyez sur réinitialiser pour recommencer."
-  },
-  de: {
-    input: "Nachricht eingeben...",
-    locked: "Chat gesperrt. Drücken Sie Reset, um neu zu beginnen."
-  }
 };
 
 const formatPrice = (price: number) => {
   return price.toLocaleString('de-DE');
 };
 
-
 const Pricing = () => {
-  const [language, setLanguage] = useState<SupportedLanguage>('en');
+  const { language, setLanguage, t } = useLanguage();
   const [chatState, setChatState] = useState<ChatState>({
     messages: [
       {
         role: 'assistant',
-        content: initialMessages.en,
+        content: initialMessages[language as SupportedLanguage] || initialMessages.en,
         timestamp: Date.now(),
         id: 'initial'
       }
@@ -123,6 +105,21 @@ const Pricing = () => {
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  useEffect(() => {
+    // Update initial message when language changes
+    setChatState(prev => ({
+      ...prev,
+      messages: [
+        {
+          role: 'assistant',
+          content: initialMessages[language as SupportedLanguage] || initialMessages.en,
+          timestamp: Date.now(),
+          id: 'initial-' + Date.now()
+        }
+      ]
+    }));
+  }, [language]);
 
   useEffect(() => {
     // If nothing changed, do nothing.
@@ -197,7 +194,7 @@ const Pricing = () => {
         body: JSON.stringify({
           messages: [{
             role: 'assistant',
-            content: initialMessages[newLanguage || language]
+            content: initialMessages[newLanguage || language as SupportedLanguage]
           }],
           language: newLanguage || language
         })
@@ -213,7 +210,7 @@ const Pricing = () => {
         messages: [
           {
             role: 'assistant',
-            content: initialMessages[newLanguage || language],
+            content: initialMessages[newLanguage || language as SupportedLanguage],
             timestamp: Date.now(),
             id: 'reset-' + Date.now()
           }
@@ -322,15 +319,14 @@ const Pricing = () => {
   }
 
   return (
-    <section className="py-20 px-6">
+    <section className="py-20 px-6" id="pricing">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/80 to-primary dark:from-primary/90 dark:via-primary/70 dark:to-primary/90">
-            Get Your Project Estimate
+            {t('pricing.title')}
           </h2>
           <p className="text-lg text-muted-foreground dark:text-muted-foreground/90 max-w-2xl mx-auto">
-            Our AI assistant helps assess your project scope to provide you with a competitive pricing estimation. 
-            With our smart planning approach, we can significantly reduce costs while maintaining quality.
+            {t('pricing.description')}
           </p>
         </div>
 
@@ -338,7 +334,7 @@ const Pricing = () => {
           <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
             <div className="w-full lg:w-1/2 text-blue-950 dark:text-blue-100">
               <h2 className="text-4xl font-bold mb-6">
-                Your Estimation is
+                {t('pricing.estimation')}
               </h2>
               <motion.div 
                 className="text-6xl font-bold"
@@ -360,7 +356,7 @@ const Pricing = () => {
                     <DropdownMenuTrigger asChild>
                       <Button variant="outline" size="sm" className="gap-2">
                         <Globe className="h-4 w-4" />
-                        {languageOptions[language]}
+                        {languageOptions[language as SupportedLanguage]}
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
@@ -443,8 +439,8 @@ const Pricing = () => {
                       onKeyPress={handleKeyPress}
                       placeholder={
                         chatState.isLocked
-                          ? placeholderText[language].locked
-                          : placeholderText[language].input
+                          ? t('pricing.placeholder.locked')
+                          : t('pricing.placeholder.input')
                       }
                       disabled={isLoading || chatState.isLocked}
                       className="flex-1 resize-none rounded-md border border-input bg-background dark:bg-gray-900 dark:border-gray-700 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 dark:focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:opacity-50"

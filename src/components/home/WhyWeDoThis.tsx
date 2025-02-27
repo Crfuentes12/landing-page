@@ -3,6 +3,7 @@
 
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
+import { useLanguage } from "@/providers/language-provider";
 
 export default function WhyWeDoThis() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -10,6 +11,7 @@ export default function WhyWeDoThis() {
     once: true, 
     margin: "-100px" 
   });
+  const { t } = useLanguage();
 
   const textVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -21,7 +23,7 @@ export default function WhyWeDoThis() {
   };
 
   return (
-    <section className="pt-24 pb-4 relative overflow-hidden">
+    <section className="pt-24 pb-4 relative overflow-hidden" id="why-we-do-this">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div 
@@ -51,7 +53,7 @@ export default function WhyWeDoThis() {
             className="text-3xl md:text-4xl font-bold mb-6"
           >
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#4285F4] to-[#2B63D9]">
-              Why We Do This
+              {t('why.title')}
             </span>
           </motion.h2>
         </motion.div>
@@ -64,7 +66,7 @@ export default function WhyWeDoThis() {
           className="text-center mb-16"
         >
           <h3 className="text-2xl md:text-3xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-[#000000] to-[#a1a1a1]">
-            We believe every bold idea deserves a chance.
+            {t('why.subtitle')}
           </h3>
         </motion.div>
 
@@ -76,12 +78,10 @@ export default function WhyWeDoThis() {
             transition={{ delay: 0.4, duration: 0.8 }}
             className="space-y-6"
           >
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              Too many visionary founders struggle to bring their ideas to life, because they face 
-              <span className="font-semibold text-foreground"> barriers that shouldn&apos;t exist</span>. 
-              High costs due to unnecessary features and bad advice kill great concepts before they 
-              even reach the market.
-            </p>
+            <p 
+              className="text-lg text-muted-foreground leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: t('why.paragraph1') }}
+            />
           </motion.div>
 
           <motion.div
@@ -90,11 +90,10 @@ export default function WhyWeDoThis() {
             transition={{ delay: 0.6, duration: 0.8 }}
             className="space-y-6"
           >
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              We&apos;ve seen it happen too many times. We know the frustration of having a groundbreaking 
-              idea but being held back by unnecessary complexity. 
-              <span className="font-semibold text-foreground"> That&apos;s why we&apos;re here—to break down these barriers.</span>
-            </p>
+            <p 
+              className="text-lg text-muted-foreground leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: t('why.paragraph2') }}
+            />
           </motion.div>
         </div>
       </motion.div>

@@ -1,4 +1,3 @@
-
 //landing-page/src/components/home/CTA.tsx
 "use client";
 
@@ -22,42 +21,9 @@ type ContactFormData = {
 interface SocialLink {
   icon: IconDefinition | React.ComponentType;
   href: string;
-  label: string;
+  labelKey: string;
   hoverColor: string;
   isLucide?: boolean;
-}
-
-const socialLinks: SocialLink[] = [
-  {
-    icon: Mail,
-    href: "mailto:your-email@example.com",
-    label: "Email",
-    hoverColor: "hover:text-[#2B63D9]",
-    isLucide: true
-  },
-  {
-    icon: faLinkedin,
-    href: "https://linkedin.com/company/your-company",
-    label: "LinkedIn",
-    hoverColor: "hover:text-[#0A66C2]"
-  }
-];
-
-async function submitContactForm(data: ContactFormData) {
-  const response = await fetch('/api/contact', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to submit form');
-  }
-
-  return response.json();
 }
 
 const CTA = () => {
@@ -65,6 +31,39 @@ const CTA = () => {
   const { openModal } = useModal();
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const socialLinks: SocialLink[] = [
+    {
+      icon: Mail,
+      href: "mailto:your-email@example.com",
+      labelKey: "cta.email",
+      hoverColor: "hover:text-[#2B63D9]",
+      isLucide: true
+    },
+    {
+      icon: faLinkedin,
+      href: "https://linkedin.com/company/your-company",
+      labelKey: "cta.linkedin",
+      hoverColor: "hover:text-[#0A66C2]"
+    }
+  ];
+
+  async function submitContactForm(data: ContactFormData) {
+    const response = await fetch('/api/contact', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to submit form');
+    }
+
+    return response.json();
+  }
   
   const {
     values,
@@ -115,7 +114,7 @@ const CTA = () => {
   });
 
   return (
-    <section className="relative py-20 px-6 overflow-hidden bg-primary/5 dark:bg-primary/[0.02]">
+    <section className="relative py-20 px-6 overflow-hidden bg-primary/5 dark:bg-primary/[0.02]" id="contact">
       {/* Background Pattern */}
       <div className="absolute inset-0" 
         style={{
@@ -129,19 +128,18 @@ const CTA = () => {
           <div className="space-y-8">
             <div className="space-y-6">
               <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#4285F4] to-[#2B63D9] dark:from-[#5C9FFF] dark:to-[#3B7DFF] bg-clip-text text-transparent leading-tight">
-                Ready to Build the Next Big Thing? Let&apos;s Talk!
+                {t('cta.title')}
               </h2>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Start now. The <span className="font-semibold text-foreground">right MVP</span> at 
-                the <span className="font-semibold text-foreground">right price</span>—nothing more, 
-                nothing less. We&apos;re just a <span className="font-semibold text-foreground">tap away</span>.
-              </p>
+              <p 
+                className="text-lg text-muted-foreground leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: t('cta.description') }}
+              />
             </div>
             
             <div className="flex gap-6">
               {socialLinks.map((link) => (
                 <a
-                  key={link.label}
+                  key={link.labelKey}
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"

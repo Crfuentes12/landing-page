@@ -4,10 +4,11 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { User, Send, Target, Code, Rocket, Lightbulb, Sparkles, ShoppingCart, Brain, ClipboardList, MessageSquare, Bot, Zap } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLanguage } from "@/providers/language-provider";
 
 interface TimelineItem {
-  title: string;
-  description: string;
+  titleKey: string;
+  descriptionKey: string;
   icon: React.ReactNode;
 }
 
@@ -17,8 +18,8 @@ interface ComparisonItem {
 }
 
 interface FeatureItem {
-  title: string;
-  description: string;
+  titleKey: string;
+  descriptionKey: string;
   icon: React.ReactNode;
 }
 
@@ -33,234 +34,15 @@ interface Preview {
 
 interface ChatMessage {
   user: {
-    name: string;
-    message: string;
+    nameKey: string;
+    messageKey: string;
   };
-  assistant: string;
+  assistantKey: string;
   preview: Preview;
 }
 
-const chatSequences: ChatMessage[][] = [
-  [
-    {
-      user: { 
-        name: "Sarah Chen", 
-        message: "Can you build a mobile-first SaaS platform?" 
-      },
-      assistant: "We specialize in modern SaaS development. Here's our proven approach to building scalable platforms:",
-      preview: {
-        type: 'timeline',
-        content: {
-          timeline: [
-            {
-              title: "Design Sprint",
-              description: "UX research & modern UI design",
-              icon: <Target className="h-4 w-4 text-blue-400" />
-            },
-            {
-              title: "Rapid Development",
-              description: "Progressive web app build",
-              icon: <Code className="h-4 w-4 text-blue-400" />
-            },
-            {
-              title: "Launch",
-              description: "3-week MVP deployment",
-              icon: <Rocket className="h-4 w-4 text-blue-400" />
-            }
-          ]
-        }
-      }
-    }
-  ],
-  [
-    {
-      user: { 
-        name: "Marcus Thompson", 
-        message: "Looking to build an AI-powered B2B SaaS for startups" 
-      },
-      assistant: "Perfect timing! We'll create a cutting-edge AI platform tailored for startups. Here's what we deliver:",
-      preview: {
-        type: 'features',
-        content: {
-          features: [
-            {
-              title: "AI Core Integration",
-              description: "Custom LLM implementation & API management",
-              icon: <Brain className="h-4 w-4 text-blue-400" />
-            },
-            {
-              title: "Startup-Ready Features",
-              description: "Multi-tenant architecture & scalable infrastructure",
-              icon: <Zap className="h-4 w-4 text-blue-400" />
-            },
-            {
-              title: "Analytics Dashboard",
-              description: "Real-time metrics & AI insights",
-              icon: <Sparkles className="h-4 w-4 text-blue-400" />
-            }
-          ]
-        }
-      }
-    }
-  ],
-  [
-    {
-      user: {
-        name: "Elena Rodriguez",
-        message: "Need a premium e-commerce platform, not the usual Shopify template"
-      },
-      assistant: "We'll create a distinctive e-commerce experience that sets you apart. Here's our custom approach:",
-      preview: {
-        type: 'features',
-        content: {
-          features: [
-            {
-              title: "Custom Shopping Experience",
-              description: "Unique UI/UX with AR product previews",
-              icon: <ShoppingCart className="h-4 w-4 text-blue-400" />
-            },
-            {
-              title: "Advanced Analytics",
-              description: "AI-powered customer insights & recommendations",
-              icon: <Brain className="h-4 w-4 text-blue-400" />
-            },
-            {
-              title: "Seamless Integration",
-              description: "Custom payment & inventory systems",
-              icon: <Code className="h-4 w-4 text-blue-400" />
-            }
-          ]
-        }
-      }
-    }
-  ],
-  [
-    {
-      user: {
-        name: "James Wilson",
-        message: "I want to build a habit tracking app with social features"
-      },
-      assistant: "We'll create an engaging habit tracking platform that keeps users motivated. Here's our development roadmap:",
-      preview: {
-        type: 'timeline',
-        content: {
-          timeline: [
-            {
-              title: "User Experience Design",
-              description: "Gamified tracking & social interactions",
-              icon: <Target className="h-4 w-4 text-blue-400" />
-            },
-            {
-              title: "Core Features",
-              description: "Habit streaks, challenges & social graph",
-              icon: <ClipboardList className="h-4 w-4 text-blue-400" />
-            },
-            {
-              title: "Analytics & Insights",
-              description: "Progress visualization & AI recommendations",
-              icon: <Sparkles className="h-4 w-4 text-blue-400" />
-            }
-          ]
-        }
-      }
-    }
-  ],
-  [
-    {
-      user: {
-        name: "Lisa Chang",
-        message: "Need AI consultancy for our value proposition"
-      },
-      assistant: "We'll help you leverage AI to create compelling value for your customers. Our consultation process includes:",
-      preview: {
-        type: 'features',
-        content: {
-          features: [
-            {
-              title: "AI Opportunity Analysis",
-              description: "Market research & competitive positioning",
-              icon: <Lightbulb className="h-4 w-4 text-blue-400" />
-            },
-            {
-              title: "Strategy Workshop",
-              description: "AI integration roadmap & ROI projection",
-              icon: <Target className="h-4 w-4 text-blue-400" />
-            },
-            {
-              title: "Implementation Guide",
-              description: "Technical requirements & resource planning",
-              icon: <ClipboardList className="h-4 w-4 text-blue-400" />
-            }
-          ]
-        }
-      }
-    }
-  ],
-  [
-    {
-      user: {
-        name: "David Park",
-        message: "Looking to build an AI note-taking app with voice recording"
-      },
-      assistant: "We'll create a powerful AI-enhanced note-taking platform. Here's what we'll deliver:",
-      preview: {
-        type: 'features',
-        content: {
-          features: [
-            {
-              title: "Voice Recognition",
-              description: "Real-time transcription & semantic search",
-              icon: <MessageSquare className="h-4 w-4 text-blue-400" />
-            },
-            {
-              title: "AI Processing",
-              description: "Auto-summarization & topic extraction",
-              icon: <Brain className="h-4 w-4 text-blue-400" />
-            },
-            {
-              title: "Smart Organization",
-              description: "AI-powered tagging & categorization",
-              icon: <Bot className="h-4 w-4 text-blue-400" />
-            }
-          ]
-        }
-      }
-    }
-  ],
-  [
-    {
-      user: {
-        name: "Rachel Martinez",
-        message: "Can you help create a fast content generation platform for our marketing team?"
-      },
-      assistant: "We'll build an AI-powered content acceleration platform tailored to your brand. Here's our solution:",
-      preview: {
-        type: 'timeline',
-        content: {
-          timeline: [
-            {
-              title: "AI Engine Setup",
-              description: "Custom LLM training & brand voice integration",
-              icon: <Brain className="h-4 w-4 text-blue-400" />
-            },
-            {
-              title: "Content Workflow",
-              description: "Templates, scheduling & approval system",
-              icon: <ClipboardList className="h-4 w-4 text-blue-400" />
-            },
-            {
-              title: "Analytics Suite",
-              description: "Performance tracking & content optimization",
-              icon: <Sparkles className="h-4 w-4 text-blue-400" />
-            }
-          ]
-        }
-      }
-    }
-  ]
-];
-
 const HeroChat: React.FC = () => {
+  const { t } = useLanguage();
   const [currentSequenceIndex, setCurrentSequenceIndex] = useState(0);
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const [isTyping, setIsTyping] = useState(false);
@@ -270,6 +52,226 @@ const HeroChat: React.FC = () => {
   const [messageStage, setMessageStage] = useState<'typing' | 'preview'>('typing');
   
   const chatRef = useRef<HTMLDivElement>(null);
+
+  const chatSequences: ChatMessage[][] = [
+    [
+      {
+        user: { 
+          nameKey: "chat.sarah.name", 
+          messageKey: "chat.sarah.message" 
+        },
+        assistantKey: "chat.sarah.response",
+        preview: {
+          type: 'timeline',
+          content: {
+            timeline: [
+              {
+                titleKey: "chat.sarah.timeline.design.title",
+                descriptionKey: "chat.sarah.timeline.design.desc",
+                icon: <Target className="h-4 w-4 text-blue-400" />
+              },
+              {
+                titleKey: "chat.sarah.timeline.dev.title",
+                descriptionKey: "chat.sarah.timeline.dev.desc",
+                icon: <Code className="h-4 w-4 text-blue-400" />
+              },
+              {
+                titleKey: "chat.sarah.timeline.launch.title",
+                descriptionKey: "chat.sarah.timeline.launch.desc",
+                icon: <Rocket className="h-4 w-4 text-blue-400" />
+              }
+            ]
+          }
+        }
+      }
+    ],
+    [
+      {
+        user: { 
+          nameKey: "chat.marcus.name", 
+          messageKey: "chat.marcus.message" 
+        },
+        assistantKey: "chat.marcus.response",
+        preview: {
+          type: 'features',
+          content: {
+            features: [
+              {
+                titleKey: "chat.marcus.features.ai.title",
+                descriptionKey: "chat.marcus.features.ai.desc",
+                icon: <Brain className="h-4 w-4 text-blue-400" />
+              },
+              {
+                titleKey: "chat.marcus.features.startup.title",
+                descriptionKey: "chat.marcus.features.startup.desc",
+                icon: <Zap className="h-4 w-4 text-blue-400" />
+              },
+              {
+                titleKey: "chat.marcus.features.analytics.title",
+                descriptionKey: "chat.marcus.features.analytics.desc",
+                icon: <Sparkles className="h-4 w-4 text-blue-400" />
+              }
+            ]
+          }
+        }
+      }
+    ],
+    [
+      {
+        user: {
+          nameKey: "chat.elena.name",
+          messageKey: "chat.elena.message"
+        },
+        assistantKey: "chat.elena.response",
+        preview: {
+          type: 'features',
+          content: {
+            features: [
+              {
+                titleKey: "chat.elena.features.shopping.title",
+                descriptionKey: "chat.elena.features.shopping.desc",
+                icon: <ShoppingCart className="h-4 w-4 text-blue-400" />
+              },
+              {
+                titleKey: "chat.elena.features.analytics.title",
+                descriptionKey: "chat.elena.features.analytics.desc",
+                icon: <Brain className="h-4 w-4 text-blue-400" />
+              },
+              {
+                titleKey: "chat.elena.features.integration.title",
+                descriptionKey: "chat.elena.features.integration.desc",
+                icon: <Code className="h-4 w-4 text-blue-400" />
+              }
+            ]
+          }
+        }
+      }
+    ],
+    [
+      {
+        user: {
+          nameKey: "chat.james.name",
+          messageKey: "chat.james.message"
+        },
+        assistantKey: "chat.james.response",
+        preview: {
+          type: 'timeline',
+          content: {
+            timeline: [
+              {
+                titleKey: "chat.james.timeline.ux.title",
+                descriptionKey: "chat.james.timeline.ux.desc",
+                icon: <Target className="h-4 w-4 text-blue-400" />
+              },
+              {
+                titleKey: "chat.james.timeline.features.title",
+                descriptionKey: "chat.james.timeline.features.desc",
+                icon: <ClipboardList className="h-4 w-4 text-blue-400" />
+              },
+              {
+                titleKey: "chat.james.timeline.analytics.title",
+                descriptionKey: "chat.james.timeline.analytics.desc",
+                icon: <Sparkles className="h-4 w-4 text-blue-400" />
+              }
+            ]
+          }
+        }
+      }
+    ],
+    [
+      {
+        user: {
+          nameKey: "chat.lisa.name",
+          messageKey: "chat.lisa.message"
+        },
+        assistantKey: "chat.lisa.response",
+        preview: {
+          type: 'features',
+          content: {
+            features: [
+              {
+                titleKey: "chat.lisa.features.analysis.title",
+                descriptionKey: "chat.lisa.features.analysis.desc",
+                icon: <Lightbulb className="h-4 w-4 text-blue-400" />
+              },
+              {
+                titleKey: "chat.lisa.features.strategy.title",
+                descriptionKey: "chat.lisa.features.strategy.desc",
+                icon: <Target className="h-4 w-4 text-blue-400" />
+              },
+              {
+                titleKey: "chat.lisa.features.implementation.title",
+                descriptionKey: "chat.lisa.features.implementation.desc",
+                icon: <ClipboardList className="h-4 w-4 text-blue-400" />
+              }
+            ]
+          }
+        }
+      }
+    ],
+    [
+      {
+        user: {
+          nameKey: "chat.david.name",
+          messageKey: "chat.david.message"
+        },
+        assistantKey: "chat.david.response",
+        preview: {
+          type: 'features',
+          content: {
+            features: [
+              {
+                titleKey: "chat.david.features.voice.title",
+                descriptionKey: "chat.david.features.voice.desc",
+                icon: <MessageSquare className="h-4 w-4 text-blue-400" />
+              },
+              {
+                titleKey: "chat.david.features.ai.title",
+                descriptionKey: "chat.david.features.ai.desc",
+                icon: <Brain className="h-4 w-4 text-blue-400" />
+              },
+              {
+                titleKey: "chat.david.features.organization.title",
+                descriptionKey: "chat.david.features.organization.desc",
+                icon: <Bot className="h-4 w-4 text-blue-400" />
+              }
+            ]
+          }
+        }
+      }
+    ],
+    [
+      {
+        user: {
+          nameKey: "chat.rachel.name",
+          messageKey: "chat.rachel.message"
+        },
+        assistantKey: "chat.rachel.response",
+        preview: {
+          type: 'timeline',
+          content: {
+            timeline: [
+              {
+                titleKey: "chat.rachel.timeline.engine.title",
+                descriptionKey: "chat.rachel.timeline.engine.desc",
+                icon: <Brain className="h-4 w-4 text-blue-400" />
+              },
+              {
+                titleKey: "chat.rachel.timeline.workflow.title",
+                descriptionKey: "chat.rachel.timeline.workflow.desc",
+                icon: <ClipboardList className="h-4 w-4 text-blue-400" />
+              },
+              {
+                titleKey: "chat.rachel.timeline.analytics.title",
+                descriptionKey: "chat.rachel.timeline.analytics.desc",
+                icon: <Sparkles className="h-4 w-4 text-blue-400" />
+              }
+            ]
+          }
+        }
+      }
+    ]
+  ];
 
   const startChatSequence = useCallback(() => {
     const currentSequence = chatSequences[currentSequenceIndex];
@@ -284,7 +286,7 @@ const HeroChat: React.FC = () => {
       setTimeout(() => {
         setIsTyping(false);
         let currentText = '';
-        const message = currentSequence[currentMessageIndex].assistant;
+        const message = t(currentSequence[currentMessageIndex].assistantKey);
         let currentIndex = 0;
 
         const typeText = () => {
@@ -312,7 +314,7 @@ const HeroChat: React.FC = () => {
         typeText();
       }, 1500);
     }
-  }, [currentSequenceIndex, currentMessageIndex, isAnimating]);
+  }, [currentSequenceIndex, currentMessageIndex, isAnimating, t]);
 
   useEffect(() => {
     if (!isAnimating) {
@@ -331,8 +333,8 @@ const HeroChat: React.FC = () => {
         <div key={index} className="flex items-start gap-3">
           <div className="mt-1">{item.icon}</div>
           <div>
-            <div className="font-medium text-sm text-gray-900 dark:text-gray-100">{item.title}</div>
-            <div className="text-xs text-gray-700 dark:text-gray-300">{item.description}</div>
+            <div className="font-medium text-sm text-gray-900 dark:text-gray-100">{t(item.titleKey)}</div>
+            <div className="text-xs text-gray-700 dark:text-gray-300">{t(item.descriptionKey)}</div>
           </div>
         </div>
       ))}
@@ -350,9 +352,9 @@ const HeroChat: React.FC = () => {
         <div key={index} className="space-y-1">
           <div className="flex items-center gap-2">
             {feature.icon}
-            <div className="font-medium text-sm text-gray-900 dark:text-gray-100">{feature.title}</div>
+            <div className="font-medium text-sm text-gray-900 dark:text-gray-100">{t(feature.titleKey)}</div>
           </div>
-          <div className="text-xs text-gray-700 dark:text-gray-300 ml-6">{feature.description}</div>
+          <div className="text-xs text-gray-700 dark:text-gray-300 ml-6">{t(feature.descriptionKey)}</div>
         </div>
       ))}
     </motion.div>
@@ -390,10 +392,10 @@ const HeroChat: React.FC = () => {
           >
             <div className="space-y-1">
               <div className="text-xs text-gray-400 dark:text-gray-500 text-right">
-                {currentMessage.user.name}
+                {t(currentMessage.user.nameKey)}
               </div>
               <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl rounded-tr-none px-3 md:px-4 py-2 text-xs md:text-sm inline-block shadow-lg shadow-blue-500/20">
-                {currentMessage.user.message}
+                {t(currentMessage.user.messageKey)}
               </div>
             </div>
             <div className="bg-gray-100 dark:bg-gray-800 rounded-full p-1.5 hidden sm:block">

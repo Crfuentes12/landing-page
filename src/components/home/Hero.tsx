@@ -4,23 +4,25 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowDown } from "lucide-react";
 import { useScroll } from "@/providers/scroll-provider";
+import { useLanguage } from "@/providers/language-provider";
 import HeroChat from './HeroChat';
 
 interface Stat {
-  label: string;
+  labelKey: string;
   value: string;
   accent: string;
 }
 
-const stats: Stat[] = [
-  { label: 'MVPs builded', value: '10+', accent: 'from-[#4285F4] to-[#2B63D9]' },
-  { label: 'Years of Experience', value: '8+', accent: 'from-[#4285F4] to-[#2B63D9]' },
-  { label: 'happy clients', value: '15+', accent: 'from-[#4285F4] to-[#2B63D9]' },
-  { label: 'Team size', value: '2', accent: 'from-[#4285F4] to-[#2B63D9]' }
-];
-
 const Hero = () => {
   const { scrollToSection } = useScroll();
+  const { t } = useLanguage();
+
+  const stats: Stat[] = [
+    { labelKey: 'hero.stats.mvps', value: '10+', accent: 'from-[#4285F4] to-[#2B63D9]' },
+    { labelKey: 'hero.stats.experience', value: '8+', accent: 'from-[#4285F4] to-[#2B63D9]' },
+    { labelKey: 'hero.stats.clients', value: '15+', accent: 'from-[#4285F4] to-[#2B63D9]' },
+    { labelKey: 'hero.stats.team', value: '2', accent: 'from-[#4285F4] to-[#2B63D9]' }
+  ];
 
   return (
     <section className="relative min-h-screen flex flex-col justify-start md:justify-center items-center px-4 md:px-6 pt-16 md:pt-0 pb-20 overflow-hidden">
@@ -48,12 +50,12 @@ const Hero = () => {
         <div className="space-y-6 md:space-y-8 text-center lg:text-left">
           <div className="space-y-3 md:space-y-4">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
-              <span className="block text-[#4285F4]">Fast. Smart.</span>
-              <span>Your MVP Done Right.</span>
+              <span className="block text-[#4285F4]">{t('hero.title.fast')}</span>
+              <span>{t('hero.title.mvp')}</span>
             </h1>
             
             <p className="text-lg md:text-xl text-muted-foreground max-w-xl mx-auto lg:mx-0">
-              Launch your Software MVP in 6 weeks and save 30% of development costs.
+              {t('hero.description')}
             </p>
           </div>
           
@@ -63,7 +65,7 @@ const Hero = () => {
               className="bg-[#4285F4] hover:bg-[#2B63D9] text-white group transition-all duration-300 text-base md:text-lg py-4 md:py-6 w-full sm:w-auto"
               onClick={() => scrollToSection('pricing')}
             >
-              Get Your Price Estimation
+              {t('hero.button.estimate')}
               <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5 transition-transform group-hover:translate-x-1" />
             </Button>
             <Button 
@@ -72,7 +74,7 @@ const Hero = () => {
               className="border-[#4285F4] text-[#4285F4] hover:bg-[#4285F4]/10 transition-all duration-300 text-base md:text-lg py-4 md:py-6 w-full sm:w-auto"
               onClick={() => scrollToSection('contact')}
             >
-              Contact Us
+              {t('hero.button.contact')}
             </Button>
           </div>
 
@@ -80,11 +82,11 @@ const Hero = () => {
           <div className="w-full overflow-x-auto pb-2 -mx-4 px-4">
             <div className="flex gap-4 md:gap-8 min-w-max md:min-w-0 md:justify-between">
               {stats.map((stat) => (
-                <div key={stat.label} className="text-center flex-1">
+                <div key={stat.labelKey} className="text-center flex-1">
                   <div className={`text-2xl md:text-3xl font-bold bg-gradient-to-r ${stat.accent} bg-clip-text text-transparent`}>
                     {stat.value}
                   </div>
-                  <div className="text-xs md:text-sm text-muted-foreground mt-1 whitespace-nowrap">{stat.label}</div>
+                  <div className="text-xs md:text-sm text-muted-foreground mt-1 whitespace-nowrap">{t(stat.labelKey)}</div>
                 </div>
               ))}
             </div>

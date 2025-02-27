@@ -10,7 +10,7 @@ export function LanguageSelector() {
 
   useEffect(() => {
     setMounted(true);
-    const storedLang = localStorage.getItem("preferredLanguage") as "en" | "es" | "fr";
+    const storedLang = localStorage.getItem("preferredLanguage") as "en" | "es" | "de";
     if (storedLang && storedLang !== language) {
       setLanguage(storedLang);
     }

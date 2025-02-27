@@ -7,16 +7,15 @@ import { schemas } from "@/lib/validation";
 import { useModal } from "@/providers/modal-provider";
 import { useLanguage } from "@/providers/language-provider";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Rocket, AlertCircle, Mail } from "lucide-react";
+import { ArrowRight, Rocket, AlertCircle, Mail, Loader2 } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLinkedin } from '@fortawesome/free-brands-svg-icons';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ContactFormData } from "@/types";
 
-type ContactFormData = {
-  email: string;
-  message: string;
-};
+// Company email address
+const COMPANY_EMAIL = "info@sprintlaunchers.com";
 
 interface SocialLink {
   icon: IconDefinition | React.ComponentType;
@@ -30,39 +29,50 @@ const CTA = () => {
   const { t } = useLanguage();
   const { openModal } = useModal();
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitWarning, setSubmitWarning] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const socialLinks: SocialLink[] = [
     {
       icon: Mail,
-      href: "mailto:your-email@example.com",
+      href: `mailto:${COMPANY_EMAIL}`,
       labelKey: "cta.email",
       hoverColor: "hover:text-[#2B63D9]",
       isLucide: true
     },
     {
       icon: faLinkedin,
-      href: "https://linkedin.com/company/your-company",
+      href: "https://linkedin.com/company/sprintlaunchers",
       labelKey: "cta.linkedin",
       hoverColor: "hover:text-[#0A66C2]"
     }
   ];
 
   async function submitContactForm(data: ContactFormData) {
-    const response = await fetch('/api/contact', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Failed to submit form');
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to submit form');
+      }
+
+      if (result.warning) {
+        setSubmitWarning(result.warning);
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      throw error;
     }
-
-    return response.json();
   }
   
   const {
@@ -72,6 +82,7 @@ const CTA = () => {
     handleChange,
     handleBlur,
     handleSubmit,
+    resetForm
   } = useForm<ContactFormData>({
     initialValues: {
       email: '',
@@ -82,7 +93,9 @@ const CTA = () => {
       try {
         setIsSubmitting(true);
         setSubmitError(null);
-        await submitContactForm(values);
+        setSubmitWarning(null);
+        
+        const result = await submitContactForm(values);
         
         openModal(
           <div className="p-6 text-center">
@@ -95,12 +108,17 @@ const CTA = () => {
             <p className="text-muted-foreground">
               {t('cta.success.message').replace('{email}', values.email)}
             </p>
+            {submitWarning && (
+              <div className="mt-4 bg-amber-100 border border-amber-500 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800 p-3 rounded-md flex items-start gap-2">
+                <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                <div className="text-sm text-left">{submitWarning}</div>
+              </div>
+            )}
           </div>
         );
 
         // Reset form values
-        handleChange('email', '');
-        handleChange('message', '');
+        resetForm();
       } catch (error) {
         setSubmitError(
           error instanceof Error 
@@ -144,6 +162,7 @@ const CTA = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="transition-transform hover:scale-110 duration-200"
+                  aria-label={t(link.labelKey)}
                 >
                   {link.isLucide ? (
                     <Mail className={`w-8 h-8 text-muted-foreground ${link.hoverColor} dark:text-muted-foreground dark:hover:text-white transition-colors duration-200`} />
@@ -163,6 +182,7 @@ const CTA = () => {
             {submitError && (
               <Alert variant="destructive" className="mb-6">
                 <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
                 <AlertDescription>{submitError}</AlertDescription>
               </Alert>
             )}
@@ -175,6 +195,7 @@ const CTA = () => {
                 <input
                   id="email"
                   type="email"
+                  name="email"
                   value={values.email}
                   onChange={e => handleChange('email', e.target.value)}
                   onBlur={() => handleBlur('email')}
@@ -184,9 +205,15 @@ const CTA = () => {
                       : 'border-input dark:border-gray-700'}
                   `}
                   placeholder={t('cta.form.email.placeholder')}
+                  disabled={isSubmitting}
+                  required
+                  aria-required="true"
+                  aria-invalid={touched.email && !!errors.email}
                 />
                 {touched.email && errors.email && (
-                  <p className="text-sm text-red-500 dark:text-red-400">{t(errors.email)}</p>
+                  <p className="text-sm text-red-500 dark:text-red-400" role="alert">
+                    {t(errors.email)}
+                  </p>
                 )}
               </div>
 
@@ -196,6 +223,7 @@ const CTA = () => {
                 </label>
                 <textarea
                   id="message"
+                  name="message"
                   rows={4}
                   value={values.message}
                   onChange={e => handleChange('message', e.target.value)}
@@ -206,19 +234,34 @@ const CTA = () => {
                       : 'border-input dark:border-gray-700'}
                   `}
                   placeholder={t('cta.form.message.placeholder')}
+                  disabled={isSubmitting}
+                  required
+                  aria-required="true"
+                  aria-invalid={touched.message && !!errors.message}
                 />
                 {touched.message && errors.message && (
-                  <p className="text-sm text-red-500 dark:text-red-400">{t(errors.message)}</p>
+                  <p className="text-sm text-red-500 dark:text-red-400" role="alert">
+                    {t(errors.message)}
+                  </p>
                 )}
               </div>
 
               <Button 
-                className="w-full group bg-[#4285F4] hover:bg-[#2B63D9] dark:bg-[#5C9FFF] dark:hover:bg-[#3B7DFF] text-white" 
-                type="submit" 
+                type="submit"
                 disabled={isSubmitting}
+                className="w-full group bg-[#4285F4] hover:bg-[#2B63D9] dark:bg-[#5C9FFF] dark:hover:bg-[#3B7DFF] text-white disabled:opacity-70 transition-all duration-300"
               >
-                {isSubmitting ? t('cta.form.button.sending') : t('cta.form.button.send')}
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    {t('cta.form.button.sending')}
+                  </>
+                ) : (
+                  <>
+                    {t('cta.form.button.send')}
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </>
+                )}
               </Button>
             </form>
           </div>

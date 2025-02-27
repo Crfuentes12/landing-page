@@ -1,104 +1,66 @@
-// src/lib/validation.ts
-interface ValidationRule {
-    test: (value: unknown, formValues?: Record<string, unknown>) => boolean;
-    message: string;
+// lib/validation.ts
+import * as yup from 'yup';
+import { ContactFormData } from '@/types';
+
+// Contact form validation schema
+const contactFormSchema = yup.object().shape({
+  email: yup
+    .string()
+    .required('cta.validation.required')
+    .email('cta.validation.email')
+    .max(255, 'cta.validation.maxLength'),
+  message: yup
+    .string()
+    .required('cta.validation.required')
+    .min(10, 'cta.validation.minLength')
+    .max(5000, 'cta.validation.maxLength'),
+});
+
+// Custom form hook helpers
+const validateField = async (
+  schema: any, // Using any here because of the complex Yup types
+  value: any
+): Promise<string | undefined> => {
+  try {
+    await schema.validate(value);
+    return undefined;
+  } catch (error) {
+    if (error instanceof yup.ValidationError) {
+      return error.message;
+    }
+    return 'Invalid value';
   }
-  
-  export type ValidationFunction = (values: Record<string, unknown>) => Record<string, string>;
-  
-  export interface ValidationSchema {
-    [key: string]: ValidationRule[];
-  }
-  
-  export const createValidationSchema = (schema: ValidationSchema): ValidationFunction => {
-    return (values: Record<string, unknown>) => {
-      const errors: Record<string, string> = {};
-  
-      Object.entries(schema).forEach(([field, rules]) => {
-        const value = values[field];
-  
-        for (const rule of rules) {
-          if (!rule.test(value, values)) {
-            errors[field] = rule.message;
-            break;
-          }
+};
+
+const validateForm = async<T extends Record<string, any>>(
+  schema: yup.ObjectSchema<any>, 
+  values: T
+): Promise<Record<string, string | undefined>> => {
+  try {
+    await schema.validate(values, { abortEarly: false });
+    return {};
+  } catch (error) {
+    if (error instanceof yup.ValidationError) {
+      return error.inner.reduce((errors: Record<string, string>, err: yup.ValidationError) => {
+        if (err.path) {
+          errors[err.path] = err.message;
         }
-      });
-  
-      return errors;
-    };
-  };
-  
-  // Common validation rules
-  export const rules = {
-    required: {
-      test: (value: unknown) => value !== undefined && value !== null && value !== '',
-      message: 'This field is required'
+        return errors;
+      }, {} as Record<string, string>);
+    }
+    return { form: 'Invalid form values' };
+  }
+};
+
+// Export schemas and validation helpers
+export const schemas = {
+  contactForm: {
+    schema: contactFormSchema,
+    validate: (values: ContactFormData) => validateForm(contactFormSchema, values),
+    validateField: {
+      // Use type assertions to avoid TypeScript errors
+      email: (value: string) => validateField(contactFormSchema.fields.email as any, value),
+      message: (value: string) => validateField(contactFormSchema.fields.message as any, value),
     },
-    email: {
-      test: (value: unknown) => 
-        typeof value === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
-      message: 'Please enter a valid email address'
-    },
-    phone: {
-      test: (value: unknown) => 
-        typeof value === 'string' && /^\+?[\d\s-]{10,}$/.test(value),
-      message: 'Please enter a valid phone number'
-    },
-    minLength: (length: number): ValidationRule => ({
-      test: (value: unknown) => 
-        typeof value === 'string' && value.length >= length,
-      message: `Must be at least ${length} characters`
-    }),
-    maxLength: (length: number): ValidationRule => ({
-      test: (value: unknown) => 
-        typeof value === 'string' && value.length <= length,
-      message: `Must be no more than ${length} characters`
-    }),
-    password: {
-      test: (value: unknown) => 
-        typeof value === 'string' && 
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(value),
-      message: 'Password must contain at least 8 characters, one uppercase, one lowercase, one number and one special character'
-    },
-    match: (fieldToMatch: string, fieldName: string): ValidationRule => ({
-      test: (value: unknown, formValues?: Record<string, unknown>) => 
-        formValues ? value === formValues[fieldToMatch] : false,
-      message: `Must match ${fieldName}`
-    })
-  };
-  
-  // Common validation schemas
-  export const schemas = {
-    contactForm: createValidationSchema({
-      firstName: [rules.required],
-      lastName: [rules.required],
-      email: [rules.required, rules.email],
-      phone: [rules.phone],
-      message: [rules.required, rules.minLength(10)]
-    }),
-    loginForm: createValidationSchema({
-      email: [rules.required, rules.email],
-      password: [rules.required, rules.password]
-    }),
-    registrationForm: createValidationSchema({
-      firstName: [rules.required],
-      lastName: [rules.required],
-      email: [rules.required, rules.email],
-      password: [rules.required, rules.password],
-      confirmPassword: [
-        rules.required,
-        rules.match('password', 'password')
-      ]
-    }),
-    profileForm: createValidationSchema({
-      username: [rules.required],
-      email: [rules.required, rules.email],
-      bio: [rules.maxLength(500)]
-    }),
-    pricingForm: createValidationSchema({
-      email: [rules.required, rules.email],
-      company: [rules.required],
-      employees: [rules.required]
-    })
-  };
+  },
+};

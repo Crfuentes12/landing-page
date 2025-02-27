@@ -1,7 +1,7 @@
 //landing-page/src/components/home/HeroChat.tsx
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { User, Send, Target, Code, Rocket, Lightbulb, Sparkles, ShoppingCart, Brain, ClipboardList, MessageSquare, Bot, Zap } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from "@/providers/language-provider";
@@ -53,7 +53,8 @@ const HeroChat: React.FC = () => {
   
   const chatRef = useRef<HTMLDivElement>(null);
 
-  const chatSequences: ChatMessage[][] = [
+  // Wrap the chatSequences array in useMemo to prevent it from being recreated on each render
+  const chatSequences = useMemo<ChatMessage[][]>(() => [
     [
       {
         user: { 
@@ -271,7 +272,7 @@ const HeroChat: React.FC = () => {
         }
       }
     ]
-  ];
+  ], []); // Empty dependency array as these chat sequences are static
 
   const startChatSequence = useCallback(() => {
     const currentSequence = chatSequences[currentSequenceIndex];
@@ -314,7 +315,7 @@ const HeroChat: React.FC = () => {
         typeText();
       }, 1500);
     }
-  }, [currentSequenceIndex, currentMessageIndex, isAnimating, t]);
+  }, [currentSequenceIndex, currentMessageIndex, isAnimating, t, chatSequences]);
 
   useEffect(() => {
     if (!isAnimating) {

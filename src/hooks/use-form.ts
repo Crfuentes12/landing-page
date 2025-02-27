@@ -1,25 +1,26 @@
 // hooks/use-form.ts
 import { useState, useCallback } from 'react';
+import * as yup from 'yup';
 
 interface ValidationSchema<T> {
-  schema: any;
+  schema: yup.Schema<unknown>; // Fixed: replaced 'any' with 'yup.Schema<unknown>'
   validate: (values: T) => Promise<Record<string, string | undefined>>;
   validateField: {
     [K in keyof T]?: (value: T[K]) => Promise<string | undefined>;
   };
 }
 
-interface UseFormProps<T extends Record<string, any>> {
+interface UseFormProps<T extends Record<string, unknown>> { // Fixed: replaced 'any' with 'unknown'
   initialValues: T;
   validationSchema?: ValidationSchema<T>;
   onSubmit: (values: T) => Promise<void> | void;
 }
 
-interface UseFormReturn<T extends Record<string, any>> {
+interface UseFormReturn<T extends Record<string, unknown>> { // Fixed: replaced 'any' with 'unknown'
   values: T;
   errors: Record<string, string | undefined>;
   touched: Record<string, boolean>;
-  handleChange: (field: keyof T, value: any) => void;
+  handleChange: (field: keyof T, value: unknown) => void; // Fixed: replaced 'any' with 'unknown'
   handleBlur: (field: keyof T) => void;
   handleSubmit: (e: React.FormEvent) => void;
   resetForm: () => void;
@@ -27,7 +28,7 @@ interface UseFormReturn<T extends Record<string, any>> {
   isValid: boolean;
 }
 
-export function useForm<T extends Record<string, any>>({
+export function useForm<T extends Record<string, unknown>>({ // Fixed: replaced 'any' with 'unknown'
   initialValues,
   validationSchema,
   onSubmit,
@@ -76,7 +77,7 @@ export function useForm<T extends Record<string, any>>({
   }, [values, validationSchema]);
 
   // Handle field change
-  const handleChange = useCallback((field: keyof T, value: any) => {
+  const handleChange = useCallback((field: keyof T, value: unknown) => { // Fixed: replaced 'any' with 'unknown'
     setValues(prev => ({ ...prev, [field]: value }));
   }, []);
 

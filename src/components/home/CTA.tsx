@@ -58,17 +58,17 @@ const CTA = () => {
         body: JSON.stringify(data),
       });
 
-      const result = await response.json();
+      const responseData = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to submit form');
+        throw new Error(responseData.error || 'Failed to submit form');
       }
 
-      if (result.warning) {
-        setSubmitWarning(result.warning);
+      if (responseData.warning) {
+        setSubmitWarning(responseData.warning);
       }
 
-      return result;
+      return responseData;
     } catch (error) {
       console.error('Error submitting form:', error);
       throw error;
@@ -95,7 +95,7 @@ const CTA = () => {
         setSubmitError(null);
         setSubmitWarning(null);
         
-        const result = await submitContactForm(values);
+        const responseData = await submitContactForm(values);
         
         openModal(
           <div className="p-6 text-center">

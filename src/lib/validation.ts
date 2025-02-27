@@ -18,8 +18,8 @@ const contactFormSchema = yup.object().shape({
 
 // Custom form hook helpers
 const validateField = async (
-  schema: any, // Using any here because of the complex Yup types
-  value: any
+  schema: yup.Schema<unknown>, // Fixed: replaced 'any' with 'yup.Schema<unknown>'
+  value: unknown // Fixed: replaced 'any' with 'unknown'
 ): Promise<string | undefined> => {
   try {
     await schema.validate(value);
@@ -32,8 +32,8 @@ const validateField = async (
   }
 };
 
-const validateForm = async<T extends Record<string, any>>(
-  schema: yup.ObjectSchema<any>, 
+const validateForm = async<T extends Record<string, unknown>>( // Fixed: replaced 'any' with 'unknown'
+  schema: yup.ObjectSchema<yup.AnyObject>, // Fixed: replaced 'any' with 'yup.AnyObject'
   values: T
 ): Promise<Record<string, string | undefined>> => {
   try {
@@ -58,9 +58,9 @@ export const schemas = {
     schema: contactFormSchema,
     validate: (values: ContactFormData) => validateForm(contactFormSchema, values),
     validateField: {
-      // Use type assertions to avoid TypeScript errors
-      email: (value: string) => validateField(contactFormSchema.fields.email as any, value),
-      message: (value: string) => validateField(contactFormSchema.fields.message as any, value),
+      // Fixed: replaced 'any' with more specific Yup schema types
+      email: (value: string) => validateField(contactFormSchema.fields.email as yup.StringSchema<string>, value),
+      message: (value: string) => validateField(contactFormSchema.fields.message as yup.StringSchema<string>, value),
     },
   },
 };

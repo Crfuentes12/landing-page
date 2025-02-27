@@ -6,7 +6,7 @@ export type ContactFormData = {
 
 export type ContactFormResponse = {
   success: boolean;
-  data?: any;
+  data?: unknown; // Fixed: replaced 'any' with 'unknown'
   error?: string;
 };
 

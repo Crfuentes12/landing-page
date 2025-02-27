@@ -95,7 +95,8 @@ const CTA = () => {
         setSubmitError(null);
         setSubmitWarning(null);
         
-        const responseData = await submitContactForm(values);
+        // Just call the function without assigning its return value
+        await submitContactForm(values);
         
         openModal(
           <div className="p-6 text-center">

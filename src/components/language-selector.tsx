@@ -13,10 +13,6 @@ export function LanguageSelector() {
     { code: 'de', name: 'Deutsch' }
   ];
 
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
-
   const handleLanguageSelect = (langCode: 'en' | 'es' | 'de') => {
     setLanguage(langCode);
     setIsOpen(false);

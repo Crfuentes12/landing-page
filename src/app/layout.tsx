@@ -20,15 +20,6 @@ const geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <LanguageProvider>
-      <LanguageSelector />
-      <LayoutWrapper>{children}</LayoutWrapper>
-    </LanguageProvider>
-  );
-}
-
-function LayoutWrapper({ children }: { children: React.ReactNode }) {
-  return (
     <html lang="es" className={`${geistSans.className} ${geistMono.className}`} suppressHydrationWarning>
       <head>
         <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
@@ -39,14 +30,17 @@ function LayoutWrapper({ children }: { children: React.ReactNode }) {
         <link rel="manifest" href="/manifest.json" />
       </head>
       <body className="min-h-screen bg-background font-sans antialiased overflow-x-hidden" suppressHydrationWarning>
-        <ThemeProvider defaultTheme="system">
-          <RootProvider>
-            <div className="relative flex min-h-screen flex-col overflow-hidden">
-              <Header />
-              <main className="flex-1 pt-16 w-full">{children}</main>
-            </div>
-          </RootProvider>
-        </ThemeProvider>
+        <LanguageProvider>
+          <ThemeProvider defaultTheme="system">
+            <RootProvider>
+              <LanguageSelector />
+              <div className="relative flex min-h-screen flex-col overflow-hidden">
+                <Header />
+                <main className="flex-1 pt-16 w-full">{children}</main>
+              </div>
+            </RootProvider>
+          </ThemeProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

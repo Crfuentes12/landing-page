@@ -1,3 +1,4 @@
+//landing-page/src/providers/language-provider.tsx
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from 'react';

@@ -1,4 +1,3 @@
-//landing-page/src/components/home/Hero.tsx
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -25,7 +24,7 @@ const Hero = () => {
   ];
 
   return (
-    <section className="relative min-h-screen flex flex-col justify-start md:justify-center items-center px-4 md:px-6 pt-16 md:pt-0 pb-20 overflow-hidden">
+    <section className="relative min-h-screen flex flex-col justify-center items-center px-4 md:px-6 lg:px-8 py-16 md:py-24 lg:py-32 overflow-hidden">
       {/* Gradient Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-background/80" />
       
@@ -45,7 +44,7 @@ const Hero = () => {
         </div>
       </div>
       
-      <div className="relative z-10 w-full max-w-6xl mx-auto flex flex-col lg:grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
+      <div className="relative z-10 w-full max-w-6xl mx-auto flex flex-col lg:grid lg:grid-cols-2 gap-8 md:gap-10 lg:gap-12 items-center">
         {/* Left side - Main content */}
         <div className="space-y-6 md:space-y-8 text-center lg:text-left">
           <div className="space-y-3 md:space-y-4">
@@ -78,15 +77,15 @@ const Hero = () => {
             </Button>
           </div>
 
-          {/* Stats in a single row with horizontal scroll on mobile */}
-          <div className="w-full overflow-x-auto pb-2 -mx-4 px-4">
-            <div className="flex gap-4 md:gap-8 min-w-max md:min-w-0 md:justify-between">
+          {/* Stats in a grid with equal columns - Fixed version */}
+          <div className="w-full py-4 md:py-6 lg:py-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
               {stats.map((stat) => (
-                <div key={stat.labelKey} className="text-center flex-1">
-                  <div className={`text-2xl md:text-3xl font-bold bg-gradient-to-r ${stat.accent} bg-clip-text text-transparent`}>
+                <div key={stat.labelKey} className="text-center">
+                  <div className={`text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r ${stat.accent} bg-clip-text text-transparent`}>
                     {stat.value}
                   </div>
-                  <div className="text-xs md:text-sm text-muted-foreground mt-1 whitespace-nowrap">{t(stat.labelKey)}</div>
+                  <div className="text-xs md:text-sm lg:text-base text-muted-foreground mt-1 md:mt-2">{t(stat.labelKey)}</div>
                 </div>
               ))}
             </div>
@@ -95,7 +94,7 @@ const Hero = () => {
 
         {/* Right side - Chat simulation with fixed height */}
         <div className="w-full max-w-md mx-auto lg:mx-0">
-          <div className="h-[450px] md:h-[500px]"> {/* Fixed height container */}
+          <div className="h-[400px] md:h-[450px] lg:h-[500px]"> {/* Fixed height container with responsive sizing */}
             <HeroChat />
           </div>
         </div>
@@ -104,10 +103,10 @@ const Hero = () => {
       {/* Scroll indicator */}
       <button 
         onClick={() => scrollToSection('why-we-do-this')}
-        className="absolute bottom-6 md:bottom-10 animate-bounce z-10 transform transition-transform duration-800 hover:scale-110"
+        className="absolute bottom-6 md:bottom-8 lg:bottom-10 animate-bounce z-10 transform transition-transform duration-800 hover:scale-110"
         aria-label="Scroll to Our Mission section"
       >
-        <ArrowDown className="h-6 w-6 md:h-8 md:w-8 text-[#4285F4]" />
+        <ArrowDown className="h-6 w-6 md:h-7 md:w-7 lg:h-8 lg:w-8 text-[#4285F4]" />
       </button>
 
       {/* Custom animations styles */}

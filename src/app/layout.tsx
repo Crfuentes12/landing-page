@@ -8,6 +8,7 @@ import { LanguageSelector } from "@/components/language-selector";
 import "./globals.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
+import Script from "next/script";
 config.autoAddCss = false;
 
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -28,6 +29,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="icon" href="/logos/sprintlaunchers-icon.png" />
         <link rel="apple-touch-icon" href="/logos/sprintlaunchers-icon.png" />
         <link rel="manifest" href="/manifest.json" />
+        {/* Google Ads Tag */}
+        <Script async src="https://www.googletagmanager.com/gtag/js?id=AW-16491618146" />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'AW-16491618146');
+          `}
+        </Script>
       </head>
       <body className="min-h-screen bg-background font-sans antialiased overflow-x-hidden" suppressHydrationWarning>
         <LanguageProvider>

@@ -118,6 +118,16 @@ const CTA = () => {
           </div>
         );
 
+      // Registrar la conversión
+      if (typeof window !== 'undefined' && typeof (window as any).gtag === 'function') {
+        (window as any).gtag('event', 'conversion', {
+          'send_to': 'AW-16491618146/XTFpCPWJ2aQaEOK-6Lc9', // Reemplaza con tu etiqueta real
+          'transaction_id': new Date().getTime().toString() // ID único basado en timestamp
+        });
+        
+        // También puedes agregar un evento personalizado para depuración
+        console.log('Conversión de formulario de contacto registrada');
+      }
         // Reset form values
         resetForm();
       } catch (error) {

@@ -14,6 +14,18 @@ import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ContactFormData } from "@/types";
 
+// Definición de tipos específicos para Google Analytics
+declare global {
+  interface Window {
+    dataLayer: Array<Record<string, unknown>>;
+    gtag: (
+      command: string,
+      action: string,
+      params?: Record<string, string | number | boolean | undefined>
+    ) => void;
+  }
+}
+
 // Company email address
 const COMPANY_EMAIL = "info@sprintlaunchers.com";
 
@@ -119,15 +131,16 @@ const CTA = () => {
         );
 
       // Registrar la conversión
-      if (typeof window !== 'undefined' && typeof (window as any).gtag === 'function') {
-        (window as any).gtag('event', 'conversion', {
-          'send_to': 'AW-16491618146/XTFpCPWJ2aQaEOK-6Lc9', // Reemplaza con tu etiqueta real
+      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+        window.gtag('event', 'conversion', {
+          'send_to': 'AW-16491618146/ETIQUETA_DE_CONVERSION', // Reemplaza con tu etiqueta real
           'transaction_id': new Date().getTime().toString() // ID único basado en timestamp
         });
         
         // También puedes agregar un evento personalizado para depuración
         console.log('Conversión de formulario de contacto registrada');
       }
+
         // Reset form values
         resetForm();
       } catch (error) {

@@ -1,5 +1,4 @@
-// src/app/page.tsx
-import { redirect } from "next/navigation";
+// src/app/home/layout.tsx
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -8,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "SprintLaunchers - Desarrollo de MVPs para Startups",
     description: "Crea tu MVP con SprintLaunchers y valida tu idea rápidamente.",
-    url: "https://sprintlaunchers.com",
+    url: "https://sprintlaunchers.com/home",
     type: "website",
     images: [
       {
@@ -27,6 +26,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Page() {
-  redirect("/home");
+export default function HomeLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return <>{children}</>;
 }

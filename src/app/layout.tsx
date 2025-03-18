@@ -30,7 +30,7 @@ export const metadata = {
     type: "website",
     images: [
       {
-        url: "https://sprintlaunchers.com/logos/sprintlaunchers-og.png",
+        url: "https://sprintlaunchers.com/logos/sprintlaunchers-icon.png",
         width: 1200,
         height: 630,
         alt: "SprintLaunchers",
@@ -41,7 +41,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "SprintLaunchers - Desarrollo de MVPs para Startups",
     description: "Crea tu MVP con SprintLaunchers y valida tu idea rápidamente.",
-    images: ["https://sprintlaunchers.com/logos/sprintlaunchers-og.png"],
+    images: ["https://sprintlaunchers.com/logos/sprintlaunchers-icon.png"],
   },
   metadataBase: new URL("https://sprintlaunchers.com"),
 };

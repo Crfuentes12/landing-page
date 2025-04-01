@@ -15,9 +15,9 @@ const translations = {
   en: {
     // Hero Section
     "hero.title.fast": "Fast. Smart.",
-    "hero.title.mvp": "Your MVP Done Right.",
-    "hero.description": "Launch your Software MVP in 6 weeks and save 30% of development costs.",
-    "hero.button.estimate": "Get Your Price Estimation",
+    "hero.title.mvp": "Your software done right.",
+    "hero.description": "Launch your startup MVP in 6 weeks and save 30% of development costs.",
+    "hero.button.estimate": "Price estimation",
     "hero.button.contact": "Contact Us",
     "hero.stats.mvps": "MVPs builded",
     "hero.stats.experience": "Years of Experience",
@@ -40,7 +40,7 @@ const translations = {
     "roadmap.feature1.description": "We understand that every great product starts with a visionary idea. Our focus is on preserving your vision while making it market-ready.",
     
     "roadmap.feature2.title": "Efficient Development",
-    "roadmap.feature2.description": "No unnecessary complexity. We build exactly what you need to validate your idea and enter the market confidently.",
+    "roadmap.feature2.description": "No unnecessary features. We build exactly what you need to validate your idea and enter the market confidently.",
     
     "roadmap.feature3.title": "Future-Proof Foundation",
     "roadmap.feature3.description": "While we focus on MVP essentials, we ensure your foundation is solid and scalable for future growth.",
@@ -321,9 +321,9 @@ const translations = {
   es: {
     // Hero Section
     "hero.title.fast": "Rápido. Inteligente.",
-    "hero.title.mvp": "Tu MVP Bien Hecho.",
-    "hero.description": "Lanza tu MVP de Software en 6 semanas y ahorra un 30% en costos de desarrollo.",
-    "hero.button.estimate": "Obtén tu Estimación de Precio",
+    "hero.title.mvp": "Tu software bien hecho.",
+    "hero.description": "Lanza el MVP de tu startup en 6 semanas y ahorra un 30% en costos de desarrollo.",
+    "hero.button.estimate": "estimacion de precio",
     "hero.button.contact": "Contáctanos",
     "hero.stats.mvps": "MVPs construidos",
     "hero.stats.experience": "Años de Experiencia",
@@ -346,7 +346,7 @@ const translations = {
     "roadmap.feature1.description": "Entendemos que todo gran producto comienza con una idea visionaria. Nuestro enfoque está en preservar tu visión mientras la hacemos lista para el mercado.",
     
     "roadmap.feature2.title": "Desarrollo Eficiente",
-    "roadmap.feature2.description": "Sin complejidad innecesaria. Construimos exactamente lo que necesitas para validar tu idea y entrar al mercado con confianza.",
+    "roadmap.feature2.description": "Sin funcionalidades innecesarias. Construimos exactamente lo que necesitas para validar tu idea y entrar al mercado con confianza.",
     
     "roadmap.feature3.title": "Base Preparada para el Futuro",
     "roadmap.feature3.description": "Mientras nos concentramos en lo esencial del MVP, nos aseguramos de que tu base sea sólida y escalable para el crecimiento futuro.",
@@ -627,9 +627,9 @@ const translations = {
   de: {
     // Hero Section
     "hero.title.fast": "Schnell. Smart.",
-    "hero.title.mvp": "Dein MVP, perfekt umgesetzt.",
-    "hero.description": "Erhalte Dein Software-MVP in 6 Wochen und spare 30% Entwicklungskosten.",
-    "hero.button.estimate": "Preisschätzung erhalten",
+    "hero.title.mvp": "Deine Software, perfekt umgesetzt.",
+    "hero.description": "Starte das MVP deines Startups in 6 Wochen und spare 30% Entwicklungskosten.",
+    "hero.button.estimate": "Preisschätzung",
     "hero.button.contact": "Kontaktiere uns",
     "hero.stats.mvps": "MVPs entwickelt",
     "hero.stats.experience": "Jahre Erfahrung",
@@ -652,7 +652,7 @@ const translations = {
     "roadmap.feature1.description": "Wir verstehen, dass jedes großartige Produkt mit einer visionären Idee beginnt. Unser Fokus liegt darauf, Deine Vision zu bewahren und gleichzeitig marktreif zu machen.",
     
     "roadmap.feature2.title": "Effiziente Entwicklung",
-    "roadmap.feature2.description": "Keine unnötige Komplexität. Wir bauen genau das, was Du brauchst, um Deine Idee zu validieren und selbstbewusst im Markt zu testen.",
+    "roadmap.feature2.description": "Keine unnötigen Funktionen. Wir bauen genau das, was Du brauchst, um Deine Idee zu validieren und selbstbewusst im Markt zu testen.",
     
     "roadmap.feature3.title": "Skalierbarkeit inklusive",
     "roadmap.feature3.description": "Wir fokussieren uns auf das Wesentliche des MVPs und stellen gleichzeitig sicher, dass dieses Fundament solide und skalierbar für zukünftiges Wachstum ist.",

@@ -93,7 +93,7 @@ const Hero = () => {
         </div>
 
         {/* Right side - Chat simulation with fixed height */}
-        <div className="w-full max-w-md mx-auto lg:mx-0">
+        <div className="hidden md:block w-full max-w-md mx-auto lg:mx-0">
           <div className="h-[400px] md:h-[450px] lg:h-[500px]"> {/* Fixed height container with responsive sizing */}
             <HeroChat />
           </div>

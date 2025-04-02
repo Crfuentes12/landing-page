@@ -325,9 +325,9 @@ const Pricing = () => {
           <h2 className="text-4xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/80 to-primary dark:from-primary/90 dark:via-primary/70 dark:to-primary/90">
             {t('pricing.title')}
           </h2>
-          <p className="text-lg text-muted-foreground dark:text-muted-foreground/90 max-w-2xl mx-auto">
-            {t('pricing.description')}
-          </p>
+          <p className="text-lg text-muted-foreground dark:text-muted-foreground/90 max-w-2xl mx-auto hidden md:block">
+          {t('pricing.description')}
+        </p>
         </div>
 
         <div className="bg-blue-100/80 dark:bg-blue-950/30 rounded-3xl p-12 relative">

@@ -2,7 +2,7 @@
 "use client";
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
-import { Target, Zap, Route, Shield, CodeXml, Rocket, LucideIcon, ChevronRight } from "lucide-react";
+import { Target, Zap, Route, Shield, CodeXml, Rocket, LucideIcon, ChevronRight, ChevronDown, ChevronUp } from "lucide-react";
 import { motion } from 'framer-motion';
 import { useLanguage } from "@/providers/language-provider";
 
@@ -212,50 +212,109 @@ const roadmapSteps: RoadmapStep[] = [
 interface StepIndicatorProps {
   step: RoadmapStep;
   isActive: boolean;
+  isExpanded: boolean;
   isCompleted: boolean;
   onClick: () => void;
+  toggleExpand: () => void;
+  isMobile: boolean;
 }
 
 const StepIndicator: React.FC<StepIndicatorProps> = ({ 
   step, 
   isActive, 
+  isExpanded,
   isCompleted, 
-  onClick 
+  onClick,
+  toggleExpand,
+  isMobile
 }) => {
   const Icon = step.icon;
   const { t } = useLanguage();
   
+  const handleClick = () => {
+    if (isMobile) {
+      toggleExpand();
+    } else {
+      onClick();
+    }
+  };
+  
   return (
-    <button 
-      className="flex items-center w-full group hover:scale-105 transition-all duration-300 
-                select-none focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none
-                [&:not(:focus-visible)]:ring-0 [&:not(:focus-visible)]:outline-none"
-      onClick={onClick}
-      type="button"
-    >
-      <div
-        className={`
-          w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-500
-          group-hover:shadow-lg group-hover:scale-105 relative z-10
-          ${isActive 
-            ? `bg-gradient-to-br ${step.gradient} shadow-lg scale-110` 
-            : isCompleted
-              ? 'bg-[#4285F4] opacity-50 group-hover:opacity-75'
-              : 'bg-border/30 group-hover:bg-border/50'
-          }
-        `}
-      >
-        <Icon className={`h-8 w-8 ${isActive || isCompleted ? 'text-white' : 'text-muted-foreground'} 
-          group-hover:scale-110 transition-transform duration-300`} />
-      </div>
-      <div className={`ml-4 transition-all duration-300 text-left ${isActive ? 'opacity-100' : 'opacity-50 group-hover:opacity-75'}`}>
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-muted-foreground">Step {step.id}</span>
-          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+    <div className="w-full">
+      {isMobile ? (
+        <button 
+          className="flex items-center w-full px-4 py-3 group transition-all duration-300 
+                    select-none focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none
+                    [&:not(:focus-visible)]:ring-0 [&:not(:focus-visible)]:outline-none"
+          onClick={handleClick}
+          type="button"
+        >
+          <div
+            className={`
+              w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-500
+              relative z-10
+              ${isExpanded ? `bg-gradient-to-br ${step.gradient} shadow-md` : 'bg-border/20'}
+            `}
+          >
+            <Icon className={`h-6 w-6 ${isExpanded ? 'text-white' : 'text-muted-foreground'} 
+              transition-transform duration-300`} />
+          </div>
+          <div className={`ml-4 transition-all duration-300 text-left flex-grow ${
+            isExpanded ? 'opacity-100' : 'opacity-60'
+          }`}>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-muted-foreground">Step {step.id}</span>
+              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+            </div>
+            <h3 className="font-semibold">{t(step.titleKey)}</h3>
+          </div>
+          <div>
+            {isExpanded ? (
+              <ChevronUp className="h-5 w-5 text-muted-foreground" />
+            ) : (
+              <ChevronDown className="h-5 w-5 text-muted-foreground" />
+            )}
+          </div>
+        </button>
+      ) : (
+        <button 
+          className="flex items-center w-full px-4 py-2 group transition-all duration-300
+                    select-none focus:outline-none focus:ring-0"
+          onClick={handleClick}
+          type="button"
+        >
+          <div
+            className={`
+              w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-500
+              relative z-10 group-hover:shadow-md
+              ${isActive ? `bg-gradient-to-br ${step.gradient} shadow-md` : 
+                isCompleted ? 'bg-[#4285F4] opacity-50' : 'bg-border/20'
+              }
+            `}
+          >
+            <Icon className={`h-6 w-6 ${
+              (isActive || isCompleted) ? 'text-white' : 'text-muted-foreground'
+            } transition-transform duration-300`} />
+          </div>
+          <div className={`ml-4 transition-all duration-300 text-left flex-grow ${
+            isActive ? 'opacity-100' : 'opacity-60 group-hover:opacity-80'
+          }`}>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-muted-foreground">Step {step.id}</span>
+              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+            </div>
+            <h3 className="font-semibold">{t(step.titleKey)}</h3>
+          </div>
+        </button>
+      )}
+      
+      {/* Mobile content (collapsible) */}
+      {isMobile && isExpanded && (
+        <div className="px-4 pb-6 pt-2 animate-in fade-in slide-in-from-top-4 duration-300">
+          <StepContent step={step} />
         </div>
-        <h3 className="font-semibold">{t(step.titleKey)}</h3>
-      </div>
-    </button>
+      )}
+    </div>
   );
 };
 
@@ -267,18 +326,18 @@ const StepContent: React.FC<StepContentProps> = ({ step }) => {
   const { t } = useLanguage();
   
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div>
-        <p className="text-lg text-muted-foreground mb-8 font-bold">{t(step.descriptionKey)}</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <p className="text-muted-foreground mb-4 font-medium lg:text-lg">{t(step.descriptionKey)}</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
           {step.features.map((feature, index) => (
-            <Card key={index} className="border-[#4285F4]/10 bg-card/50 backdrop-blur-sm hover:shadow-md transition-all duration-300">
-              <CardContent className="p-6">
-                <div className="flex items-center gap-3 mb-2">
+            <Card key={index} className="border-[#4285F4]/10 bg-card/50 backdrop-blur-sm hover:shadow-sm transition-all duration-300">
+              <CardContent className="p-4 lg:p-6">
+                <div className="flex items-center gap-2 mb-2 lg:gap-3">
                   <div className={`h-2 w-2 rounded-full bg-gradient-to-br ${step.gradient}`} />
-                  <h4 className="font-medium">{t(feature.titleKey)}</h4>
+                  <h4 className="font-medium text-sm lg:text-base">{t(feature.titleKey)}</h4>
                 </div>
-                <p className="text-sm text-muted-foreground pl-5">
+                <p className="text-xs lg:text-sm text-muted-foreground pl-4 lg:pl-5">
                   {t(feature.descriptionKey)}
                 </p>
               </CardContent>
@@ -292,7 +351,23 @@ const StepContent: React.FC<StepContentProps> = ({ step }) => {
 
 const Roadmap: React.FC = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
+  // Track which steps are expanded on mobile
+  const [expandedSteps, setExpandedSteps] = useState<number[]>([]);
   const { t } = useLanguage();
+  
+  // Function to toggle expansion of a step on mobile
+  const toggleExpand = (index: number) => {
+    setExpandedSteps(prev => {
+      // If the clicked item is already expanded, collapse it
+      if (prev.includes(index)) {
+        return prev.filter(i => i !== index);
+      } 
+      // Otherwise expand this item and collapse all others
+      else {
+        return [index];
+      }
+    });
+  };
   
   return (
     <section className="py-24 relative overflow-hidden" id="roadmap">
@@ -339,22 +414,46 @@ const Roadmap: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[400px,1fr] gap-12">
-          <div className="space-y-8">
+        {/* Mobile view (accordion style) */}
+        <div className="lg:hidden space-y-3 px-2">
+          {roadmapSteps.map((step, index) => (
+            <div 
+              key={step.id} 
+              className="border border-[#4285F4]/10 rounded-xl bg-card/50 backdrop-blur-sm overflow-hidden shadow-sm"
+            >
+              <StepIndicator
+                step={step}
+                isActive={activeStep === index}
+                isExpanded={expandedSteps.includes(index)}
+                isCompleted={index < activeStep}
+                onClick={() => setActiveStep(index)}
+                toggleExpand={() => toggleExpand(index)}
+                isMobile={true}
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop view (original layout) */}
+        <div className="hidden lg:grid grid-cols-[350px,1fr] gap-6">
+          <div className="space-y-4">
             {roadmapSteps.map((step, index) => (
               <StepIndicator
                 key={step.id}
                 step={step}
                 isActive={activeStep === index}
+                isExpanded={false}
                 isCompleted={index < activeStep}
                 onClick={() => setActiveStep(index)}
+                toggleExpand={() => {}}
+                isMobile={false}
               />
             ))}
           </div>
 
           <div className="relative">
             <div className="absolute -inset-4 rounded-xl bg-gradient-to-br from-[#4285F4]/5 to-transparent" />
-            <div className="relative">
+            <div className="relative p-4">
               {roadmapSteps.map((step, index) => (
                 <div
                   key={step.id}

@@ -24,10 +24,6 @@ interface ComparisonItem {
     icon: 'check' | 'circle' | 'x';
     descriptionKey: string;
   };
-  noCode: {
-    icon: 'check' | 'circle' | 'x';
-    descriptionKey: string;
-  };
 }
 
 const getComparisonData = (): ComparisonItem[] => {
@@ -42,10 +38,6 @@ const getComparisonData = (): ComparisonItem[] => {
       traditional: {
         icon: 'circle',
         descriptionKey: "comparison.strategic.traditional"
-      },
-      noCode: {
-        icon: 'circle',
-        descriptionKey: "comparison.strategic.nocode"
       }
     },
     {
@@ -58,10 +50,6 @@ const getComparisonData = (): ComparisonItem[] => {
       traditional: {
         icon: 'circle',
         descriptionKey: "comparison.cost.traditional"
-      },
-      noCode: {
-        icon: 'circle',
-        descriptionKey: "comparison.cost.nocode"
       }
     },
     {
@@ -74,10 +62,6 @@ const getComparisonData = (): ComparisonItem[] => {
       traditional: {
         icon: 'circle',
         descriptionKey: "comparison.agility.traditional"
-      },
-      noCode: {
-        icon: 'x',
-        descriptionKey: "comparison.agility.nocode"
       }
     },
     {
@@ -90,10 +74,6 @@ const getComparisonData = (): ComparisonItem[] => {
       traditional: {
         icon: 'circle',
         descriptionKey: "comparison.expertise.traditional"
-      },
-      noCode: {
-        icon: 'x',
-        descriptionKey: "comparison.expertise.nocode"
       }
     },
     {
@@ -106,10 +86,6 @@ const getComparisonData = (): ComparisonItem[] => {
       traditional: {
         icon: 'x',
         descriptionKey: "comparison.scalability.traditional"
-      },
-      noCode: {
-        icon: 'x',
-        descriptionKey: "comparison.scalability.nocode"
       }
     }
   ];
@@ -148,7 +124,7 @@ const ComparisonRow = ({
   isInView: boolean;
 }) => {
   const { t } = useLanguage();
-  const serviceTypes = ['ourService', 'traditional', 'noCode'] as const;
+  const serviceTypes = ['ourService', 'traditional'] as const;
 
   return (
     <motion.tr
@@ -213,7 +189,7 @@ const ComparisonMatrix = () => {
 
         <Card className="border-primary/20 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/50 overflow-hidden">
           <div className="w-full overflow-x-auto">
-            <div className="min-w-[600px]"> {/* Minimum width to prevent squishing */}
+            <div className="min-w-[400px]"> {/* Minimum width to prevent squishing */}
               <table className="w-full border-separate border-spacing-0">
                 <thead>
                   <tr>
@@ -228,9 +204,6 @@ const ComparisonMatrix = () => {
                     </th>
                     <th className="py-4 sm:py-6 px-2 sm:px-4 font-semibold text-muted-foreground w-1/4 text-sm sm:text-base">
                       {t('comparison.traditional')}
-                    </th>
-                    <th className="py-4 sm:py-6 px-2 sm:px-4 font-semibold text-muted-foreground w-1/4 text-sm sm:text-base">
-                      {t('comparison.nocode')}
                     </th>
                   </tr>
                 </thead>

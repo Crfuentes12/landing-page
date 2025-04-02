@@ -28,7 +28,7 @@ const translations = {
     "why.title": "Why We Do This",
     "why.subtitle": "We believe every bold idea deserves a chance.",
     "why.paragraph1": "Too many visionary founders struggle to bring their ideas to life, because they face <span className=\"font-semibold text-foreground\"> barriers that shouldn't exist</span>. High costs due to unnecessary features and bad advice kill great concepts before they even reach the market.",
-    "why.paragraph2": "We've seen it happen too many times. We know the frustration of having a groundbreaking idea but being held back by unnecessary complexity. <span className=\"font-semibold text-foreground\"> That's why we're here—to break down these barriers.</span>",
+    "why.paragraph2": "We know the frustration of having a groundbreaking idea but being held back by unnecessary complexity. <span className=\"font-semibold text-foreground\"> That's why we're here—to break down these barriers.</span>",
     
     // Roadmap Section
     "roadmap.title": "How We Make It Happen",
@@ -334,7 +334,7 @@ const translations = {
     "why.title": "Por Qué Hacemos Esto",
     "why.subtitle": "Creemos que cada idea audaz merece una oportunidad.",
     "why.paragraph1": "Demasiados fundadores visionarios luchan por dar vida a sus ideas porque enfrentan <span className=\"font-semibold text-foreground\"> barreras que no deberían existir</span>. Los altos costos debido a características innecesarias y malos consejos matan grandes conceptos antes de que lleguen al mercado.",
-    "why.paragraph2": "Lo hemos visto suceder demasiadas veces. Conocemos la frustración de tener una idea revolucionaria pero ser limitados por complejidades innecesarias. <span className=\"font-semibold text-foreground\"> Por eso estamos aquí: para derribar estas barreras.</span>",
+    "why.paragraph2": "Conocemos la frustración de tener una idea revolucionaria pero ser limitados por complejidades innecesarias. <span className=\"font-semibold text-foreground\"> Por eso estamos aquí: para derribar estas barreras.</span>",
     
     // Roadmap Section
     "roadmap.title": "Cómo Lo Hacemos Realidad",
@@ -640,7 +640,7 @@ const translations = {
     "why.title": "Warum wir das machen?",
     "why.subtitle": "Wir glauben, dass jede mutige Idee eine Chance verdient.",
     "why.paragraph1": "Oft scheitern visionäre Gründer daran, ihre Ideen in die Tat umzusetzen - nicht weil sie schlecht sind, sondern weil unnötige Hürden im Weg stehen. Hohe Kosten für ein MVP mit überflüssigen Features und falsche Beratung lassen großartige Konzepte untergehen, bevor sie überhaupt den Markt erreichen.",
-    "why.paragraph2": "Wir haben das schon zu häufig erlebt. Wir wissen, wie frustrierend es ist, eine bahnbrechende Idee zu haben und an unnötiger Komplexität zu scheitern. <span className=\"font-semibold text-foreground\">Genau deshalb sind wir hier - um diese Barrieren aus dem Weg zu räumen.</span>",
+    "why.paragraph2": "Wir wissen, wie frustrierend es ist, eine bahnbrechende Idee zu haben und an unnötiger Komplexität zu scheitern. <span className=\"font-semibold text-foreground\">Genau deshalb sind wir hier - um diese Barrieren aus dem Weg zu räumen.</span>",
     
     // Roadmap Section
     "roadmap.title": "Wie Wir Es Umsetzen",

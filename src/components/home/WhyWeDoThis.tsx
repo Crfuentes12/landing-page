@@ -76,7 +76,7 @@ export default function WhyWeDoThis() {
             initial={{ opacity: 0, x: -40 }}
             animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -40 }}
             transition={{ delay: 0.4, duration: 0.8 }}
-            className="space-y-6"
+            className="hidden md:block space-y-6"
           >
             <p 
               className="text-lg text-muted-foreground leading-relaxed"

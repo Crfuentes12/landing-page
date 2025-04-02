@@ -107,15 +107,19 @@ const getFounders = (): Founder[] => {
 
 const HexagonSkillGrid = ({ skills, isInView }: { skills: Skill[]; isInView: boolean }) => {
   const { t } = useLanguage();
-  const hexGrid = new HexagonGrid(50);
+  // Tamaño base para hexágonos, más grande para dispositivos móviles
+  const baseSize = 50;
+  // Usar un hexágono con el tamaño base
+  const hexGrid = new HexagonGrid(baseSize);
   const offsetX = 100;
   const offsetY = 200;
 
   return (
-    <div className="relative w-full h-60">
+    <div className="relative w-full h-80 md:h-60">
       <svg 
-        viewBox="0 0 500 250" 
+        viewBox="0 0 500 300" 
         className="w-full h-full"
+        preserveAspectRatio="xMidYMid meet"
       >
         <defs>
           <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
@@ -174,14 +178,14 @@ const HexagonSkillGrid = ({ skills, isInView }: { skills: Skill[]; isInView: boo
               />
 
               <foreignObject
-                x={pos.x + offsetX - 45}
-                y={pos.y + offsetY - 20}
-                width="90"
-                height="40"
+                x={pos.x + offsetX - 55}
+                y={pos.y + offsetY - 30}
+                width="110"
+                height="60"
                 className="pointer-events-none"
               >
                 <div className="h-full flex items-center justify-center">
-                  <p className="text-xs font-medium text-foreground text-center px-1">
+                  <p className="text-sm md:text-xs font-medium text-foreground text-center px-2">
                     {skill.nameKey ? t(skill.nameKey) : ""}
                   </p>
                 </div>
@@ -207,35 +211,35 @@ const FounderCard = ({ founder, index }: { founder: Founder; index: number }) =>
       transition={{ delay: index * 0.3, duration: 0.8 }}
     >
       <Card className="border-[#4285F4]/10 bg-card/50 backdrop-blur-sm">
-        <CardContent className="p-8">
-          <div className="flex flex-col items-center text-center mb-8">
-            <div className="relative w-24 h-24 rounded-lg overflow-hidden border border-[#4285F4]/10 mb-6">
+        <CardContent className="p-4 sm:p-6 md:p-8">
+          <div className="flex flex-col items-center text-center mb-6 md:mb-8">
+            <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-lg overflow-hidden border border-[#4285F4]/10 mb-4 md:mb-6">
               <Image
                 src={founder.imagePath}
                 alt={`${t(founder.nameKey)}'s profile`}
                 fill
                 className="object-cover"
-                sizes="96px"
+                sizes="(max-width: 768px) 80px, 96px"
                 priority
               />
             </div>
-            <div className="space-y-2">
-              <h3 className="text-2xl font-bold text-foreground">{t(founder.nameKey)}</h3>
-              <p className="text-lg text-muted-foreground">{t(founder.titleKey)}</p>
-              <p className="text-sm text-[#4285F4] font-medium">{t(founder.achievementKey)}</p>
+            <div className="space-y-1 md:space-y-2">
+              <h3 className="text-xl md:text-2xl font-bold text-foreground">{t(founder.nameKey)}</h3>
+              <p className="text-base md:text-lg text-muted-foreground">{t(founder.titleKey)}</p>
+              <p className="text-xs md:text-sm text-[#4285F4] font-medium">{t(founder.achievementKey)}</p>
             </div>
           </div>
 
-          <div className="space-y-8">
+          <div className="space-y-6 md:space-y-8">
             <div className="flex justify-center">
               <HexagonSkillGrid skills={founder.skills} isInView={isInView} />
             </div>
 
-            <div className="space-y-4">
-              <h4 className="text-sm font-semibold text-[#4285F4] tracking-wide text-center">
+            <div className="space-y-3 md:space-y-4">
+              <h4 className="text-xs md:text-sm font-semibold text-[#4285F4] tracking-wide text-center">
                 {t('about.mission.title')}
               </h4>
-              <p className="text-muted-foreground leading-relaxed text-center">{t(founder.missionKey)}</p>
+              <p className="text-sm md:text-base text-muted-foreground leading-relaxed text-center">{t(founder.missionKey)}</p>
             </div>
           </div>
         </CardContent>
@@ -251,7 +255,7 @@ const AboutUs = () => {
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
   return (
-    <section className="py-24 relative overflow-hidden" id="about">
+    <section className="py-12 md:py-24 relative overflow-hidden" id="about">
       <div className="absolute inset-0">
         <div 
           className="absolute inset-0"
@@ -262,23 +266,23 @@ const AboutUs = () => {
         />
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 relative" ref={sectionRef}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative" ref={sectionRef}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          className="text-center mb-16"
+          className="text-center mb-8 md:mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#4285F4] to-[#2B63D9]">
               {t('about.title')}
             </span>
           </h2>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto">
             {t('about.description')}
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 mb-8 md:mb-16">
           {founders.map((founder, index) => (
             <FounderCard key={founder.nameKey} founder={founder} index={index} />
           ))}

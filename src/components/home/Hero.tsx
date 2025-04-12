@@ -1,3 +1,4 @@
+//landing-page/src/components/home/Hero.tsx
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -54,7 +55,10 @@ const Hero = () => {
             </h1>
             
             <p className="text-lg md:text-xl text-muted-foreground max-w-xl mx-auto lg:mx-0">
-              {t('hero.description')}
+              {/* Using split translation keys for clean integration */}
+              {t('hero.description.part1')}
+              <span className="font-semibold text-foreground">{t('hero.description.part2')}</span>
+              {t('hero.description.part3')}
             </p>
           </div>
           

@@ -107,17 +107,18 @@ const getFounders = (): Founder[] => {
 
 const HexagonSkillGrid = ({ skills, isInView }: { skills: Skill[]; isInView: boolean }) => {
   const { t } = useLanguage();
-  // Tamaño base para hexágonos, más grande para dispositivos móviles
-  const baseSize = 50;
+  // Increased base size for hexagons on mobile
+  const baseSize = 55;
   // Usar un hexágono con el tamaño base
   const hexGrid = new HexagonGrid(baseSize);
-  const offsetX = 100;
-  const offsetY = 200;
+  // Adjusted offsets to better center the grid
+  const offsetX = 120;
+  const offsetY = 180;
 
   return (
-    <div className="relative w-full h-80 md:h-60">
+    <div className="relative w-full h-96 md:h-64">
       <svg 
-        viewBox="0 0 500 300" 
+        viewBox="0 0 500 350" 
         className="w-full h-full"
         preserveAspectRatio="xMidYMid meet"
       >
@@ -178,14 +179,14 @@ const HexagonSkillGrid = ({ skills, isInView }: { skills: Skill[]; isInView: boo
               />
 
               <foreignObject
-                x={pos.x + offsetX - 55}
-                y={pos.y + offsetY - 30}
-                width="110"
-                height="60"
+                x={pos.x + offsetX - 60}
+                y={pos.y + offsetY - 35}
+                width="120"
+                height="70"
                 className="pointer-events-none"
               >
                 <div className="h-full flex items-center justify-center">
-                  <p className="text-sm md:text-xs font-medium text-foreground text-center px-2">
+                  <p className="text-xs md:text-xs font-medium text-foreground text-center px-2">
                     {skill.nameKey ? t(skill.nameKey) : ""}
                   </p>
                 </div>

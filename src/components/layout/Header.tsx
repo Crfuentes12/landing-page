@@ -1,4 +1,4 @@
-//src/components/layout/Header.tsx
+// src/components/layout/Header.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -15,6 +15,12 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const { setTheme, theme } = useTheme();
   const { t } = useLanguage();
+  const [mounted, setMounted] = useState(false);
+
+  // Ensure the component is mounted before rendering theme-dependent elements
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -52,7 +58,11 @@ const Header = () => {
               alt="Sprint Launchers Logo"
               width={160}
               height={40}
-              className={`object-contain transition-all duration-300 ${theme === "dark" ? "brightness-0 invert opacity-70 filter-gpu transform-gpu" : "opacity-80 transform-gpu"}`}
+              className={`object-contain transition-all duration-300 ${
+                mounted && theme === "dark" 
+                  ? "brightness-0 invert opacity-70 filter-gpu transform-gpu" 
+                  : "opacity-80 transform-gpu"
+              }`}
               priority
             />
           </Link>
@@ -72,13 +82,19 @@ const Header = () => {
           {/* Desktop Controls */}
           <div className="hidden md:flex items-center gap-4">
             <LanguageSwitch />
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-            >
-              {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-            </Button>
+            {mounted && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+              >
+                {theme === "light" ? (
+                  <Moon className="h-4 w-4" />
+                ) : (
+                  <Sun className="h-4 w-4" />
+                )}
+              </Button>
+            )}
           </div>
           {/* Mobile Menu Button */}
           <button
@@ -109,14 +125,20 @@ const Header = () => {
           ))}
           <div className="pt-4 flex flex-col gap-2">
             <LanguageSwitch />
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-            >
-              {theme === "light" ? <Moon className="h-4 w-4 mr-2" /> : <Sun className="h-4 w-4 mr-2" />}
-              {t("theme")}
-            </Button>
+            {mounted && (
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+              >
+                {theme === "light" ? (
+                  <Moon className="h-4 w-4 mr-2" />
+                ) : (
+                  <Sun className="h-4 w-4 mr-2" />
+                )}
+                {t("theme")}
+              </Button>
+            )}
           </div>
         </div>
       </div>

@@ -16,7 +16,9 @@ const translations = {
     // Hero Section
     "hero.title.fast": "Fast. Smart.",
     "hero.title.mvp": "Your software done right.",
-    "hero.description": "Launch your startup MVP in 6 weeks and save 30% of development costs.",
+    "hero.description.part1": "Launch your ",
+    "hero.description.part2": "startup MVP",
+    "hero.description.part3": " in 6 weeks and save 30% of development costs.",
     "hero.button.estimate": "Price estimation",
     "hero.button.contact": "Contact Us",
     "hero.stats.mvps": "MVPs builded",
@@ -46,6 +48,7 @@ const translations = {
     "roadmap.feature3.description": "While we focus on MVP essentials, we ensure your foundation is solid and scalable for future growth.",
     
     // Roadmap Steps
+    "roadmap.step.label": "Step",
     "roadmap.step1.title": "Idea Analysis",
     "roadmap.step1.description": "1. We dive into your vision to understand your needs and analyze your market.",
     "roadmap.step1.feature1.title": "Industry Insights",
@@ -322,8 +325,10 @@ const translations = {
     // Hero Section
     "hero.title.fast": "Rápido. Inteligente.",
     "hero.title.mvp": "Tu software bien hecho.",
-    "hero.description": "Lanza el MVP de tu startup en 6 semanas y ahorra un 30% en costos de desarrollo.",
-    "hero.button.estimate": "estimacion de precio",
+    "hero.description.part1": "Lanza el ",
+    "hero.description.part2": "MVP de tu startup",
+    "hero.description.part3": " en 6 semanas y ahorra un 30% en costos de desarrollo.",
+    "hero.button.estimate": "Estimación de precio",
     "hero.button.contact": "Contáctanos",
     "hero.stats.mvps": "MVPs construidos",
     "hero.stats.experience": "Años de Experiencia",
@@ -352,6 +357,7 @@ const translations = {
     "roadmap.feature3.description": "Mientras nos concentramos en lo esencial del MVP, nos aseguramos de que tu base sea sólida y escalable para el crecimiento futuro.",
     
     // Roadmap Steps
+    "roadmap.step.label": "Paso",
     "roadmap.step1.title": "Análisis de Ideas",
     "roadmap.step1.description": "1. Profundizamos en tu visión para entender tus necesidades y analizar tu mercado.",
     "roadmap.step1.feature1.title": "Perspectivas de la Industria",
@@ -628,7 +634,9 @@ const translations = {
     // Hero Section
     "hero.title.fast": "Schnell. Smart.",
     "hero.title.mvp": "Deine Software, perfekt umgesetzt.",
-    "hero.description": "Starte das MVP deines Startups in 6 Wochen und spare 30% Entwicklungskosten.",
+    "hero.description.part1": "Starte das ",
+    "hero.description.part2": "MVP deines Startups",
+    "hero.description.part3": " in 6 Wochen und spare 30% Entwicklungskosten.",
     "hero.button.estimate": "Preisschätzung",
     "hero.button.contact": "Kontaktiere uns",
     "hero.stats.mvps": "MVPs entwickelt",
@@ -658,6 +666,7 @@ const translations = {
     "roadmap.feature3.description": "Wir fokussieren uns auf das Wesentliche des MVPs und stellen gleichzeitig sicher, dass dieses Fundament solide und skalierbar für zukünftiges Wachstum ist.",
     
     // Roadmap Steps
+    "roadmap.step.label": "Schritt",
     "roadmap.step1.title": "Ideenanalyse",
     "roadmap.step1.description": "1. Wir tauchen in Deine Vision ein, um deine Bedürfnisse zu verstehen und den Markt zu analysieren den Markt.",
     "roadmap.step1.feature1.title": "Markteinblicke",

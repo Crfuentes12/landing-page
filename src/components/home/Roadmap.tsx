@@ -263,7 +263,7 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({
             isExpanded ? 'opacity-100' : 'opacity-60'
           }`}>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-muted-foreground">Step {step.id}</span>
+              <span className="text-sm font-medium text-muted-foreground">{t('roadmap.step.label')} {step.id}</span>
               <ChevronRight className="h-4 w-4 text-muted-foreground" />
             </div>
             <h3 className="font-semibold">{t(step.titleKey)}</h3>
@@ -300,7 +300,7 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({
             isActive ? 'opacity-100' : 'opacity-60 group-hover:opacity-80'
           }`}>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-muted-foreground">Step {step.id}</span>
+              <span className="text-sm font-medium text-muted-foreground">{t('roadmap.step.label')} {step.id}</span>
               <ChevronRight className="h-4 w-4 text-muted-foreground" />
             </div>
             <h3 className="font-semibold">{t(step.titleKey)}</h3>

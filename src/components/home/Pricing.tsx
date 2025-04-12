@@ -333,7 +333,7 @@ const Pricing = () => {
         <div className="bg-blue-100/80 dark:bg-blue-950/30 rounded-3xl p-12 relative">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
             <div className="w-full lg:w-1/2 text-blue-950 dark:text-blue-100">
-              <h2 className="text-4xl font-bold mb-6">
+              <h2 className="text-4xl font-bold mb-6 hidden md:block">
                 {t('pricing.estimation')}
               </h2>
               <motion.div 

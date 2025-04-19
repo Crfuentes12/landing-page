@@ -112,11 +112,11 @@ const HexagonSkillGrid = ({ skills, isInView }: { skills: Skill[]; isInView: boo
   // Usar un hexágono con el tamaño base
   const hexGrid = new HexagonGrid(baseSize);
   // Adjusted offsets to better center the grid
-  const offsetX = 120;
-  const offsetY = 180;
+  const offsetX = 100;
+  const offsetY = 250;
 
   return (
-    <div className="relative w-full h-96 md:h-64">
+    <div className="relative w-full h-84 md:h-64">
       <svg 
         viewBox="0 0 500 350" 
         className="w-full h-full"
@@ -279,7 +279,11 @@ const AboutUs = () => {
             </span>
           </h2>
           <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto">
-            {t('about.description')}
+            {t('about.description.part1')}
+            <strong className="font-semibold text-foreground">{t('about.description.part2')}</strong>
+            {t('about.description.part3')}
+            <strong className="font-semibold text-foreground">{t('about.description.part4')}</strong>
+            {t('about.description.part5')}
           </p>
         </motion.div>
 

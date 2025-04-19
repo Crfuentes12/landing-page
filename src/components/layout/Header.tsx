@@ -60,8 +60,8 @@ const Header = () => {
               height={40}
               className={`object-contain transition-all duration-300 ${
                 mounted && theme === "dark" 
-                  ? "brightness-0 invert opacity-70 filter-gpu transform-gpu" 
-                  : "opacity-80 transform-gpu"
+                  ? "brightness-0 invert filter-gpu transform-gpu" 
+                  : "transform-gpu"
               }`}
               priority
             />

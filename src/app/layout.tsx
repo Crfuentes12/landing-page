@@ -2,7 +2,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import Header from "@/components/layout/Header";
 import { RootProvider } from "@/providers/root-provider";
-import { ThemeProvider } from "@/providers/theme-provider";
 import { LanguageProvider } from "@/providers/language-provider";
 import { LanguageSelector } from "@/components/language-selector";
 import "./globals.css";
@@ -49,29 +48,30 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es" className={`${geistSans.className} ${geistMono.className}`} suppressHydrationWarning>
+      <head>
+        {/* Ensure no variable calculations in head that could cause hydration issues */}
+      </head>
       <body className="min-h-screen bg-background font-sans antialiased overflow-x-hidden" suppressHydrationWarning>
         <LanguageProvider>
-          <ThemeProvider defaultTheme="system">
-            <RootProvider>
-              <LanguageSelector />
-              <div className="relative flex min-h-screen flex-col overflow-hidden">
-                <Header />
-                <main className="flex-1 pt-16 w-full">{children}</main>
-              </div>
-            </RootProvider>
-          </ThemeProvider>
+          <RootProvider>
+            <LanguageSelector />
+            <div className="relative flex min-h-screen flex-col overflow-hidden">
+              <Header />
+              <main className="flex-1 pt-16 w-full">{children}</main>
+            </div>
+            
+            {/* Google Ads & Analytics (Outside of ThemeProvider to prevent hydration issues) */}
+            <Script strategy="afterInteractive" src="https://www.googletagmanager.com/gtag/js?id=AW-16491618146" />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'AW-16491618146', { anonymize_ip: true });
+              `}
+            </Script>
+          </RootProvider>
         </LanguageProvider>
-
-        {/* Google Ads & Analytics (Movido Fuera de <head>) */}
-        <Script strategy="afterInteractive" src="https://www.googletagmanager.com/gtag/js?id=AW-16491618146" />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'AW-16491618146', { anonymize_ip: true });
-          `}
-        </Script>
       </body>
     </html>
   );

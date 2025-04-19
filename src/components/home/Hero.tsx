@@ -6,6 +6,7 @@ import { ArrowRight, ArrowDown } from "lucide-react";
 import { useScroll } from "@/providers/scroll-provider";
 import { useLanguage } from "@/providers/language-provider";
 import HeroChat from './HeroChat';
+import { useEffect, useState } from 'react';
 
 interface Stat {
   labelKey: string;
@@ -16,6 +17,18 @@ interface Stat {
 const Hero = () => {
   const { scrollToSection } = useScroll();
   const { t } = useLanguage();
+  const [gridItems, setGridItems] = useState<Array<{ opacity: number; delay: string }>>([]);
+  const [isMounted, setIsMounted] = useState(false);
+  
+  // Generate random values only on the client side after component mount
+  useEffect(() => {
+    const items = Array.from({ length: 72 }).map(() => ({
+      opacity: Math.random() * 0.9,
+      delay: `${Math.random() * 2000}ms`
+    }));
+    setGridItems(items);
+    setIsMounted(true);
+  }, []);
 
   const stats: Stat[] = [
     { labelKey: 'hero.stats.mvps', value: '10+', accent: 'from-[#4285F4] to-[#2B63D9]' },
@@ -29,19 +42,31 @@ const Hero = () => {
       {/* Gradient Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-background/80" />
       
-      {/* Subtle pattern overlay */}
+      {/* Subtle pattern overlay - with client-side only randomization */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0 grid grid-cols-6 md:grid-cols-12 gap-px">
-          {Array.from({ length: 72 }).map((_, i) => (
-            <div 
-              key={i}
-              className="bg-[#4285F4] transition-opacity duration-1000"
-              style={{
-                opacity: Math.random() * 0.9,
-                transitionDelay: `${Math.random() * 2000}ms`
-              }}
-            />
-          ))}
+          {isMounted ? (
+            // Only render grid items with random values after client-side mount
+            gridItems.map((item, i) => (
+              <div 
+                key={i}
+                className="bg-[#4285F4] transition-opacity duration-1000"
+                style={{
+                  opacity: item.opacity,
+                  transitionDelay: item.delay
+                }}
+              />
+            ))
+          ) : (
+            // During SSR and hydration, render placeholder divs with consistent styling
+            Array.from({ length: 72 }).map((_, i) => (
+              <div 
+                key={i}
+                className="bg-[#4285F4] transition-opacity duration-1000"
+                style={{ opacity: 0.5 }}
+              />
+            ))
+          )}
         </div>
       </div>
       
@@ -55,7 +80,6 @@ const Hero = () => {
             </h1>
             
             <p className="text-lg md:text-xl text-muted-foreground max-w-xl mx-auto lg:mx-0">
-              {/* Using split translation keys for clean integration */}
               {t('hero.description.part1')}
               <span className="font-semibold text-foreground">{t('hero.description.part2')}</span>
               {t('hero.description.part3')}
@@ -81,7 +105,7 @@ const Hero = () => {
             </Button>
           </div>
 
-          {/* Stats in a grid with equal columns - Fixed version */}
+          {/* Stats in a grid with equal columns */}
           <div className="w-full py-4 md:py-6 lg:py-8">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
               {stats.map((stat) => (
@@ -98,7 +122,7 @@ const Hero = () => {
 
         {/* Right side - Chat simulation with fixed height */}
         <div className="hidden md:block w-full max-w-md mx-auto lg:mx-0">
-          <div className="h-[400px] md:h-[450px] lg:h-[500px]"> {/* Fixed height container with responsive sizing */}
+          <div className="h-[400px] md:h-[450px] lg:h-[500px]"> 
             <HeroChat />
           </div>
         </div>
@@ -107,7 +131,7 @@ const Hero = () => {
       {/* Scroll indicator */}
       <button 
         onClick={() => scrollToSection('why-we-do-this')}
-        className="absolute bottom-6 md:bottom-8 lg:bottom-10 animate-bounce z-10 transform transition-transform duration-800 hover:scale-110"
+        className="absolute bottom-6 md:bottom-8 lg:bottom-10 animate-bounce z-10 transform transition-transform hover:scale-110"
         aria-label="Scroll to Our Mission section"
       >
         <ArrowDown className="h-6 w-6 md:h-7 md:w-7 lg:h-8 lg:w-8 text-[#4285F4]" />

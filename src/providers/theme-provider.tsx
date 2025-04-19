@@ -1,6 +1,6 @@
 // src/providers/theme-provider.tsx
 "use client";
-import { createContext, useContext, useEffect } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 
 type Theme = 'light' | 'dark' | 'system';
@@ -19,10 +19,16 @@ export function ThemeProvider({
     children: React.ReactNode;
     defaultTheme?: Theme;
   }) {
+    const [mounted, setMounted] = useState(false);
     const [theme, setTheme] = useLocalStorage<Theme>('theme', defaultTheme);
   
+    // Apply theme class only after hydration to avoid mismatch
     useEffect(() => {
-      if (typeof window === "undefined") return;
+      setMounted(true);
+    }, []);
+  
+    useEffect(() => {
+      if (!mounted) return;
       
       const root = window.document.documentElement;
       root.classList.remove('light', 'dark');
@@ -35,10 +41,13 @@ export function ThemeProvider({
       } else {
         root.classList.add(theme);
       }
-    }, [theme]);
+    }, [theme, mounted]);
+  
+    // Provide the value that will be consumed by the hook
+    const value = { theme, setTheme };
   
     return (
-      <ThemeProviderContext.Provider value={{ theme, setTheme }}>
+      <ThemeProviderContext.Provider value={value}>
         {children}
       </ThemeProviderContext.Provider>
     );

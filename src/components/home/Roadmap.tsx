@@ -9,7 +9,7 @@ import { useLanguage } from "@/providers/language-provider";
 interface FeatureCardProps {
   icon: React.ElementType;
   titleKey: string;
-  descriptionKey: string;
+  descriptionKeyBase: string;
   gradient: string;
   delay: number;
 }
@@ -17,11 +17,16 @@ interface FeatureCardProps {
 const FeatureCard: React.FC<FeatureCardProps> = ({ 
   icon: Icon, 
   titleKey, 
-  descriptionKey, 
+  descriptionKeyBase, 
   gradient, 
   delay
 }) => {
   const { t } = useLanguage();
+  
+  // Obtener los textos de las partes de la descripción
+  const part1 = t(`${descriptionKeyBase}.part1`);
+  const part2 = t(`${descriptionKeyBase}.part2`);
+  const part3 = t(`${descriptionKeyBase}.part3`);
   
   return (
     <motion.div
@@ -40,7 +45,9 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
             {t(titleKey)}
           </h3>
           <p className="text-muted-foreground leading-relaxed">
-            {t(descriptionKey)}
+            {part1 !== descriptionKeyBase + ".part1" ? part1 : ""}
+            <strong className="font-semibold text-foreground">{part2}</strong>
+            {part3}
           </p>
         </CardContent>
       </Card>
@@ -52,19 +59,19 @@ const features = [
   {
     icon: Target,
     titleKey: "roadmap.feature1.title",
-    descriptionKey: "roadmap.feature1.description",
+    descriptionKeyBase: "roadmap.feature1.description",
     gradient: "from-[#4285F4] to-[#2B63D9]"
   },
   {
     icon: Zap,
     titleKey: "roadmap.feature2.title",
-    descriptionKey: "roadmap.feature2.description",
+    descriptionKeyBase: "roadmap.feature2.description",
     gradient: "from-[#FF9800] to-[#F57C00]"
   },
   {
     icon: Shield,
     titleKey: "roadmap.feature3.title",
-    descriptionKey: "roadmap.feature3.description",
+    descriptionKeyBase: "roadmap.feature3.description",
     gradient: "from-[#34A853] to-[#2E7D32]"
   }
 ];
@@ -73,7 +80,7 @@ interface RoadmapStep {
   id: number;
   icon: LucideIcon;
   titleKey: string;
-  descriptionKey: string;
+  descriptionKeyBase: string;
   gradient: string;
   features: {
     titleKey: string;
@@ -86,7 +93,7 @@ const roadmapSteps: RoadmapStep[] = [
     id: 1,
     icon: Target,
     titleKey: "roadmap.step1.title",
-    descriptionKey: "roadmap.step1.description",
+    descriptionKeyBase: "roadmap.step1.description",
     gradient: "from-[#4285F4] to-[#2B63D9]",
     features: [
       {
@@ -111,7 +118,7 @@ const roadmapSteps: RoadmapStep[] = [
     id: 2,
     icon: Zap,
     titleKey: "roadmap.step2.title",
-    descriptionKey: "roadmap.step2.description",
+    descriptionKeyBase: "roadmap.step2.description",
     gradient: "from-[#34A853] to-[#2E7D32]",
     features: [
       {
@@ -136,7 +143,7 @@ const roadmapSteps: RoadmapStep[] = [
     id: 3,
     icon: Route,
     titleKey: "roadmap.step3.title",
-    descriptionKey: "roadmap.step3.description",
+    descriptionKeyBase: "roadmap.step3.description",
     gradient: "from-[#FBBC05] to-[#F57C00]",
     features: [
       {
@@ -161,7 +168,7 @@ const roadmapSteps: RoadmapStep[] = [
     id: 4,
     icon: CodeXml,
     titleKey: "roadmap.step4.title",
-    descriptionKey: "roadmap.step4.description",
+    descriptionKeyBase: "roadmap.step4.description",
     gradient: "from-[#EA4335] to-[#C62828]",
     features: [
       {
@@ -186,7 +193,7 @@ const roadmapSteps: RoadmapStep[] = [
     id: 5,
     icon: Rocket,
     titleKey: "roadmap.step5.title",
-    descriptionKey: "roadmap.step5.description",
+    descriptionKeyBase: "roadmap.step5.description",
     gradient: "from-[#9C27B0] to-[#6A1B9A]",
     features: [
       {
@@ -325,10 +332,37 @@ interface StepContentProps {
 const StepContent: React.FC<StepContentProps> = ({ step }) => {
   const { t } = useLanguage();
   
+  // Renderizar la descripción con partes en negrita
+  const renderDescription = () => {
+    if (step.id === 5) {
+      // El paso 5 tiene 5 partes
+      return (
+        <>
+          {t(`${step.descriptionKeyBase}.part1`)}
+          <strong className="font-semibold text-foreground">{t(`${step.descriptionKeyBase}.part2`)}</strong>
+          {t(`${step.descriptionKeyBase}.part3`)}
+          <strong className="font-semibold text-foreground">{t(`${step.descriptionKeyBase}.part4`)}</strong>
+          {t(`${step.descriptionKeyBase}.part5`)}
+        </>
+      );
+    } else {
+      // Los demás pasos tienen 3 partes
+      return (
+        <>
+          {t(`${step.descriptionKeyBase}.part1`)}
+          <strong className="font-semibold text-foreground">{t(`${step.descriptionKeyBase}.part2`)}</strong>
+          {t(`${step.descriptionKeyBase}.part3`)}
+        </>
+      );
+    }
+  };
+  
   return (
     <div className="space-y-4">
       <div>
-        <p className="text-muted-foreground mb-4 font-medium lg:text-lg">{t(step.descriptionKey)}</p>
+        <p className="text-muted-foreground mb-4 font-medium lg:text-lg">
+          {renderDescription()}
+        </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
           {step.features.map((feature, index) => (
             <Card key={index} className="border-[#4285F4]/10 bg-card/50 backdrop-blur-sm hover:shadow-sm transition-all duration-300">
@@ -396,7 +430,7 @@ const Roadmap: React.FC = () => {
               key={feature.titleKey}
               icon={feature.icon}
               titleKey={feature.titleKey}
-              descriptionKey={feature.descriptionKey}
+              descriptionKeyBase={feature.descriptionKeyBase}
               gradient={feature.gradient}
               delay={0.2 + index * 0.2}
             />

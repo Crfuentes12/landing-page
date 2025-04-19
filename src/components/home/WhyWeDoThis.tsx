@@ -1,4 +1,4 @@
-//landing-page/src/components/home/WhyWeDoThis.tsx
+// /landing-page/src/components/home/WhyWeDoThis.tsx
 'use client';
 
 import { useRef } from 'react';
@@ -23,7 +23,7 @@ export default function WhyWeDoThis() {
   };
 
   return (
-    <section className="pt-24 pb-4 relative overflow-hidden" id="why-we-do-this">
+    <section className="pt-4 pb-4 relative overflow-hidden" id="why-we-do-this">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div 
@@ -90,10 +90,12 @@ export default function WhyWeDoThis() {
             transition={{ delay: 0.6, duration: 0.8 }}
             className="space-y-6"
           >
-            <p 
-              className="text-lg text-muted-foreground leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: t('why.paragraph2') }}
-            />
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              {t('why.paragraph2.part1')}
+              <strong className="font-semibold text-foreground">{t('why.paragraph2.part2')}</strong>
+              {t('why.paragraph2.part3')}
+              <strong className="font-semibold text-foreground">{t('why.paragraph2.part4')}</strong>.
+            </p>
           </motion.div>
         </div>
       </motion.div>

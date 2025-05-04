@@ -579,7 +579,7 @@ const translations = {
     "faq.categories.support": "Soporte",
 
     // Questions
-    "faq.questions.industries": "¿En qué tipos de startups y proyectos son expertos?",
+    "faq.questions.industries": "¿En qué tipos de startups y proyectos sois expertos?",
     "faq.questions.technical": "¿Necesito saber de tecnología para trabajar con vosotros?",
     "faq.questions.feedback": "¿Cómo gestionáis los cambios y comentarios durante el desarrollo?",
     "faq.questions.fulldev": "Si mi MVP funciona, ¿podéis desarrollar el producto completo?",
